@@ -10,7 +10,7 @@ Este directorio inicia el workspace de Cargo y refleja los módulos principales 
 - Simulator: deriva R.10, ruido gaussiano con RNG local reproducible y proyección al símplex implementados.
 - Diagnose: rango Ω, estado, identificabilidad y recomendación implementados; bootstrap continúa sin ajuste estadístico.
 - Pruebas Rust: caso Maquinas, proyección, reproducibilidad, diagnóstico y rechazo de memoria temporal.
-- CI ejecuta `cargo test` y `cargo check`.
+- CI ejecuta `cargo test`, que compila y ejecuta las pruebas unitarias y de integración.
 
 Esto ya no es solo un esqueleto, pero **no** es todavía el compilador Rust completo ni un runtime conforme: no hay lexer/parser, validador independiente, CLI ni bindings PyO3/WASM/C. La memoria temporal sigue rechazada. La implementación no depende de crates externos.
 
