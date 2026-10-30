@@ -54,7 +54,7 @@ fn json_numbers(values: &[f64]) -> String {
 
 fn csv_field(value: &str) -> String {
     if value.contains(',') || value.contains('"') || value.contains('\n') || value.contains('\r') {
-        format!("\\"{}\\"", value.replace('"', "\\"\\""))
+        format!("\"{}\"", value.replace('"', "\"\""))
     } else {
         value.to_string()
     }
