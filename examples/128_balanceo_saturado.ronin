@@ -1,0 +1,17 @@
+// Ejemplo 128 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva el bloque system; los comandos externos al bloque no forman parte
+// del subconjunto que acepta actualmente el parser Python.
+system LoadBalancer = {
+    parts: 10,
+    resource: 10000,
+    agents: [ /* servidores con capacidad */ ],
+    params: {
+        model: "ces_hill",
+        lambda: 0.4,
+        K: 0.8,
+        alpha_h: 1.5,
+        alpha: 1.1,
+        gamma: 0.3,
+        sigma: 0.1
+    }
+}
