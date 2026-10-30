@@ -224,7 +224,7 @@ mod tests {
         "#;
         let output = compile_program(&parse(source).unwrap()).unwrap();
         assert!(output.contains("\"note\":\"line\\nquote\\\" slash\\\\\""));
-        assert!(output.contains("\"profile\":{\"empty\":null,\"enabled\":true,\"region\":\"north\"}"));
+        assert!(output.contains("\"profile\":{\"empty\":null,\"enabled\":true,\"region\":\"north\",\"tiny\":1e-300}"));
     }
 
     #[test]
