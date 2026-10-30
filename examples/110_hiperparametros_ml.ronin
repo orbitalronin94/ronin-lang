@@ -1,0 +1,14 @@
+// Ejemplo 110 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva la declaración system del ejemplo fuente; las instrucciones
+// posteriores (solve/diagnose/print/loops) no pertenecen al parser de la CLI actual.
+system Hyperparametros = {
+    parts: 4,
+    resource: 100,
+    agents: [
+        { name: "LearningRate", phi: 0.8, psi: 0.7, frequency: 0.25 },
+        { name: "BatchSize", phi: 0.7, psi: 0.8, frequency: 0.25 },
+        { name: "Dropout", phi: 0.6, psi: 0.9, frequency: 0.25 },
+        { name: "L2Reg", phi: 0.5, psi: 0.95, frequency: 0.25 }
+    ],
+    params: { model: "ces", lambda: 0.5, alpha: 0.9, gamma: 0.2, sigma: 0.05 }
+}
