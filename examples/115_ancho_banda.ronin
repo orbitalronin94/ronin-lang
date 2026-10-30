@@ -1,0 +1,9 @@
+// Ejemplo 115 de RONIN 1.1 — extracto del documento maestro.
+// PLANTILLA: el documento fuente usa generadores o marcadores de posición
+// (datos no incluidos). No representa datos reales ni es ejecutable semánticamente.
+system AnchoBandaTemplate = {
+    parts: 2,
+    resource: 1.0,
+    agents: [],
+    params: { model: "pusfre" }
+}
