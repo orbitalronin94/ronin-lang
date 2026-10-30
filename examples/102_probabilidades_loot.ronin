@@ -1,0 +1,14 @@
+// Ejemplo 102 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva la declaración system del ejemplo fuente; las instrucciones
+// posteriores (solve/diagnose/print/loops) no pertenecen al parser de la CLI actual.
+system Loot = {
+    parts: 5,
+    resource: 100,
+    agents: [
+        { name: "Común", phi: 0.1, psi: 0.95, frequency: 0.2 },
+        { name: "Raro", phi: 0.5, psi: 0.8, frequency: 0.2 },
+        { name: "Épico", phi: 0.7, psi: 0.7, frequency: 0.2 },
+        { name: "Legendario", phi: 0.9, psi: 0.5, frequency: 0.2 }
+    ],
+    params: { model: "ces", lambda: 0.5, alpha: 0.8, gamma: 0.2, sigma: 0.1 }
+}
