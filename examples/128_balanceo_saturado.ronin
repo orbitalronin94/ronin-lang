@@ -4,7 +4,7 @@
 system LoadBalancer = {
     parts: 10,
     resource: 10000,
-    agents: [ /* servidores con capacidad */ ],
+    agents: [ // servidores con capacidad ],
     params: {
         model: "ces_hill",
         lambda: 0.4,
