@@ -53,6 +53,7 @@ def test_parser_supports_strings_signed_values_and_memory_arrays():
     assert system.params.memory_weights == [1.0]
     assert system.params.degeneracy_check is True
     assert validate_coherence(system.params)
+    assert parse('system Default = { parts: 2, resource: 1, agents: [{phi:0.5,psi:0.5,frequency:0.5},{phi:0.5,psi:0.5,frequency:0.5}], params: { memory_weights: null } }')["Default"].params.memory_weights is None
 
 
 def test_invalid_frequency_sum():
