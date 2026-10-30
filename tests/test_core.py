@@ -135,6 +135,7 @@ def test_degeneracy_active_for_narrow_omega_range():
     '''
     report = diagnose(parse(source)["Narrow"])
     assert report.degeneracy == "active"
+    assert not report.lambda_identifiable
     assert not report.K_identifiable
     assert not report.alpha_h_identifiable
 
