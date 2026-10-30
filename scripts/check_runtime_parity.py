@@ -75,7 +75,7 @@ def compare(path: Path, delta=None) -> None:
                 raise AssertionError(f"{path}: {name}.{field} length differs")
             for index, (left, right) in enumerate(zip(python_result[field], rust_result[field])):
                 close(left, right, f"{name}.{field}[{index}]", path)
-        for field in ("coexistence", "degeneracy", "model_used"):
+        for field in ("coexistence", "degeneracy", "model_used", "debt"):
             if python_result[field] != rust_result[field]:
                 raise AssertionError(
                     f"{path}: {name}.{field}: Python={python_result[field]!r}, Rust={rust_result[field]!r}"

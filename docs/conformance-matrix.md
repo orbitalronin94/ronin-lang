@@ -25,7 +25,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | CORE-001 | §1.1, §2.1 | Declarar sistemas con partes, recurso, agentes y parámetros | I | P | `ronin/parser.py`; `rust/src/parser.rs`; `tests/test_core.py`; tests de parser Rust |
 | CORE-002 | §1.2, N.1 | Resolver un sistema y calcular fitness/asignación en los modelos del perfil compartido | I | I | Python/Rust comparados por `scripts/check_runtime_parity.py` en 11 proyectos; fitness, allocation, coexistence, k_min y diagnóstico numérico con tolerancia 1e-9 |
 | CORE-003 | §1.3, §2.3 | Evaluar coexistencia y umbral `k_min` | P | P | `k_min` y campo coexistence existen; falta cerrar el contrato de coexistencia de la fuente |
-| CORE-004 | §1.4, N.1.4 | Estimar deuda del sistema | P | N | Python `debt()` devuelve placeholder `0.0`; no es un estimador. Rust no expone un estimador ni un campo deuda normativo |
+| CORE-004 | §1.4, N.1.4 | Estimar deuda del sistema | N | N | No existe estimador normativo; Python y Rust serializan `debt: null` para no presentar el placeholder como cero |
 | CORE-005 | §1.5 | Calcular geometría del sistema | N | N | No se encontró función ejecutable con contrato de geometría |
 | CORE-006 | §1.6 | Calcular fatiga de enrutamiento | N | N | No se encontró implementación ejecutable |
 | CORE-007 | §1.7, N.1.5 | Diagnosticar rango Ω y degeneración K–α | I | P | `ronin/diagnose.py`, `rust/src/diagnose.rs`; pruebas de umbral y parámetros no identificables |

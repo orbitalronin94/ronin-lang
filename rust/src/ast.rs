@@ -49,6 +49,7 @@ pub struct Solution {
     pub fitness: Vec<f64>,
     pub coexistence: Option<bool>,
     pub k_min: Option<f64>,
+    pub debt: Option<f64>,
     pub model_used: String,
     pub lambda_used: f64,
     pub k_used: f64,

@@ -59,8 +59,9 @@ def k_min(s, delta=0.05):
     return s.parts * max(q) / min(q) / math.log(s.parts / delta)
 
 
-def debt(s):
-    return 0.0
+def debt(_system):
+    """Return None until MDES defines an executable debt estimator."""
+    return None
 
 
 def omega_range_orders(xs):

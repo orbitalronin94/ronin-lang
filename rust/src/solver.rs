@@ -98,7 +98,7 @@ pub fn solve(system: &System, delta: f64) -> Result<Solution, String> {
     let min_q = q.iter().cloned().fold(f64::INFINITY,f64::min);
     let k_min = if min_q <= 0.0 { None } else { Some(system.parts as f64 * q.iter().cloned().fold(0.0,f64::max) / min_q / ((system.parts as f64 / delta).ln())) };
     Ok(Solution {
-        allocation, fitness, coexistence: k_min.map(|v|system.resource>=v), k_min,
+        allocation, fitness, coexistence: k_min.map(|v|system.resource>=v), k_min, debt: None,
         model_used:p.model.clone(), lambda_used:p.lambda, k_used:p.k, alpha_h_used:p.alpha_h,
         omega_range_orders:orders, degeneracy,
     })
@@ -148,6 +148,7 @@ mod tests {
         close(result.allocation[1], 29.411764705882355, 1e-9);
         close(result.allocation.iter().sum(), 100.0, 1e-9);
         assert_eq!(result.model_used, "pusfre");
+        assert_eq!(result.debt, None);
     }
 
     #[test]

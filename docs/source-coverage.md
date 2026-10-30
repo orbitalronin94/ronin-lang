@@ -22,7 +22,7 @@ La [matriz de trazabilidad MDES v0.5](conformance-matrix.md) contiene IDs por re
 
 ## Límites de implementación explícitos
 
-1. **Estimador de deuda.** El código Python de R.8 define `debt(system)` como `0.0`. No se proporciona un estimador ejecutable en R.3–R.14. El runtime conserva ese placeholder y no afirma auditar deuda.
+1. **Estimador de deuda.** No se proporciona un estimador ejecutable en R.3–R.14. Python y Rust devuelven `debt: null` para indicar explícitamente que el valor no está calculado; no se interpreta como deuda cero.
 2. **Bootstrap.** La implementación de diagnóstico de la fuente deja pendiente el ajuste bootstrap. El runtime devuelve `bootstrap_ci: null`.
 3. **Memoria temporal.** Se definen `memory_order` y `memory_weights`, pero no un kernel temporal ejecutable. Los órdenes superiores a 1 se rechazan en ejecución en vez de aproximarse silenciosamente.
 4. **Datos NeuralScaling/FamaFrench.** Los ejemplos suministrados contienen `...` en lugar de los 46/720 registros completos. No son fixtures ejecutables y no fabricamos observaciones.
@@ -48,7 +48,7 @@ La fuente proporciona la fórmula de `k_min` e indica que se advierta cuando el 
 
 ## Otros objetivos descritos en el Markdown
 
-- **Rust (Parte VI / 6.1–6.14):** el repositorio implementa AST, lexer/parser para el subconjunto compartido, IR interno y serializador JSON IR v1; CLI `list`, `check`, `solve`, `run` (todos los sistemas, JSON/CSV), `compile`, `diagnose` y `simulate`. `solve` sin `--system` selecciona el primer sistema, como Python. La paridad verificada incluye parser, validación, solver, diagnósticos, contratos de simulación y CSV; las trayectorias RNG no son bit a bit equivalentes. Siguen pendientes bindings PyO3/WASM/C, memoria temporal de orden superior y cierre normativo de deuda/bootstrap. No se declara runtime completo ni conforme.
+- **Rust (Parte VI / 6.1–6.14):** el repositorio implementa AST, lexer/parser para el subconjunto compartido, IR interno y serializador JSON IR v1; CLI `list`, `check`, `solve`, `run` (todos los sistemas, JSON/CSV), `compile`, `diagnose` y `simulate`. `solve` sin `--system` selecciona el primer sistema, como Python. La paridad verificada incluye parser, validación, solver, diagnósticos, contratos de simulación y CSV; las trayectorias con semilla fija coinciden entre runtimes con tolerancia 1e-12. Siguen pendientes bindings PyO3/WASM/C, memoria temporal de orden superior y cierre normativo de deuda/bootstrap. No se declara runtime completo ni conforme.
 - **WASM y C (6.13–6.14):** son bocetos de extensión; el generador C contiene puntos suspensivos y no es un backend completo.
 - **RONIN Office (Parte VII):** se describen paneles, mockups y tablas de estado. Este runtime Python no incluye la interfaz Office.
 - **Motor JavaScript (7.9):** el ejemplo contiene puntos suspensivos y no es un backend completo ni conforme.
@@ -100,7 +100,7 @@ This document maps repository behavior to *RONIN 1.1 — Edición Familia* and d
 
 ## Known implementation limits
 
-Debt estimation remains a `0.0` placeholder; bootstrap confidence intervals return null; higher-order temporal memory has no executable kernel; NeuralScaling and FamaFrench source datasets are incomplete; and Rust, WASM, C, Office and the JavaScript engine are proposal/sketch material rather than complete backends.
+Debt estimation is explicitly unavailable and serialized as `null`; bootstrap confidence intervals return null; higher-order temporal memory has no executable kernel; NeuralScaling and FamaFrench source datasets are incomplete; and Rust, WASM, C, Office and the JavaScript engine are proposal/sketch material rather than complete backends.
 
 ## CES limit as lambda approaches zero
 

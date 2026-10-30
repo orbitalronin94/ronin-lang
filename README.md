@@ -95,7 +95,7 @@ Los hitos son objetivos de ingeniería, no afirmaciones de funcionalidades ya en
 
 ## Límites conocidos de v0.1
 
-- `debt()` continúa siendo un placeholder `0.0`; no existe un estimador normativo ejecutable.
+- `debt` se devuelve como `null` en ambos runtimes: no existe un estimador normativo ejecutable y no se presenta la ausencia de cálculo como deuda cero.
 - Los intervalos bootstrap siguen pendientes y se devuelven como `null`.
 - La memoria temporal de orden superior a 1 no tiene kernel ejecutable.
 - Rust todavía no ofrece paridad completa con Python en todas las áreas; la simulación sí reproduce las trayectorias Python para semillas enteras compartidas con tolerancia 1e-12.

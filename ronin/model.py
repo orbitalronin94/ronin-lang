@@ -44,7 +44,7 @@ class Solution:
     fitness: List[float]
     coexistence: Optional[bool] = None
     k_min: Optional[float] = None
-    debt: float = 0.0
+    debt: Optional[float] = None
     convergence: bool = True
     steps: int = 1
     model_used: str = "pusfre"
