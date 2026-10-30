@@ -107,7 +107,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | BUILD-011 | §6.13 | REPL general del lenguaje | P | N | Existe consola Python básica; no ejecuta el lenguaje completo |
 | BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | P | Python `diagnose`; Rust expone módulo pero no subcomando CLI |
 | BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR |
-| BUILD-014 | §6, Parte VI | CLI Rust list/check/solve/run | — | I | `rust/src/main.rs`; tests de integración de comandos |
+| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run | — | I | `rust/src/main.rs`; tests de integración de comandos |
 
 ## 8. Runtime de referencia Python — Parte V
 

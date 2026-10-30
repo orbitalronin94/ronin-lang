@@ -59,7 +59,7 @@ Trabajo:
 
 **Criterios de salida:**
 - Cada requisito del perfil ejecutable tiene identificador y estado.
-- CI publica resultados por área y lenguaje.
+- CI publica resultados por área y lenguaje. La workflow separa Python (parser/metadata, runtime numérico/fixtures, CLI/IR/REPL) y Rust (parser, solver, diagnóstico, simulación, IR y CLI).
 - Ningún ejemplo incompleto se presenta como aceptación ejecutable.
 - La cobertura reportada se calcula desde la matriz, no por estimación subjetiva.
 
