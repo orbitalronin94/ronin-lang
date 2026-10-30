@@ -1,0 +1,6 @@
+// Ejemplo 130 — comparación de modelos.
+// La fuente omite los agentes ([ /* ... */ ]) y usa composición base_params with {...}.
+// Estos tres bloques son esqueletos parser-only; no contienen datos de agentes.
+system M0 = { parts: 5, resource: 10000, agents: [], params: { model: "pusfre", lambda: 0.0, K: ∞ } }
+system M1 = { parts: 5, resource: 10000, agents: [], params: { model: "ces", lambda: 0.5, K: ∞ } }
+system M6 = { parts: 5, resource: 10000, agents: [], params: { model: "ces_hill", lambda: 0.5, K: 0.5, alpha_h: 1.5 } }
