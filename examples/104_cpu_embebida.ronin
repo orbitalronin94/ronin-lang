@@ -1,0 +1,14 @@
+// Ejemplo 104 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva la declaración system del ejemplo fuente; las instrucciones
+// posteriores (solve/diagnose/print/loops) no pertenecen al parser de la CLI actual.
+system TareasEmbebidas = {
+    parts: 4,
+    resource: 100,
+    agents: [
+        { name: "Sensores", phi: 0.7, psi: 0.9, frequency: 0.25 },
+        { name: "Comunicación", phi: 0.8, psi: 0.8, frequency: 0.25 },
+        { name: "Procesamiento", phi: 0.9, psi: 0.7, frequency: 0.25 },
+        { name: "UI", phi: 0.5, psi: 0.95, frequency: 0.25 }
+    ],
+    params: { model: "pusfre", alpha: 0.8, gamma: 0.3, sigma: 0.05 }
+}
