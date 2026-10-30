@@ -5,13 +5,14 @@ use std::collections::BTreeMap;
 pub struct AgentIr {
     pub phi: f64,
     pub psi: f64,
-    pub omega: f64,
+    pub frequency: f64,
     pub metadata: BTreeMap<String, Value>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct SystemIr {
     pub name: String,
+    pub parts: usize,
     pub resource: f64,
     pub agents: Vec<AgentIr>,
     pub params: Params,
@@ -22,7 +23,7 @@ impl From<&Agent> for AgentIr {
         Self {
             phi: agent.phi,
             psi: agent.psi,
-            omega: agent.frequency,
+            frequency: agent.frequency,
             metadata: agent.metadata.clone(),
         }
     }
@@ -31,6 +32,7 @@ impl From<&Agent> for AgentIr {
 pub fn lower_system(system: &System) -> SystemIr {
     SystemIr {
         name: system.name.clone(),
+        parts: system.parts,
         resource: system.resource,
         agents: system.agents.iter().map(AgentIr::from).collect(),
         params: system.params.clone(),
@@ -67,6 +69,10 @@ mod tests {
             lowered.agents[0].metadata.get("niche"),
             Some(&Value::Array(vec![Value::Number(0.2), Value::Number(0.4)]))
         );
+        assert_eq!(lowered.name, "Coast");
+        assert_eq!(lowered.parts, 2);
+        assert_eq!(lowered.resource, 100.0);
+        assert_eq!(lowered.agents[0].frequency, 0.5);
         assert_eq!(lowered.params.memory_weights, Some(vec![0.7, 0.3]));
         assert!(lowered.params.degeneracy_check);
         assert!(lowered.params.omega_range_report);
