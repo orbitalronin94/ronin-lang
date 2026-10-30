@@ -4,7 +4,7 @@
 system RAGCurvado = {
     parts: 1000,
     resource: 100,
-    agents: [ /* documentos con embeddings */ ],
+    agents: [ // documentos con embeddings ],
     params: {
         model: "ces",
         lambda: 0.5,
