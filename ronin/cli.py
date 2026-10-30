@@ -1,26 +1,70 @@
-import argparse,json,sys
+import argparse
+import json
+import sys
 from dataclasses import asdict
+
 from . import __version__
-from .parser import parse
-from .validator import validate,validate_coherence
-from .solver import solve
-from .simulator import simulate
 from .diagnose import diagnose
 from .errors import RoninError
+from .parser import parse
+from .simulator import simulate
+from .solver import solve
+from .validator import validate, validate_coherence
+
+
+def _load_first_system(path):
+    with open(path, encoding="utf-8") as source_file:
+        systems = parse(source_file.read())
+    if not systems:
+        raise RoninError("no system declarations found")
+    return next(iter(systems.values()))
+
+
 def main(argv=None):
-    p=argparse.ArgumentParser(prog="ronin"); p.add_argument("--version",action="version",version=f"RONIN {__version__}")
-    sub=p.add_subparsers(dest="cmd",required=True)
-    for name in ("check","solve"): sub.add_parser(name).add_argument("file")
-    q=sub.add_parser("simulate"); q.add_argument("file"); q.add_argument("--steps",type=int,default=100); q.add_argument("--seed",type=int)
-    q=sub.add_parser("diagnose"); q.add_argument("file"); q.add_argument("--bootstrap",type=int,default=0)
-    a=p.parse_args(argv)
+    parser = argparse.ArgumentParser(prog="ronin")
+    parser.add_argument(
+        "--version", action="version", version=f"RONIN {__version__}"
+    )
+    commands = parser.add_subparsers(dest="command", required=True)
+
+    for name in ("check", "solve"):
+        command = commands.add_parser(name)
+        command.add_argument("file")
+        if name == "solve":
+            command.add_argument("--delta", type=float, default=None)
+
+    command = commands.add_parser("simulate")
+    command.add_argument("file")
+    command.add_argument("--steps", type=int, default=100)
+    command.add_argument("--seed", type=int)
+
+    command = commands.add_parser("diagnose")
+    command.add_argument("file")
+    command.add_argument("--bootstrap", type=int, default=0)
+
+    args = parser.parse_args(argv)
     try:
-        with open(a.file,encoding="utf-8") as f: systems=parse(f.read())
-        if not systems: raise RoninError("no system declarations")
-        s=next(iter(systems.values()))
-        if a.cmd=="check": validate(s); validate_coherence(s.params); print("OK"); return 0
-        r=solve(s) if a.cmd=="solve" else simulate(s,a.steps,a.seed) if a.cmd=="simulate" else diagnose(s,a.bootstrap)
-        print(json.dumps(asdict(r),indent=2,default=str)); return 0
-    except RoninError as e: print(f"RONIN ERROR: {e}",file=sys.stderr); return e.code
-    except Exception as e: print(f"RONIN ERROR: {e}",file=sys.stderr); return 3
-if __name__=="__main__": raise SystemExit(main())
+        system = _load_first_system(args.file)
+        if args.command == "check":
+            validate(system)
+            validate_coherence(system.params)
+            print("OK")
+            return 0
+        if args.command == "solve":
+            result = solve(system, delta=args.delta)
+        elif args.command == "simulate":
+            result = simulate(system, steps=args.steps, seed=args.seed)
+        else:
+            result = diagnose(system, bootstrap=args.bootstrap)
+        print(json.dumps(asdict(result), indent=2, default=str))
+        return 0
+    except RoninError as error:
+        print(f"RONIN ERROR: {error}", file=sys.stderr)
+        return getattr(error, "code", 3)
+    except (OSError, ValueError) as error:
+        print(f"RONIN ERROR: {error}", file=sys.stderr)
+        return 3
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
