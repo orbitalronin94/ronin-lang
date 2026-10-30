@@ -16,5 +16,5 @@ La documentación canónica de este repositorio se mantiene **primero en castell
 
 1. El documento maestro adjunto declara que los ejemplos 1–100 se conservan de una versión anterior, pero no incluye sus cuerpos.
 2. La semántica de CES para lambda tendiendo a cero aparece con formulaciones incompatibles en distintas partes del documento: la declaración normativa inicial define el límite geométrico; N.2.3 afirma recuperación de PUSFRE. La implementación Python sigue la media geométrica CES, y la diferencia queda señalada para resolución editorial.
-3. Las secciones de Rust y Office describen arquitectura y fragmentos de implementación; no equivalen a backends completos y conformes.
+3. Las especificaciones completas de Rust y Office se han separado en documentos propios. El workspace Rust sigue siendo un esqueleto; Office es un prototipo local con paneles básicos, no la suite completa.
 4. Los ejemplos con agentes/datasets omitidos se identifican como plantillas parser-only.
