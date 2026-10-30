@@ -87,14 +87,14 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | INTEROP-005 | §5.9 | Importar CSV como datos de sistema | N | N | Existe exportación de resultados CSV, no importación CSV al modelo |
 | INTEROP-006 | §5.10 | Importar JSON de datos como proyecto/sistema | N | N | La exportación JSON IR no equivale a importar JSON externo como System |
 | INTEROP-007 | §5.11–5.19 | YAML, TOML, XML, Protobuf, MsgPack, BSON, Avro, Parquet y Arrow | N | N | No implementados |
-| INTEROP-008 | §3.2, §5.10 | Exportar IR JSON versionado | I | P | Python `ronin compile`, `tests/test_compile_ir.py`; Rust baja AST→IR pero no tiene CLI compile/serializador equivalente |
+| INTEROP-008 | §3.2, §5.10 | Exportar IR JSON versionado | I | I | Python `ronin compile`; Rust `ronin-core compile`; ambos validan y emiten IR v1 con metadata y valores no finitos normalizados |
 | INTEROP-009 | §5.9 | Exportar resultados a CSV | I | N | Python `ronin run --format csv`; `tests/test_run_csv.py` |
 
 ## 7. Compilación, ejecución y herramientas
 
 | ID | Referencia MDES | Requisito / comportamiento | Python | Rust | Evidencia actual / observaciones |
 |---|---|---|---|---|---|
-| BUILD-001 | Anexo compilador 1–3 | Construir IR normalizado tras validación | I | P | Python IR versionado; Rust lowering AST→IR interno |
+| BUILD-001 | Anexo compilador 1–3 | Construir IR normalizado tras validación | I | I | Python `ronin compile`; Rust `ronin-core compile`; ambos validan todos los sistemas y emiten formato `ronin-ir` v1 |
 | BUILD-002 | §6.1 | Generar ejecutable nativo | N | N | No hay codegen nativo |
 | BUILD-003 | §6.2 | Generar WASM | N | N | No hay backend WASM |
 | BUILD-004 | §6.3 | Generar C | N | N | No hay backend C |
@@ -107,7 +107,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | BUILD-011 | §6.13 | REPL general del lenguaje | P | N | Existe consola Python básica; no ejecuta el lenguaje completo |
 | BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | P | Python `diagnose`; Rust expone módulo pero no subcomando CLI |
 | BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR |
-| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run | — | I | `rust/src/main.rs`; tests de integración de comandos |
+| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile | — | I | `rust/src/main.rs`; tests de integración de comandos y compilación IR |
 
 ## 8. Runtime de referencia Python — Parte V
 
@@ -134,11 +134,11 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | RS-002 | 6.3–6.4 | Lexer/parser de proyectos soportados | I | `rust/src/parser.rs`; tests de sintaxis, escapes, Unicode y objetos |
 | RS-003 | 6.5 | Validación semántica | P | Validación integrada en solver; no cubre el validador completo de MDES |
 | RS-004 | 6.6 | Lowering a IR | I | `rust/src/ir.rs`; tests de campos y metadata |
-| RS-005 | 6.6 | Serializar IR con contrato JSON idéntico a Python | N | No existe comando Rust `compile` ni serializador de IR público |
+| RS-005 | 6.6 | Serializar IR con contrato JSON equivalente a Python | I | `rust/src/ir.rs`; `ronin-core compile`; `scripts/check_ir_parity.py` compara 11 fixtures válidos y 4 rechazos entre Python/Rust |
 | RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; tests Hill/CES/Maquinas/validación y corpus compartido de cinco modelos; paridad completa no demostrada |
 | RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; tests de semilla reproducible, simplex y steps inválidos; necesita vectores cruzados de conformidad |
 | RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; tests de degeneración activa/inactiva/unknown y fixtures compartidos; bootstrap no implementado |
-| RS-009 | 6.10 | CLI Rust list/check/solve/run | I | `rust/src/main.rs`; tests de comandos |
+| RS-009 | 6.10 | CLI Rust list/check/solve/run/compile | I | `rust/src/main.rs`; tests de list/check/solve/run y compile/--output |
 | RS-010 | 6.11 | Suite normativa Rust completa | P | Tests unitarios/parser/CLI presentes; no cubren todas las normas MDES |
 | RS-011 | 6.12 | Bindings Python con PyO3 | N | No existe crate/binding PyO3 en el workspace actual |
 | RS-012 | 6.13 | Backend WASM | N | No implementado |
@@ -162,7 +162,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 
 ## 11. Fixtures compartidos de conformidad
 
-El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python como en Rust: cinco perfiles positivos (PUSFRE, CES, Hill, CES-Hill y full/order 1), cuatro casos negativos y tres diagnósticos compartidos. Su catálogo está en `tests/fixtures/conformance/README.md`. No reemplaza los datasets normativos ausentes ni resuelve contradicciones de MDES.
+El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python como en Rust: seis perfiles positivos (PUSFRE, CES, Hill, CES-Hill, full/order 1 y metadata anidada), cuatro casos negativos y tres diagnósticos compartidos. Su catálogo está en `tests/fixtures/conformance/README.md`. No reemplaza los datasets normativos ausentes ni resuelve contradicciones de MDES.
 
 ## 12. Ejemplos y datos de aceptación
 

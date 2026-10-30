@@ -1,0 +1,20 @@
+system MetadataParity = {
+  parts: 2,
+  resource: 10,
+  agents: [
+    {
+      phi: 0.6, psi: 0.7, frequency: 0.5,
+      note: "line\nquote\" slash\\",
+      profile: {
+        enabled: true,
+        region: "north",
+        empty: null,
+        tiny: 1e-300,
+        ceiling: inf,
+        labels: ["a", "b"]
+      }
+    },
+    { phi: 0.5, psi: 0.8, frequency: 0.5 }
+  ],
+  params: { model: "pusfre", lambda: 0.0, K: inf }
+}

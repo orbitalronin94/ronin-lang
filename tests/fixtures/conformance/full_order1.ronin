@@ -1,1 +1,1 @@
-system FullOrderOne = { parts: 2, resource: 100, agents: [{ phi: 0.8, psi: 1.0, frequency: 0.6 }, { phi: 0.5, psi: 1.0, frequency: 0.4 }], params: { model: "full", lambda: 0.5, K: 0.5, alpha_h: 1.5, memory_order: 1 } }
+system FullOrderOne = { parts: 2, resource: 100, agents: [{ phi: 0.8, psi: 1.0, frequency: 0.6 }, { phi: 0.5, psi: 1.0, frequency: 0.4 }], params: { model: "full", lambda: 0.5, K: 0.5, alpha_h: 1.5, memory_order: 1, memory_weights: [1.0] } }

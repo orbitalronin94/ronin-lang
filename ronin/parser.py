@@ -61,6 +61,31 @@ class Parser:
             if value.lower() in ("true", "false"):
                 return value.lower() == "true"
             return value
+        if token.value == "{":
+            self.take()
+            values = {}
+            while self.token.value != "}":
+                if self.token.kind == "EOF":
+                    raise SyntaxError("Unterminated object")
+                key_token = self.token
+                if key_token.kind == "STRING":
+                    key = json.loads(self.take().value)
+                elif key_token.kind == "IDENT":
+                    key = self.take().value
+                else:
+                    raise SyntaxError(
+                        f"Expected object key at {key_token.line}:{key_token.column}"
+                    )
+                self.expect(":")
+                self.add_field(values, key, self.value(), "object")
+                if self.token.value == ",":
+                    self.take()
+                elif self.token.value != "}":
+                    raise SyntaxError(
+                        f"Expected ',' or '}}' at {self.token.line}:{self.token.column}"
+                    )
+            self.take()
+            return values
         if token.value == "[":
             self.take()
             values = []
