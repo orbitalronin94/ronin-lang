@@ -6,6 +6,7 @@ import io
 import math
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,26 +50,51 @@ def rows(result, backend, path):
     return list(reader)
 
 
+def compare(path, label):
+    python_rows = rows(run_python(path), "Python", path)
+    rust_rows = rows(run_rust(path), "Rust", path)
+    if len(python_rows) != len(rust_rows):
+        raise AssertionError(f"{label}: CSV row counts differ")
+    for index, (left, right) in enumerate(zip(python_rows, rust_rows)):
+        for field in ("system", "agent_index", "model"):
+            if left[field] != right[field]:
+                raise AssertionError(
+                    f"{label} row {index} {field}: {left[field]!r} != {right[field]!r}"
+                )
+        for field in ("fitness", "allocation"):
+            if not math.isclose(float(left[field]), float(right[field]),
+                                rel_tol=1e-9, abs_tol=1e-9):
+                raise AssertionError(
+                    f"{label} row {index} {field}: "
+                    f"{left[field]!r} != {right[field]!r}"
+                )
+    print(f"CSV parity OK: {label}")
+
+
 def main():
     for path in FIXTURES:
-        python_rows = rows(run_python(path), "Python", path)
-        rust_rows = rows(run_rust(path), "Rust", path)
-        if len(python_rows) != len(rust_rows):
-            raise AssertionError(f"{path.name}: CSV row counts differ")
-        for index, (left, right) in enumerate(zip(python_rows, rust_rows)):
-            for field in ("system", "agent_index", "model"):
-                if left[field] != right[field]:
-                    raise AssertionError(
-                        f"{path.name} row {index} {field}: {left[field]!r} != {right[field]!r}"
-                    )
-            for field in ("fitness", "allocation"):
-                if not math.isclose(float(left[field]), float(right[field]),
-                                    rel_tol=1e-9, abs_tol=1e-9):
-                    raise AssertionError(
-                        f"{path.name} row {index} {field}: "
-                        f"{left[field]!r} != {right[field]!r}"
-                    )
-        print(f"CSV parity OK: {path.relative_to(ROOT)}")
+        compare(path, str(path.relative_to(ROOT)))
+
+    multi_system_source = """
+    system First = {
+      parts: 2, resource: 100,
+      agents: [
+        { phi: 0.5, psi: 0.5, frequency: 0.5 },
+        { phi: 0.5, psi: 0.5, frequency: 0.5 }
+      ]
+    }
+    system Second = {
+      parts: 2, resource: 100,
+      agents: [
+        { phi: 0.6, psi: 0.5, frequency: 0.5 },
+        { phi: 0.5, psi: 0.6, frequency: 0.5 }
+      ]
+    }
+    """
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / "multi_system.ronin"
+        path.write_text(multi_system_source, encoding="utf-8")
+        compare(path, "multi-system project")
     return 0
 
 

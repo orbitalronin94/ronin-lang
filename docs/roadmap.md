@@ -45,7 +45,7 @@ No implica:
 
 **Primera línea base creada.**
 
-La [matriz de trazabilidad](conformance-matrix.md) ya asigna IDs a los requisitos de las secciones 0–15, Partes V–VI, el anexo normativo y los ejemplos; distingue el estado Python/Rust y registra evidencias y bloqueos. El corpus compartido añade cinco perfiles positivos, cuatro negativos y tres diagnósticos probados en ambos runtimes. Es una primera auditoría, no el cierre del hito.
+La [matriz de trazabilidad](conformance-matrix.md) ya asigna IDs a los requisitos de las secciones 0–15, Partes V–VI, el anexo normativo y los ejemplos; distingue el estado Python/Rust y registra evidencias y bloqueos. El corpus compartido añade seis perfiles positivos ejecutables, cuatro negativos, tres diagnósticos y un fixture check-only de fitness cero. Es una primera auditoría, no el cierre del hito.
 
 **Objetivo:** convertir MDES v0.5 en una matriz de requisitos trazable y una suite de conformidad.
 
@@ -65,14 +65,14 @@ Trabajo:
 
 ### v0.3 — Python/Rust parity and portable IR (en curso)
 
-**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa, y `scripts/check_ir_parity.py` compara 11 proyectos válidos y cuatro rechazos entre Python y Rust. La comparación de solver está en desarrollo mediante `scripts/check_runtime_parity.py`, que contrasta fitness, allocation, coexistence, k_min, degeneracy y override de delta.
+**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa; `scripts/check_ir_parity.py` compara 11 proyectos válidos y cuatro rechazos. `scripts/check_runtime_parity.py` contrasta fitness, allocation, coexistence, k_min, degeneracy y override de delta en 11 proyectos. `scripts/check_diagnostic_parity.py` compara cuatro informes; `scripts/check_simulation_contracts.py` verifica invariantes en 12 proyectos sin fingir igualdad de RNG; y `scripts/check_csv_parity.py` compara exportaciones CSV en 11 proyectos y un proyecto multi-sistema. Todo queda integrado en jobs independientes de CI.
 
 **Objetivo:** hacer que Python y Rust compartan un contrato de datos y ejecución verificable.
 
 Trabajo:
 - Consolidar `ronin-core compile` con salida JSON IR equivalente al compilador Python y cerrar diferencias de validación restantes.
 - Definir fixtures de entrada y salidas IR canónicas.
-- Ejecutar los mismos proyectos en ambos runtimes y comparar asignaciones, fitness y diagnósticos.
+- Ampliar la paridad cruzada a validación y comandos multi-sistema; mantener las trayectorias aleatorias como contrato de invariantes hasta acordar un RNG común.
 - Alinear errores, valores por defecto, precisión numérica y serialización de valores no finitos.
 - Añadir pruebas de round-trip donde la semántica lo permita.
 

@@ -39,6 +39,7 @@ python scripts/check_runtime_parity.py
 python scripts/check_simulation_contracts.py
 python scripts/check_diagnostic_parity.py
 python scripts/check_csv_parity.py
+python scripts/check_csv_parity.py
 ```
 
 ## Qué incluye v0.1
@@ -53,7 +54,7 @@ python scripts/check_csv_parity.py
 
 ### Núcleo y CLI Rust
 - Lexer/parser para la sintaxis de proyectos actualmente soportada.
-- CLI `ronin-core` (binario Cargo por defecto) con `list`, `check`, `solve`, `run`, `compile`, `diagnose` y `simulate`.
+- CLI `ronin-core` (binario Cargo por defecto) con `list`, `check`, `solve`, `run` (JSON/CSV), `compile`, `diagnose` y `simulate`.
 - Conservación de metadatos escalares, arrays y objetos anidados.
 - Parámetros extendidos y lowering AST→IR con estructuras alineadas con Python.
 
