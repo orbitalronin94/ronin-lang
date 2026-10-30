@@ -1,0 +1,14 @@
+// Ejemplo 117 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva la declaración system del ejemplo fuente; las instrucciones
+// posteriores (solve/diagnose/print/loops) no pertenecen al parser de la CLI actual.
+system JuegoEstrategia = {
+    parts: 4,
+    resource: 1000,
+    agents: [
+        { name: "Economía", phi: 0.8, psi: 0.7, frequency: 0.3 },
+        { name: "Militar", phi: 0.9, psi: 0.6, frequency: 0.3 },
+        { name: "Tecnología", phi: 0.7, psi: 0.85, frequency: 0.2 },
+        { name: "Diplomacia", phi: 0.6, psi: 0.9, frequency: 0.2 }
+    ],
+    params: { model: "ces", lambda: 0.6, alpha: 1.2, gamma: 0.3, sigma: 0.1 }
+}
