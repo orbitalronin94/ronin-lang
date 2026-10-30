@@ -34,6 +34,8 @@ jobs:
           ronin check examples/pesca.ronin
           ronin check examples/degeneracy_active.ronin
           ronin check examples/degeneracy_inactive.ronin
+      - name: Parse every example fixture
+        run: python -m pytest -q tests/test_examples.py
       - name: Verify Maquinas normative output
         run: |
           ronin solve examples/maquinas.ronin > maquinas.json
