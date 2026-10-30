@@ -20,7 +20,7 @@ PATTERN = re.compile(
     | (?P<STRING>"(?:\\.|[^"\\])*")
     | (?P<NUMBER>[+-]?(?:\d+\.\d*|\.\d+|\d+)(?:[eE][+-]?\d+)?)
     | (?P<IDENT>[A-Za-z_][A-Za-z0-9_]*)
-    | (?P<SYMBOL>[{}\[\](),:=])
+    | (?P<SYMBOL>[{}\[\](),:=∞])
     | (?P<OTHER>.)
     """,
     re.VERBOSE,
