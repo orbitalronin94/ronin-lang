@@ -52,3 +52,42 @@ pub fn simulate(system: &System, steps: usize, seed: Option<u64>) -> Result<Simu
     let survivors = state.iter().filter(|x|**x>1e-12).count();
     Ok(Simulation { history, final_state:state, steps, seed:Some(actual_seed), extinction_events, survivability:survivors as f64/system.agents.len() as f64 })
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::simulate;
+    use crate::parser;
+
+    const MAQUINAS: &str = include_str!("../../examples/maquinas.ronin");
+
+    fn system() -> crate::ast::System {
+        parser::parse(MAQUINAS).unwrap().remove(0)
+    }
+
+    #[test]
+    fn simulation_is_reproducible_with_the_same_seed() {
+        let input = system();
+        let first = simulate(&input, 12, Some(42)).unwrap();
+        let second = simulate(&input, 12, Some(42)).unwrap();
+        assert_eq!(first, second);
+    }
+
+    #[test]
+    fn every_simulated_state_stays_on_the_simplex() {
+        let result = simulate(&system(), 20, Some(7)).unwrap();
+        assert_eq!(result.history.len(), 21);
+        for state in &result.history {
+            assert!(state.iter().all(|value| value.is_finite()));
+            assert!(state.iter().all(|value| *value >= 0.0));
+            let total: f64 = state.iter().sum();
+            assert!((total - 1.0).abs() <= 1e-12);
+        }
+    }
+
+    #[test]
+    fn simulation_rejects_zero_steps() {
+        let error = simulate(&system(), 0, Some(1)).unwrap_err();
+        assert!(error.contains("steps must be >= 1"));
+    }
+}
