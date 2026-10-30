@@ -42,8 +42,15 @@ def main(argv=None):
     command.add_argument("file")
     command.add_argument("--bootstrap", type=int, default=0)
 
+    commands.add_parser("repl", help="start the interactive RONIN command console")
+
     args = parser.parse_args(argv)
     try:
+        if args.command == "repl":
+            from .repl import run_repl
+            run_repl()
+            return 0
+
         system = _load_first_system(args.file)
         if args.command == "check":
             validate(system)
