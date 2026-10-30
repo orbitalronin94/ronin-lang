@@ -15,6 +15,7 @@ pub struct Params {
     pub k: f64,
     pub alpha_h: f64,
     pub memory_order: usize,
+    pub coexistence_delta: f64,
 }
 
 #[derive(Clone, Debug, PartialEq)]
