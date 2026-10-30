@@ -4,7 +4,7 @@
 system Sensibilidad = {
     parts: 5,
     resource: 100,
-    agents: [ /* agentes fijos */ ],
+    agents: [ // agentes fijos ],
     params: {
         model: "ces_hill",
         lambda: 0.5,
