@@ -1,11 +1,10 @@
-# RONIN 1.1 — Python reference runtime
+# RONIN 1.1 — Runtime de referencia en Python
 
-Python reference implementation of the executable runtime described in
-**RONIN 1.1 — Edición Familia**. The implementation follows the source's
-R.3–R.14 data model, parser, semantic validation, solver, simulator,
-diagnostics, CLI, examples and acceptance tests.
+**Documentación principal en castellano. English version follows below.**
 
-## Install and run
+RONIN 1.1 es un lenguaje y runtime de modelización descrito en *RONIN 1.1 — Edición Familia*. Este repositorio contiene una implementación de referencia en Python de la parte ejecutable: modelo de datos, lexer, parser, validación semántica, funciones de fitness, asignación de recursos, simulación, diagnóstico, CLI y pruebas.
+
+## Instalación y primeros pasos
 
 ```bash
 python -m pip install -e .
@@ -17,51 +16,70 @@ ronin diagnose examples/pesca.ronin
 python -m ronin solve examples/maquinas.ronin
 ```
 
-## Normative acceptance case
+## Caso de aceptación: Maquinas
 
-`examples/maquinas.ronin` must return:
+El ejemplo normativo `examples/maquinas.ronin` debe producir:
 
-- fitness: `[0.48, 0.20]`
-- allocation: `[70.5882352941, 29.4117647059]`
-- model: `pusfre`
+- Fitness: `[0.48, 0.20]`
+- Asignación: `[70.5882352941, 29.4117647059]`
+- Modelo: `pusfre`
 
-The allocation is normalized to the configured resource. The CI matrix runs
-the tests on Python 3.9–3.12 and executes the Maquinas CLI acceptance example.
+La asignación se normaliza respecto al recurso configurado. CI ejecuta las pruebas en Python 3.9–3.12 y comprueba este caso de aceptación.
 
-## Implemented in this repository
+## Qué está implementado
 
-- Lexer with line/column locations, strings, signed numeric literals and comments.
-- Parser for `system`, inline agents and extended `params` blocks.
-- Range, frequency-sum and model-coherence validation.
-- PUSFRE, CES, Hill and CES-Hill fitness paths.
-- Resource allocation and the documented `k_min` threshold.
-- Seeded drift/noise/simplex simulation.
-- K–alpha range diagnostic and JSON CLI commands.
+- Lexer con ubicación línea/columna, cadenas, literales numéricos y comentarios.
+- Parser para declaraciones `system`, agentes en línea y bloques `params`.
+- Validación de rangos, suma de frecuencias y coherencia entre modelos.
+- Rutas de fitness PUSFRE, CES, Hill y CES-Hill.
+- Media CES ponderada, incluido el límite geométrico cuando λ tiende a cero.
+- Asignación de recursos, umbral `k_min` y simulación reproducible con semilla.
+- Diagnóstico del rango Ω y degeneración K–α.
+- CLI: `check`, `solve`, `simulate` y `diagnose`.
 
-## Explicitly incomplete or specified-only
+## Límites conocidos: lo que todavía no está terminado
 
-The source document distinguishes normative implementation from proposals and
-placeholders. This repository does not misrepresent those as completed:
+No presentamos como terminado lo que el documento fuente deja como propuesta o pendiente:
 
-- `debt()` returns the source runtime's placeholder `0.0`; no executable debt
-  estimator is defined in the supplied runtime section.
-- Bootstrap confidence intervals are specified in the UI but the source code
-  explicitly leaves the estimator pending; `diagnose --bootstrap` therefore
-  returns `bootstrap_ci: null`.
-- `model: "full"` with temporal memory orders above 1 is parsed and validated
-  but execution is rejected until a normative memory kernel exists.
-- NeuralScaling and FamaFrench examples in the source contain ellipses rather
-  than complete datasets. They are documented as templates, not executable
-  fixtures. The NeuralScaling excerpt also uses `phi`/`psi` values above the
-  validator's declared [0,1] range; that contradiction is recorded in
-  `docs/source-coverage.md`.
-- Rust, WASM, C and RONIN Office are architecture/proposal sections in the
-  supplied document, not complete, testable implementations in this Python
-  runtime repository.
+- `debt()` conserva el placeholder `0.0`: el documento no define un estimador ejecutable de deuda.
+- Los intervalos de confianza bootstrap siguen pendientes; `bootstrap_ci` devuelve `null`.
+- La memoria temporal de orden superior a 1 no tiene un kernel normativo implementado y se rechaza en ejecución.
+- Los ejemplos NeuralScaling y FamaFrench del documento contienen puntos suspensivos, no los conjuntos completos. No inventamos observaciones.
+- Rust, WASM, C, RONIN Office y el motor JavaScript aparecen como arquitectura, bocetos o propuestas; no son backends completos de este runtime Python.
 
-## Source discrepancies tracked
+## Conformidad y discrepancias de la especificación
 
-See [docs/source-coverage.md](docs/source-coverage.md) for the exact source
-conflicts preserved rather than silently guessed or rewritten. The complete
-source Markdown is archived at [docs/source/RONIN_1.1_Edicion_Familia.md](docs/source/RONIN_1.1_Edicion_Familia.md)
-with its separate licensing notice in [docs/source/NOTICE.md](docs/source/NOTICE.md).
+Consulta [la cobertura de la fuente y las notas de conformidad](docs/source-coverage.md). El Markdown original está archivado en [docs/source/RONIN_1.1_Edicion_Familia.md](docs/source/RONIN_1.1_Edicion_Familia.md), con su aviso de licencia separado en [docs/source/NOTICE.md](docs/source/NOTICE.md).
+
+## Contribuir a RONIN
+
+Queremos una comunidad técnica que pueda leer, debatir, probar y documentar RONIN en castellano. Las incidencias, propuestas, ejemplos y documentación en español son bienvenidos. Para facilitar la colaboración internacional, añadimos traducción al inglés después del contenido principal en castellano. Si detectas una discrepancia matemática, aporta la fórmula, un ejemplo mínimo y el resultado esperado.
+
+---
+
+# RONIN 1.1 — Python reference runtime (English)
+
+RONIN 1.1 is a modeling language and runtime described in *RONIN 1.1 — Edición Familia*. This repository provides a Python reference implementation of the executable subset: data model, lexer, parser, semantic validation, fitness functions, resource allocation, simulation, diagnostics, CLI and tests.
+
+## Install and run
+
+```bash
+python -m pip install -e .
+pytest -q
+ronin check examples/maquinas.ronin
+ronin solve examples/maquinas.ronin
+ronin simulate examples/pesca.ronin --steps 100 --seed 42
+ronin diagnose examples/pesca.ronin
+```
+
+## Acceptance case: Maquinas
+
+The normative `examples/maquinas.ronin` fixture must produce fitness `[0.48, 0.20]` and allocation `[70.5882352941, 29.4117647059]`. CI tests Python 3.9–3.12.
+
+## Implemented scope
+
+The repository includes the lexer/parser subset, validation, PUSFRE/CES/Hill/CES-Hill fitness, the geometric CES limit near zero lambda, resource allocation, `k_min`, seeded simulation, K–alpha diagnostics and the four CLI commands.
+
+## Known limitations
+
+Debt estimation remains a `0.0` placeholder; bootstrap confidence intervals return null; higher-order temporal memory has no executable kernel; NeuralScaling and FamaFrench source datasets are incomplete; and Rust, WASM, C, Office and the JavaScript engine are proposal/sketch material rather than complete backends. See the Spanish-first [source coverage and conformance notes](docs/source-coverage.md).
