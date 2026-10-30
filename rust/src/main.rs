@@ -296,7 +296,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::execute;
+    use super::{csv_field, execute};
     use std::fs;
     use std::path::PathBuf;
 
