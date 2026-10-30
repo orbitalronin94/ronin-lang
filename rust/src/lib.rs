@@ -1,9 +1,11 @@
-//! Esqueleto Rust de RONIN 1.1.
-//! Las funciones marcadas con todo!() son puntos de extensión, no runtime terminado.
+//! Rust runtime for RONIN 1.1. The parser currently implements the core
+//! numeric project syntax; optional metadata and temporal-memory execution
+//! remain explicit limitations.
 
 pub mod ast;
 pub mod diagnose;
 pub mod ir;
+pub mod parser;
 pub mod simulator;
 pub mod solver;
 
