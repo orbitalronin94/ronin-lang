@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
 
+concurrency:
+  group: ronin-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   python-runtime:
     name: Python ${{ matrix.python-version }} / pytest
