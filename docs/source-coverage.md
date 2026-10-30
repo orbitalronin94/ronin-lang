@@ -46,7 +46,7 @@ La fuente proporciona la fórmula de `k_min` e indica que se advierta cuando el 
 
 ## Otros objetivos descritos en el Markdown
 
-- **Rust (Parte VI / 6.1–6.14):** hay arquitectura y bocetos; el parser se describe como esqueleto funcional y memoria/IR/backends siguen incompletos. Este repositorio no presenta un crate Rust como conforme.
+- **Rust (Parte VI / 6.1–6.14):** el repositorio implementa ahora lowering AST→IR, validación básica, Hill/CES, asignación, `k_min`, simulación R.10 y diagnóstico, con pruebas de regresión. Sigue faltando lexer/parser Rust, CLI, bindings PyO3/WASM/C y memoria temporal; no se declara runtime completo ni conforme.
 - **WASM y C (6.13–6.14):** son bocetos de extensión; el generador C contiene puntos suspensivos y no es un backend completo.
 - **RONIN Office (Parte VII):** se describen paneles, mockups y tablas de estado. Este runtime Python no incluye la interfaz Office.
 - **Motor JavaScript (7.9):** el ejemplo contiene puntos suspensivos y no es un backend completo ni conforme.
@@ -111,7 +111,7 @@ Green CI certifies only the Python implementation, tests and executable examples
 
 ## Incorporaciones documentales de la revisión
 
-- **Parte VI — Rust:** el contenido fuente 6.1–6.14 está ahora disponible en [`rust-backend-spec.md`](rust-backend-spec.md). El workspace Rust sigue siendo un esqueleto y no se declara conforme; las integraciones PyO3, WASM y C siguen siendo objetivos descritos.
+- **Parte VI — Rust:** el contenido fuente 6.1–6.14 está ahora disponible en [`rust-backend-spec.md`](rust-backend-spec.md). El workspace Rust implementa ya solver, simulador y diagnóstico básicos con tests; siguen pendientes parser/CLI, bindings PyO3/WASM/C y memoria temporal, por lo que no se declara conforme.
 - **Parte VII — RONIN Office:** la especificación completa está en [`office-spec.md`](office-spec.md). `office/index.html` ofrece ahora prototipos locales para Chat determinista, Sheet CSV, barrido heurístico de alpha, Simulator R.10, Agent Studio y Diagnose. No equivale a la suite completa.
 - **Parte VIII — Futuro:** transcrita en [`vision.md`](vision.md). La fuente marca 8.1–8.5 como “sin cambios estructurales”; no se han rellenado con conjeturas.
 - **Anexo normativo v1.1:** disponible en [`normative-annex.md`](normative-annex.md), incluyendo orden de evaluación, tests normativos, conformidad, estado de extensiones y política de afirmaciones verificables.
