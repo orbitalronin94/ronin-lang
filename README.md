@@ -52,13 +52,13 @@ El fixture `examples/maquinas.ronin` es la referencia de aceptación principal:
 
 ## Especificación de referencia
 
-La especificación completa de diseño se identifica en este proyecto como **MDES v0.5**. Consulta el [índice de documentación](docs/README.md), la [especificación formal](docs/spec.md), el [anexo normativo](docs/normative-annex.md) y las [notas de cobertura y conformidad](docs/source-coverage.md).
+La especificación completa de diseño se identifica en este proyecto como **MDES v0.5**. Consulta el [índice de documentación](docs/README.md), la [especificación formal](docs/spec.md), el [anexo normativo](docs/normative-annex.md), la [matriz de trazabilidad MDES v0.5](docs/conformance-matrix.md) y las [notas de cobertura](docs/source-coverage.md).
 
 El documento maestro de origen conserva algunas etiquetas editoriales de su edición original. MDES v0.5 es la etiqueta de referencia adoptada para el ciclo de desarrollo; no se han reescrito silenciosamente las fórmulas ni se han rellenado lagunas del material fuente.
 
 ## Roadmap hacia v1.0
 
-La hoja de ruta completa, con fases y criterios de salida verificables, está en **[docs/roadmap.md](docs/roadmap.md)**.
+La hoja de ruta completa, con fases y criterios de salida verificables, está en **[docs/roadmap.md](docs/roadmap.md)**. La línea base de v0.2 está en la [matriz de trazabilidad y conformidad](docs/conformance-matrix.md); todavía no publicamos un porcentaje global porque falta aprobar el perfil de conformidad v1.0.
 
 | Hito | Objetivo |
 |---|---|

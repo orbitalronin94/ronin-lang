@@ -41,7 +41,11 @@ No implica:
 - Paridad completa Python/Rust.
 - Implementación de todas las extensiones descritas en la especificación.
 
-### v0.2 — Conformance map and test baseline
+### v0.2 — Conformance map and test baseline (en curso)
+
+**Primera línea base creada.**
+
+La [matriz de trazabilidad](conformance-matrix.md) ya asigna IDs a los requisitos de las secciones 0–15, Partes V–VI, el anexo normativo y los ejemplos; distingue el estado Python/Rust y registra evidencias y bloqueos. Es una primera auditoría, no el cierre del hito.
 
 **Objetivo:** convertir MDES v0.5 en una matriz de requisitos trazable y una suite de conformidad.
 
