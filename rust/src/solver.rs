@@ -148,6 +148,7 @@ mod tests {
         close(result.allocation[1], 29.411764705882355, 1e-9);
         close(result.allocation.iter().sum(), 100.0, 1e-9);
         assert_eq!(result.model_used, "pusfre");
+        assert_eq!(result.debt, None);
     }
 
     #[test]

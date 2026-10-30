@@ -262,12 +262,13 @@ pub fn execute(args: &[String]) -> Result<String, String> {
             ));
         }
         let entry = format!(
-            "{}:{{\"allocation\":{},\"fitness\":{},\"coexistence\":{},\"k_min\":{},\"model_used\":{},\"lambda_used\":{},\"K_used\":{},\"alpha_h_used\":{},\"omega_range\":{},\"degeneracy\":{}}}",
+            "{}:{{\"allocation\":{},\"fitness\":{},\"coexistence\":{},\"k_min\":{},\"debt\":{},\"model_used\":{},\"lambda_used\":{},\"K_used\":{},\"alpha_h_used\":{},\"omega_range\":{},\"degeneracy\":{}}}",
             json_string(&system.name),
             json_numbers(&result.allocation),
             json_numbers(&result.fitness),
             json_option_bool(result.coexistence),
             json_option_number(result.k_min),
+            json_option_number(result.debt),
             json_string(&result.model_used),
             json_number(result.lambda_used),
             json_number(result.k_used),
@@ -419,6 +420,7 @@ mod tests {
         assert!(output.starts_with("{\"Maquinas\":{"));
         assert!(output.contains("\"allocation\":["));
         assert!(output.contains("\"fitness\":["));
+        assert!(output.contains("\"debt\":null"));
     }
 
     #[test]

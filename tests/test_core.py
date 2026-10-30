@@ -27,6 +27,7 @@ def test_maquinas_normative_result():
     assert sum(result.allocation) == pytest.approx(100.0, abs=1e-9)
     assert result.model_used == "pusfre"
     assert result.coexistence is True
+    assert result.debt is None
 
 
 def test_explicit_pusfre_matches_legacy_default():
