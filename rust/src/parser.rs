@@ -190,6 +190,36 @@ impl Parser {
         use crate::ast::Value;
         let token = self.current().clone();
         match token.value.as_str() {
+            "{" => {
+                self.take();
+                let mut values = std::collections::BTreeMap::new();
+                while self.current().value != "}" {
+                    if self.current().value.is_empty() {
+                        return Err(format!("Unterminated object at {}:{}", token.line, token.column));
+                    }
+                    let key_token = self.current().clone();
+                    let key = if key_token.value.starts_with('"') {
+                        self.scalar()?
+                    } else {
+                        self.identifier()?
+                    };
+                    self.expect(":")?;
+                    let value = self.value()?;
+                    if values.insert(key.clone(), value).is_some() {
+                        return Err(format!("Duplicate object key: {}", key));
+                    }
+                    if self.current().value == "," {
+                        self.take();
+                    } else if self.current().value != "}" {
+                        return Err(format!(
+                            "Expected ',' or '}}' at {}:{}",
+                            self.current().line, self.current().column
+                        ));
+                    }
+                }
+                self.expect("}")?;
+                Ok(Value::Object(values))
+            }
             "[" => {
                 self.take();
                 let mut values = Vec::new();
@@ -407,6 +437,42 @@ mod tests {
         let systems = parse(source).unwrap();
         assert_eq!(systems[0].agents[0].metadata.get("niche"), Some(&crate::ast::Value::String("robotics".into())));
         assert_eq!(systems[0].agents[0].metadata.get("protocol"), Some(&crate::ast::Value::String("v2".into())));
+    }
+
+    #[test]
+    fn parses_nested_object_metadata() {
+        let source = r#"
+            system Nested = {
+              parts: 1, resource: 1,
+              agents: [
+                { phi: 1, psi: 1, frequency: 1,
+                  profile: { niche: robotics, active: true, tags: ["a", "b"],
+                             details: { region: "north" } } }
+              ]
+            }
+        "#;
+        let systems = parse(source).unwrap();
+        let profile = systems[0].agents[0].metadata.get("profile").unwrap();
+        match profile {
+            crate::ast::Value::Object(profile) => {
+                assert_eq!(profile.get("niche"), Some(&crate::ast::Value::String("robotics".into())));
+                assert_eq!(profile.get("active"), Some(&crate::ast::Value::Bool(true)));
+                match profile.get("details").unwrap() {
+                    crate::ast::Value::Object(details) => assert_eq!(
+                        details.get("region"),
+                        Some(&crate::ast::Value::String("north".into()))
+                    ),
+                    other => panic!("expected nested object, got {:?}", other),
+                }
+            }
+            other => panic!("expected object, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn rejects_duplicate_nested_object_keys() {
+        let source = r#"system Bad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, meta: {x: 1, x: 2}}] }"#;
+        assert!(parse(source).unwrap_err().contains("Duplicate object key: x"));
     }
 
     #[test]
