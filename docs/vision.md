@@ -1,7 +1,17 @@
-# Parte VIII — El futuro de RONIN
+# Parte VIII — El futuro: RONIN como lenguaje de sistemas
 
-> Transcripción de la Parte VIII de `docs/source/RONIN_1.1_Edicion_Familia.md`. El texto fuente marca varias subsecciones como “sin cambios estructurales”; no se inventa aquí el contenido de ediciones anteriores que no está reproducido en esta edición.
+> Transcripción de la fuente 1.1. Las subsecciones 8.1–8.5 están marcadas en el documento maestro como “sin cambios estructurales”; esta copia conserva esa indicación en vez de reconstruir material no incluido.
 
+- HTML5 / CSS3
+
+**Referencia matemática:**
+- Tratado de Extensión del PUSFRE v3.5 (Ferrandez Canalis, 2026)
+
+---
+
+**1310.**
+
+---
 
 # PARTE VIII — EL FUTURO: RONIN COMO LENGUAJE DE SISTEMAS
 
