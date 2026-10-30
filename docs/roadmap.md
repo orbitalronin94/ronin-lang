@@ -65,7 +65,7 @@ Trabajo:
 
 ### v0.3 — Python/Rust parity and portable IR (en curso)
 
-**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa; `scripts/check_ir_parity.py` compara 11 proyectos válidos y cuatro rechazos. `scripts/check_runtime_parity.py` contrasta fitness, allocation, coexistence, k_min, degeneracy y override de delta en 11 proyectos. `scripts/check_diagnostic_parity.py` compara cuatro informes; `scripts/check_simulation_contracts.py` verifica invariantes en 12 proyectos sin fingir igualdad de RNG; y `scripts/check_csv_parity.py` compara exportaciones CSV en 11 proyectos y un proyecto multi-sistema. Todo queda integrado en jobs independientes de CI.
+**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa; `scripts/check_ir_parity.py` compara 11 proyectos válidos y cuatro rechazos. `scripts/check_runtime_parity.py` contrasta fitness, allocation, coexistence, k_min, degeneracy y override de delta en 11 proyectos. `scripts/check_diagnostic_parity.py` compara cuatro informes; `scripts/check_simulation_contracts.py` verifica invariantes en 12 proyectos sin fingir igualdad de RNG; y `scripts/check_csv_parity.py` compara exportaciones CSV en 11 proyectos y un proyecto multi-sistema; `scripts/check_validation_parity.py` contrasta aceptación/rechazo, selección de sistemas y proyectos válidos con fitness cero. Todo queda integrado en jobs independientes de CI.
 
 **Objetivo:** hacer que Python y Rust compartan un contrato de datos y ejecución verificable.
 
