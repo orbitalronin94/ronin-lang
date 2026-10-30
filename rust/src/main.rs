@@ -191,13 +191,17 @@ pub fn execute(args: &[String]) -> Result<String, String> {
         return Ok(output);
     }
 
-    let chosen: Vec<_> = systems.iter().filter(|system| {
+    let mut chosen: Vec<_> = systems.iter().filter(|system| {
         selected.as_ref().map_or(true, |name| &system.name == name)
     }).collect();
     if let Some(name) = selected.as_ref() {
         if chosen.is_empty() {
             return Err(format!("unknown system: {}", name));
         }
+    }
+
+    if command == "solve" && selected.is_none() {
+        chosen.truncate(1);
     }
 
     if command == "list" {
@@ -369,6 +373,43 @@ mod tests {
     fn csv_field_quotes_commas_quotes_and_newlines() {
         assert_eq!(csv_field("a,b"), "\"a,b\"");
         assert_eq!(csv_field("say \"hi\""), "\"say \"\"hi\"\"\"");
+    }
+
+    #[test]
+    fn solve_defaults_to_first_system_while_run_executes_all() {
+        let path = std::env::temp_dir()
+            .join(format!("ronin-multi-solve-{}.ronin", std::process::id()));
+        let source = r#"
+            system First = {
+                parts: 2, resource: 10,
+                agents: [
+                    { phi: 0.5, psi: 0.5, frequency: 0.5 },
+                    { phi: 0.5, psi: 0.5, frequency: 0.5 }
+                ]
+            }
+            system Second = {
+                parts: 2, resource: 20,
+                agents: [
+                    { phi: 0.6, psi: 0.5, frequency: 0.5 },
+                    { phi: 0.5, psi: 0.6, frequency: 0.5 }
+                ]
+            }
+        "#;
+        fs::write(&path, source).unwrap();
+        let file = path.to_string_lossy().into_owned();
+
+        let solve = execute(&vec!["solve".into(), file.clone()]).unwrap();
+        assert!(solve.contains("\"First\""));
+        assert!(!solve.contains("\"Second\""));
+
+        let run = execute(&vec!["run".into(), file.clone()]).unwrap();
+        assert!(run.contains("\"First\""));
+        assert!(run.contains("\"Second\""));
+
+        let selected = execute(&vec!["solve".into(), file, "--system".into(), "Second".into()]).unwrap();
+        assert!(selected.contains("\"Second\""));
+        assert!(!selected.contains("\"First\""));
+        fs::remove_file(path).unwrap();
     }
 
     #[test]

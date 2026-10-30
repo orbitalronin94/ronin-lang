@@ -182,3 +182,22 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Compare Python and Rust validation acceptance
         run: python scripts/check_validation_parity.py
+
+
+  cross-runtime-cli-selection:
+    name: Python/Rust / CLI system selection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install Python runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Compare Python and Rust CLI selection
+        run: python scripts/check_cli_selection_parity.py

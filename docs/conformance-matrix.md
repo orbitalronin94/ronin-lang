@@ -31,6 +31,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | CORE-007 | §1.7, N.1.5 | Diagnosticar rango Ω y degeneración K–α | I | P | `ronin/diagnose.py`, `rust/src/diagnose.rs`; pruebas de umbral y parámetros no identificables |
 | CORE-008 | §2.3, §3.5 | Rechazar combinaciones incoherentes entre modelo y parámetros | I | P | `ronin/validator.py`; `tests/test_core.py::test_model_coherence_is_enforced`; Rust valida a través de solver |
 | VAL-CLI-001 | R.7, R.12 | `check` valida sin ejecutar el solver y revisa todos los sistemas por defecto | I | I | `scripts/check_validation_parity.py`; casos válidos/no válidos, fitness cero y selección multi-sistema |
+| CLI-SELECT-001 | R.12 | `solve` selecciona el primer sistema por defecto; `run` procesa todos | I | I | `scripts/check_cli_selection_parity.py`; compara solve, run, `--system` y proyecto multi-sistema parcialmente inválido |
 
 ## 3. Sintaxis y construcciones del lenguaje
 
