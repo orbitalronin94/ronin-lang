@@ -1,104 +1,101 @@
-# RONIN 1.1 — Runtime de referencia en Python
+# RONIN Runtime v0.1
 
-**Documentación principal en castellano. English version follows below.**
+**Implementación inicial del lenguaje RONIN basada en la especificación completa MDES v0.5.** La documentación canónica se mantiene primero en castellano.
 
-RONIN 1.1 es un lenguaje y runtime de modelización descrito en *RONIN 1.1 — Edición Familia*. Este repositorio contiene una implementación de referencia en Python de la parte ejecutable: modelo de datos, lexer, parser, validación semántica, funciones de fitness, asignación de recursos, simulación, diagnóstico, CLI y pruebas.
+RONIN Runtime **v0.1** es una versión temprana y funcional: incluye un runtime de referencia en Python, un núcleo/CLI en Rust en desarrollo, herramientas de validación y resolución, exportación de resultados y compilación Python a JSON IR. No representa todavía la implementación completa de MDES v0.5.
+
+> **Versionado del proyecto:** v0.1 identifica el estado del software. **MDES v0.5** identifica la versión de la especificación de diseño. Son versiones independientes. El material fuente conserva sus rótulos editoriales originales cuando corresponde.
 
 ## Instalación y primeros pasos
 
 ```bash
 python -m pip install -e .
 pytest -q
+ronin list examples/maquinas.ronin
 ronin check examples/maquinas.ronin
 ronin solve examples/maquinas.ronin
-ronin simulate examples/pesca.ronin --steps 100 --seed 42
-ronin diagnose examples/pesca.ronin
-python -m ronin solve examples/maquinas.ronin
+ronin run examples/maquinas.ronin
+ronin run examples/maquinas.ronin --format csv
+ronin compile examples/maquinas.ronin
 ```
 
-## Caso de aceptación: Maquinas
+Para Rust, desde el directorio `rust/`:
 
-El ejemplo normativo `examples/maquinas.ronin` debe producir:
+```bash
+cargo test
+cargo run -- check ../examples/maquinas.ronin
+cargo run -- solve ../examples/maquinas.ronin
+```
 
+## Qué incluye v0.1
+
+### Runtime y CLI Python
+- Lexer, parser y validación semántica del subconjunto ejecutable.
+- Resolución de modelos PUSFRE, CES, Hill y CES-Hill.
+- Asignación de recursos, umbral `k_min`, simulación reproducible y diagnóstico.
+- CLI para `list`, `check`, `solve`, `simulate`, `diagnose`, `run` y `compile`.
+- Ejecución multi-sistema y exportación JSON/CSV.
+- Compilación validada a JSON IR normalizado.
+
+### Núcleo y CLI Rust
+- Lexer/parser para la sintaxis de proyectos actualmente soportada.
+- CLI `ronin-rust` con `list`, `check`, `solve` y `run`.
+- Conservación de metadatos escalares, arrays y objetos anidados.
+- Parámetros extendidos y lowering AST→IR con estructuras alineadas con Python.
+
+### Caso de aceptación: Maquinas
+
+El fixture `examples/maquinas.ronin` es la referencia de aceptación principal:
 - Fitness: `[0.48, 0.20]`
 - Asignación: `[70.5882352941, 29.4117647059]`
 - Modelo: `pusfre`
 
-La asignación se normaliza respecto al recurso configurado. CI ejecuta las pruebas en Python 3.9–3.12 y comprueba este caso de aceptación.
+## Especificación de referencia
 
-## Documentación y manuales
+La especificación completa de diseño se identifica en este proyecto como **MDES v0.5**. Consulta el [índice de documentación](docs/README.md), la [especificación formal](docs/spec.md), el [anexo normativo](docs/normative-annex.md) y las [notas de cobertura y conformidad](docs/source-coverage.md).
 
-**¿Es tu primera vez con RONIN? Empieza por el [Manual para principiantes — Tutorial para mortales](docs/tutorial.md).** Explica desde cero qué es un sistema, cómo declarar agentes y recursos, cómo resolver tu primer modelo y cómo interpretar los resultados. No necesitas empezar leyendo la especificación formal.
+El documento maestro de origen conserva algunas etiquetas editoriales de su edición original. MDES v0.5 es la etiqueta de referencia adoptada para el ciclo de desarrollo; no se han reescrito silenciosamente las fórmulas ni se han rellenado lagunas del material fuente.
 
-Rutas de lectura:
+## Roadmap hacia v1.0
 
-1. [Manual para principiantes (castellano)](docs/tutorial.md) · [Beginner tutorial (English companion)](docs/tutorial.en.md)
-2. [Índice completo de documentación](docs/README.md)
-3. [Especificación formal del lenguaje](docs/spec.md)
-4. [Arquitectura y extensión del compilador](docs/compiler.md)
-5. [Familia matemática CES-Saturada](docs/family.md)
-6. [Runtime Python: especificación y comportamiento](docs/python-runtime-spec.md)
-7. [Cobertura de la fuente, conformidad y límites conocidos](docs/source-coverage.md)
+La hoja de ruta completa, con fases y criterios de salida verificables, está en **[docs/roadmap.md](docs/roadmap.md)**.
 
-El castellano es el idioma principal; los archivos `.en.md` son resúmenes de acompañamiento en inglés.
+| Hito | Objetivo |
+|---|---|
+| v0.1 | Base ejecutable, Python + parser/CLI Rust iniciales |
+| v0.2 | Conformidad y cobertura de la especificación |
+| v0.3 | Paridad funcional Python/Rust y JSON IR |
+| v0.4 | Cierre de semánticas pendientes con decisiones normativas |
+| v0.5 | Cobertura del lenguaje y fixtures de referencia |
+| v0.6 | Interoperabilidad y bindings estables |
+| v0.7 | Herramientas de autoría y Office MVP |
+| v0.8 | Rendimiento, robustez y seguridad |
+| v0.9 | Release candidate y congelación de interfaces |
+| v1.0 | Primera versión estable y conforme al perfil publicado |
 
-## Qué está implementado
+Los hitos son objetivos de ingeniería, no afirmaciones de funcionalidades ya entregadas ni fechas comprometidas.
 
-- Lexer con ubicación línea/columna, cadenas, literales numéricos, comentarios y el símbolo `∞`.
-- Parser para declaraciones `system`, agentes en línea y bloques `params`.
-- Validación de rangos, suma de frecuencias y coherencia entre modelos.
-- Rutas de fitness PUSFRE, CES, Hill y CES-Hill.
-- Media CES ponderada, incluido el límite geométrico cuando λ tiende a cero.
-- Asignación de recursos, umbral `k_min` y simulación reproducible con semilla.
-- Diagnóstico del rango Ω y degeneración K–α.
-- CLI: `check`, `solve`, `simulate` y `diagnose`.
+## Límites conocidos de v0.1
 
-## Prototipos y límites conocidos: lo que todavía no está terminado
+- `debt()` continúa siendo un placeholder `0.0`; no existe un estimador normativo ejecutable.
+- Los intervalos bootstrap siguen pendientes y se devuelven como `null`.
+- La memoria temporal de orden superior a 1 no tiene kernel ejecutable.
+- Rust todavía no ofrece paridad completa con Python ni compilación JSON IR equivalente.
+- WASM, C, bindings externos y la suite completa RONIN Office no están terminados.
+- Algunos ejemplos y datasets de la fuente están incompletos. No se inventan los cuerpos ausentes de los ejemplos 1–100 ni los datos omitidos.
 
-No presentamos como terminado lo que el documento fuente deja como propuesta o pendiente:
+Consulta [source coverage](docs/source-coverage.md) para los límites y discrepancias concretos. Una CI verde certifica únicamente las pruebas que ejecuta; no certifica automáticamente toda MDES v0.5.
 
-- `debt()` conserva el placeholder `0.0`: el documento no define un estimador ejecutable de deuda.
-- Los intervalos de confianza bootstrap siguen pendientes; `bootstrap_ci` devuelve `null`.
-- La memoria temporal de orden superior a 1 no tiene un kernel normativo implementado y se rechaza en ejecución.
-- Los ejemplos NeuralScaling y FamaFrench del documento contienen puntos suspensivos, no los conjuntos completos. No inventamos observaciones.
-- Rust contiene un runtime parcial con solver CES/Hill, asignación, IR, simulación R.10, diagnóstico y pruebas; siguen pendientes lexer/parser, CLI, bindings externos y memoria temporal.
-- [RONIN Office](office/index.html) incluye prototipos locales de Chat determinista, Sheet CSV, barrido heurístico, Simulator R.10, Agent Studio y Diagnose; no es todavía la suite completa.
-- WASM y C siguen siendo propuestas; no son backends completos.
-- Los ejemplos 101–130 se han incorporado como declaraciones extraídas o plantillas parser-only. Los ejemplos 1–100 no aparecen en el Markdown entregado.
+## Contribuir
 
-## Conformidad y discrepancias de la especificación
-
-Consulta [la cobertura de la fuente y las notas de conformidad](docs/source-coverage.md). El Markdown original está archivado en [docs/source/RONIN_1.1_Edicion_Familia.md](docs/source/RONIN_1.1_Edicion_Familia.md), con su aviso de licencia separado en [docs/source/NOTICE.md](docs/source/NOTICE.md). Las Partes VI–VIII y el anexo normativo también están separados en [docs/README.md](docs/README.md).
-
-## Contribuir a RONIN
-
-Queremos una comunidad técnica que pueda leer, debatir, probar y documentar RONIN en castellano. Las incidencias, propuestas, ejemplos y documentación en español son bienvenidos. Para facilitar la colaboración internacional, añadimos traducción al inglés después del contenido principal en castellano. Si detectas una discrepancia matemática, aporta la fórmula, un ejemplo mínimo y el resultado esperado.
+Se agradecen incidencias, propuestas, ejemplos y documentación en castellano. Para cambios matemáticos o normativos, incluye la sección de MDES v0.5 afectada, la fórmula, un caso mínimo y el resultado esperado.
 
 ---
 
-# RONIN 1.1 — Python reference runtime (English)
+# RONIN Runtime v0.1 (English summary)
 
-RONIN 1.1 is a modeling language and runtime described in *RONIN 1.1 — Edición Familia*. This repository provides a Python reference implementation of the executable subset: data model, lexer, parser, semantic validation, fitness functions, resource allocation, simulation, diagnostics, CLI and tests.
+RONIN Runtime v0.1 is an early, usable implementation based on the complete MDES v0.5 design specification. The software version and specification version are independent.
 
-## Install and run
+The repository includes a Python reference runtime and CLI, plus an evolving Rust parser/core/CLI. Python supports validation, solving, simulation, diagnostics, multi-system runs, JSON/CSV output and validated JSON IR compilation. Rust supports the currently implemented project syntax, metadata preservation and list/check/solve/run commands.
 
-```bash
-python -m pip install -e .
-pytest -q
-ronin check examples/maquinas.ronin
-ronin solve examples/maquinas.ronin
-ronin simulate examples/pesca.ronin --steps 100 --seed 42
-ronin diagnose examples/pesca.ronin
-```
-
-## Acceptance case: Maquinas
-
-The normative `examples/maquinas.ronin` fixture must produce fitness `[0.48, 0.20]` and allocation `[70.5882352941, 29.4117647059]`. CI tests Python 3.9–3.12.
-
-## Implemented scope
-
-The repository includes the lexer/parser subset, validation, PUSFRE/CES/Hill/CES-Hill fitness, the geometric CES limit near zero lambda, resource allocation, `k_min`, seeded simulation, K–alpha diagnostics and the four CLI commands.
-
-## Known limitations
-
-Debt estimation remains a `0.0` placeholder; bootstrap confidence intervals return null; higher-order temporal memory has no executable kernel; and NeuralScaling/FamaFrench source datasets are incomplete. Rust now has a partial solver, IR lowering, simulator and diagnostics, but no Rust parser, CLI or foreign bindings. Office has local prototypes for its main panels, not the complete collaborative suite. WASM, C and the full JavaScript engine remain unfinished. See the Spanish-first [documentation index](docs/README.md) and [source coverage and conformance notes](docs/source-coverage.md).
+This release is **not yet fully conformant** with MDES v0.5. Debt estimation, bootstrap confidence intervals, higher-order temporal memory, complete Rust parity, external bindings, WASM/C and the full Office suite remain unfinished. See the [roadmap](docs/roadmap.md), [documentation index](docs/README.md) and [coverage notes](docs/source-coverage.md).

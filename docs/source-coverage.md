@@ -1,10 +1,10 @@
-# Cobertura de RONIN 1.1 y notas de conformidad
+# Cobertura de RONIN Runtime v0.1 frente a MDES v0.5
 
 **Versión principal en castellano. English version follows below.**
 
-Este documento relaciona el comportamiento del repositorio con *RONIN 1.1 — Edición Familia*. Distingue el código ejecutable de las propuestas de arquitectura y de los ejemplos incompletos.
+Este documento relaciona el comportamiento del repositorio con MDES v0.5 y con el material fuente conservado en *RONIN 1.1 — Edición Familia*. RONIN Runtime v0.1 es la versión del software; MDES v0.5 es la versión de referencia de diseño. Distingue el código ejecutable de las propuestas de arquitectura y de los ejemplos incompletos.
 
-## Runtime de referencia Python
+## Runtime de referencia Python (v0.1)
 
 | Sección fuente | Estado en el repositorio |
 |---|---|
@@ -59,10 +59,10 @@ La fuente proporciona la fórmula de `k_min` e indica que se advierta cuando el 
 - **Simulador R.10:** el kernel Python ya implementaba la proyección al símplex, deriva de medio paso, ruido gaussiano con `sigma / 10` y generador local `random.Random(seed)`. Se mantiene esa fórmula del documento y se refuerzan las pruebas de reproducibilidad con semilla y determinismo cuando `sigma = 0`. No se ha cambiado el kernel.
 - **Memoria temporal:** los órdenes superiores a 1 del modelo `full` se rechazan con `SemanticError` y un mensaje explícito; no existe aún implementación de memoria extendida.
 - **Identificabilidad:** el diagnóstico distingue entre la rama Hill desactivada (`K = inf`), un exponente Hill fijado y el caso en que K y alpha_h son libres. El rango Ω de al menos tres órdenes es requisito para informar ambos parámetros libres como identificables.
-- **Rust:** existe un crate Cargo de arquitectura con AST, IR, solver, simulator y diagnose. Las funciones principales usan `todo!()`; el CI comprueba que el esqueleto compila, pero no es un backend implementado.
+- **Rust:** existe un crate con AST, lexer/parser, IR, solver, simulador, diagnóstico y CLI inicial. Las pruebas cubren el subconjunto implementado. No es todavía un backend plenamente conforme ni equivalente al runtime Python.
 - **RONIN Office:** `office/index.html` contiene un prototipo local sin dependencias para PUSFRE, CES y CES-Hill, con edición de agentes, asignación y diagnóstico. No implementa todos los paneles de la especificación.
 
-## Cobertura real de los 130 ejemplos del documento
+## Cobertura real de los 130 ejemplos del material fuente
 
 El Markdown adjunto afirma que los ejemplos 1–100 se mantienen de una versión anterior, pero solo incluye una nota editorial: sus 100 cuerpos no están presentes. Por tanto, no es posible reconstruirlos fielmente desde el archivo proporcionado.
 

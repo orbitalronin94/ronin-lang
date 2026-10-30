@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ronin-lang"
-version = "1.1.0"
-description = "Runtime de referencia de RONIN 1.1 (Python)"
+version = "0.1.0"
+description = "Runtime v0.1 de RONIN basado en MDES v0.5 (Python)"
 requires-python = ">=3.9"
 
 [project.scripts]
