@@ -139,13 +139,12 @@ impl Parser {
             return Ok(token.value);
         }
 
-        // Decode JSON-style escapes while preserving Unicode scalar values.
-        // UTF-16 code units are used so escaped surrogate pairs work as expected.
+        // Decode JSON-style escapes and UTF-16 surrogate pairs.
         let inner = &token.value[1..token.value.len() - 1];
         let mut chars = inner.chars().peekable();
         let mut units = Vec::new();
         while let Some(ch) = chars.next() {
-            if ch != '\\\\' {
+            if ch != '\\' {
                 let mut buffer = [0u16; 2];
                 units.extend_from_slice(ch.encode_utf16(&mut buffer));
                 continue;
@@ -156,13 +155,13 @@ impl Parser {
             })?;
             match escaped {
                 '"' => units.push('"' as u16),
-                '\\\\' => units.push('\\\\' as u16),
+                '\\' => units.push('\\' as u16),
                 '/' => units.push('/' as u16),
                 'b' => units.push(8),
                 'f' => units.push(12),
-                'n' => units.push('\\n' as u16),
-                'r' => units.push('\\r' as u16),
-                't' => units.push('\\t' as u16),
+                'n' => units.push('\n' as u16),
+                'r' => units.push('\r' as u16),
+                't' => units.push('\t' as u16),
                 'u' => {
                     let mut digits = String::with_capacity(4);
                     for _ in 0..4 {
@@ -177,7 +176,7 @@ impl Parser {
                     units.push(code);
                 }
                 other => return Err(format!(
-                    "Unsupported string escape \\\\{} at {}:{}",
+                    "Unsupported string escape \\{} at {}:{}",
                     other, token.line, token.column
                 )),
             }
@@ -187,7 +186,6 @@ impl Parser {
             format!("Invalid Unicode surrogate sequence at {}:{}", token.line, token.column)
         })
     }
-
     fn value(&mut self) -> Result<crate::ast::Value, String> {
         use crate::ast::Value;
         let token = self.current().clone();
