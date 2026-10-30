@@ -89,4 +89,4 @@ The repository includes the lexer/parser subset, validation, PUSFRE/CES/Hill/CES
 
 ## Known limitations
 
-Debt estimation remains a `0.0` placeholder; bootstrap confidence intervals return null; higher-order temporal memory has no executable kernel; NeuralScaling and FamaFrench source datasets are incomplete; and Rust, WASM, C, Office and the JavaScript engine are proposal/sketch material rather than complete backends. See the Spanish-first [source coverage and conformance notes](docs/source-coverage.md).
+Debt estimation remains a `0.0` placeholder; bootstrap confidence intervals return null; higher-order temporal memory has no executable kernel; and NeuralScaling/FamaFrench source datasets are incomplete. Rust now has a partial solver, IR lowering, simulator and diagnostics, but no Rust parser, CLI or foreign bindings. Office has local prototypes for its main panels, not the complete collaborative suite. WASM, C and the full JavaScript engine remain unfinished. See the Spanish-first [documentation index](docs/README.md) and [source coverage and conformance notes](docs/source-coverage.md).
