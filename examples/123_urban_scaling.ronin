@@ -1,0 +1,15 @@
+// Ejemplo 123 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva el bloque system; los comandos externos al bloque no forman parte
+// del subconjunto que acepta actualmente el parser Python.
+system UrbanScaling = {
+    parts: 10000,
+    resource: 1.0,
+    agents: [ /* PIB, población, infraestructura */ ],
+    params: {
+        model: "ces_hill",
+        lambda: 0.5,
+        K: 1.0,
+        alpha_h: 1.4,
+        degeneracy_check: true
+    }
+}
