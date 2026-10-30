@@ -188,6 +188,7 @@ mod tests {
             include_str!("../../tests/fixtures/conformance/hill.ronin"),
             include_str!("../../tests/fixtures/conformance/ces_hill.ronin"),
             include_str!("../../tests/fixtures/conformance/full_order1.ronin"),
+            include_str!("../../tests/fixtures/conformance/metadata_nested.ronin"),
         ];
         for source in fixtures {
             let systems = parser::parse(source).unwrap();

@@ -134,7 +134,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | RS-002 | 6.3–6.4 | Lexer/parser de proyectos soportados | I | `rust/src/parser.rs`; tests de sintaxis, escapes, Unicode y objetos |
 | RS-003 | 6.5 | Validación semántica | P | Validación integrada en solver; no cubre el validador completo de MDES |
 | RS-004 | 6.6 | Lowering a IR | I | `rust/src/ir.rs`; tests de campos y metadata |
-| RS-005 | 6.6 | Serializar IR con contrato JSON equivalente a Python | I | `rust/src/ir.rs`; `ronin-core compile` valida todos los sistemas, conserva metadata y serializa JSON IR v1; pruebas de escapes, no finitos y rechazo semántico |
+| RS-005 | 6.6 | Serializar IR con contrato JSON equivalente a Python | I | `rust/src/ir.rs`; `ronin-core compile`; `scripts/check_ir_parity.py` compara 11 fixtures válidos y 4 rechazos entre Python/Rust |
 | RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; tests Hill/CES/Maquinas/validación y corpus compartido de cinco modelos; paridad completa no demostrada |
 | RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; tests de semilla reproducible, simplex y steps inválidos; necesita vectores cruzados de conformidad |
 | RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; tests de degeneración activa/inactiva/unknown y fixtures compartidos; bootstrap no implementado |
@@ -162,7 +162,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 
 ## 11. Fixtures compartidos de conformidad
 
-El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python como en Rust: cinco perfiles positivos (PUSFRE, CES, Hill, CES-Hill y full/order 1), cuatro casos negativos y tres diagnósticos compartidos. Su catálogo está en `tests/fixtures/conformance/README.md`. No reemplaza los datasets normativos ausentes ni resuelve contradicciones de MDES.
+El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python como en Rust: seis perfiles positivos (PUSFRE, CES, Hill, CES-Hill, full/order 1 y metadata anidada), cuatro casos negativos y tres diagnósticos compartidos. Su catálogo está en `tests/fixtures/conformance/README.md`. No reemplaza los datasets normativos ausentes ni resuelve contradicciones de MDES.
 
 ## 12. Ejemplos y datos de aceptación
 

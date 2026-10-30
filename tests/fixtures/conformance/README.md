@@ -10,7 +10,7 @@ These synthetic RONIN files are a shared input corpus for the Python and Rust im
 | ces.ronin | Valid CES project |
 | hill.ronin | Valid Hill project |
 | ces_hill.ronin | Valid CES-Hill project |
-| full_order1.ronin | Valid full model with first-order memory |
+| full_order1.ronin | Valid full model with first-order memory and normalized weights |\n| metadata_nested.ronin | Nested metadata, escapes, Unicode-safe JSON values and very small finite number |
 
 ## Negative fixtures
 

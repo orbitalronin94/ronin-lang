@@ -25,7 +25,7 @@ Para Rust, desde el directorio `rust/`:
 cargo test
 cargo run -- check ../examples/maquinas.ronin
 cargo run -- solve ../examples/maquinas.ronin
-cargo run -- compile ../examples/maquinas.ronin -o ../maquinas.ir.json
+cargo run -- compile ../examples/maquinas.ronin -o ../maquinas.ir.json\n\n# Comprobar paridad JSON IR entre Python y Rust desde la raíz del repo\npython scripts/check_ir_parity.py
 ```
 
 ## Qué incluye v0.1
