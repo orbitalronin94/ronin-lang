@@ -117,3 +117,5 @@ Green CI certifies only the Python implementation, tests and executable examples
 - **Anexo normativo v1.1:** disponible en [`normative-annex.md`](normative-annex.md), incluyendo orden de evaluación, tests normativos, conformidad, estado de extensiones y política de afirmaciones verificables.
 
 - **Parte V — Runtime Python:** el texto fuente R.1–R.16 se ha separado en [`python-runtime-spec.md`](python-runtime-spec.md), manteniendo los límites de implementación y las notas de conformidad.
+
+- **Referencia normativa cruzada:** R.16 afirma conformidad con un “Anexo Normativo N.6”, pero el anexo de la misma edición termina en N.5. Se conserva como discrepancia editorial de la fuente; no se crea un N.6 ficticio.
