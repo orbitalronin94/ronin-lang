@@ -107,3 +107,11 @@ The CES power mean converges to the weighted geometric mean as lambda approaches
 ## Conformance policy
 
 Green CI certifies only the Python implementation, tests and executable examples in this repository. It does not certify unspecified or incomplete backends, estimators, temporal memory kernels or missing datasets.
+
+
+## Incorporaciones documentales de la revisión
+
+- **Parte VI — Rust:** el contenido fuente 6.1–6.14 está ahora disponible en [`rust-backend-spec.md`](rust-backend-spec.md). El workspace Rust sigue siendo un esqueleto y no se declara conforme; las integraciones PyO3, WASM y C siguen siendo objetivos descritos.
+- **Parte VII — RONIN Office:** la especificación completa está en [`office-spec.md`](office-spec.md). `office/index.html` ofrece ahora prototipos locales para Chat determinista, Sheet CSV, barrido heurístico de alpha, Simulator R.10, Agent Studio y Diagnose. No equivale a la suite completa.
+- **Parte VIII — Futuro:** transcrita en [`vision.md`](vision.md). La fuente marca 8.1–8.5 como “sin cambios estructurales”; no se han rellenado con conjeturas.
+- **Anexo normativo v1.1:** disponible en [`normative-annex.md`](normative-annex.md), incluyendo orden de evaluación, tests normativos, conformidad, estado de extensiones y política de afirmaciones verificables.
