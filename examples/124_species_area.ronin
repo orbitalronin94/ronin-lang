@@ -4,7 +4,7 @@
 system SpeciesArea = {
     parts: 500,
     resource: 1.0,
-    agents: [ /* islas con área y número de especies */ ],
+    agents: [ // islas con área y número de especies ],
     params: {
         model: "ces_hill",
         lambda: 0.5,
