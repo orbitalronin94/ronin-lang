@@ -52,6 +52,26 @@ La fuente proporciona la fórmula de `k_min` e indica que se advierta cuando el 
 - **Motor JavaScript (7.9):** el ejemplo contiene puntos suspensivos y no es un backend completo ni conforme.
 - **Funciones futuras:** sistemas continuos, orquestación, optimización, DSL de auditoría y construcciones avanzadas permanecen como especificación o trabajo futuro.
 
+
+## Correcciones y entregables de esta fase
+
+- **Constante K infinita:** el lexer acepta ahora el carácter Unicode `∞`; el parser convierte `inf`, `infinity` y `∞` a `math.inf`. Hay pruebas para las tres grafías.
+- **Simulador R.10:** el kernel Python ya implementaba la proyección al símplex, deriva de medio paso, ruido gaussiano con `sigma / 10` y generador local `random.Random(seed)`. Se mantiene esa fórmula del documento y se refuerzan las pruebas de reproducibilidad con semilla y determinismo cuando `sigma = 0`. No se ha cambiado el kernel.
+- **Memoria temporal:** los órdenes superiores a 1 del modelo `full` se rechazan con `SemanticError` y un mensaje explícito; no existe aún implementación de memoria extendida.
+- **Identificabilidad:** el diagnóstico distingue entre la rama Hill desactivada (`K = inf`), un exponente Hill fijado y el caso en que K y alpha_h son libres. El rango Ω de al menos tres órdenes es requisito para informar ambos parámetros libres como identificables.
+- **Rust:** existe un crate Cargo de arquitectura con AST, IR, solver, simulator y diagnose. Las funciones principales usan `todo!()`; el CI comprueba que el esqueleto compila, pero no es un backend implementado.
+- **RONIN Office:** `office/index.html` contiene un prototipo local sin dependencias para PUSFRE, CES y CES-Hill, con edición de agentes, asignación y diagnóstico. No implementa todos los paneles de la especificación.
+
+## Cobertura real de los 130 ejemplos del documento
+
+El Markdown adjunto afirma que los ejemplos 1–100 se mantienen de una versión anterior, pero solo incluye una nota editorial: sus 100 cuerpos no están presentes. Por tanto, no es posible reconstruirlos fielmente desde el archivo proporcionado.
+
+Se han incorporado archivos 101–130. Los bloques con datos literales conservan sus declaraciones de sistema; los que usan generadores, variables simbólicas o datasets omitidos se marcan como plantillas parser-only. El test masivo comprueba que los archivos `.ronin` se parsean, no que todos sean semánticamente válidos o ejecutables. Para completar los 130 ejemplos reales se necesita el anexo original 1–100 y los datos completos de los casos 115, 120–130 cuando el documento usa marcadores.
+
+## Contradicción matemática editorial pendiente
+
+La declaración normativa inicial de RONIN 1.1 define para CES el límite `lambda -> 0` como media geométrica ponderada. En cambio, el test N.2.3 afirma que CES con `lambda = 1e-7` recupera PUSFRE. En general no son equivalentes: PUSFRE aplica `phi * psi * omega^alpha`, mientras el límite CES es la media geométrica ponderada de phi, psi y omega (con Hill según el modelo). El runtime sigue la definición CES geométrica; esta decisión queda documentada y requiere una resolución normativa del autor.
+
 ## Política de conformidad
 
 Que CI esté en verde significa que la implementación Python supera las pruebas y ejemplos ejecutables de este repositorio. No certifica Rust, WASM, C, Office, bootstrap, auditoría de deuda, memoria temporal ni datasets ausentes de la fuente. No se afirma rendimiento sin un benchmark reproducible.
