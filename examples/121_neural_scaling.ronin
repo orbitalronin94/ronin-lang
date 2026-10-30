@@ -4,7 +4,7 @@
 system NeuralScaling = {
     parts: 46,
     resource: 1.0,
-    agents: [ /* Hoffmann et al. 2022 */ ],
+    agents: [ // Hoffmann et al. 2022 ],
     params: {
         model: "ces_hill",
         lambda: 0.5,
