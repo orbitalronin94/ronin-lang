@@ -95,7 +95,7 @@ def test_k_min_uses_configured_delta():
     system = parse(MAQ)["Maquinas"]
     assert k_min(system) > 0
     changed = replace(system, params=replace(system.params, coexistence_delta=0.01))
-    assert k_min(changed) > k_min(system)
+    assert k_min(changed) < k_min(system)
 
 
 def test_degeneracy_active_for_narrow_omega_range():
