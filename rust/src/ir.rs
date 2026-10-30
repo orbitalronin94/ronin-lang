@@ -66,7 +66,7 @@ fn json_number(value: f64) -> String {
     } else if value == f64::NEG_INFINITY {
         json_string("-inf")
     } else {
-        format!("{:.17}", value)
+        format!("{:?}", value)
     }
 }
 
@@ -217,7 +217,7 @@ mod tests {
                 agents: [
                     { phi: 0.6, psi: 0.7, frequency: 0.5,
                       note: "line\nquote\" slash\\",
-                      profile: { enabled: true, region: "north", empty: null } },
+                      profile: { enabled: true, region: "north", empty: null, tiny: 1e-300 } },
                     { phi: 0.5, psi: 0.8, frequency: 0.5 }
                 ]
             }
