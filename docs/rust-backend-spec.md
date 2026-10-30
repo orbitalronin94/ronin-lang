@@ -994,11 +994,3 @@ pub fn generate_c(system: &System) -> String {
 ```
 
 ---
-
-# PARTE VII — RONIN OFFICE: INTERFAZ VISUAL
-
-## 7.1 VISIÓN GENERAL
-
-RONIN Office es una interfaz visual para diseñar, resolver y simular sistemas RONIN sin necesidad de escribir código. Es una herramienta de productividad que permite a arquitectos, diseñadores y analistas trabajar con RONIN de forma visual.
-
-**Principios operativos:**
