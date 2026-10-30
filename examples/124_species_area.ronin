@@ -1,0 +1,15 @@
+// Ejemplo 124 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva el bloque system; los comandos externos al bloque no forman parte
+// del subconjunto que acepta actualmente el parser Python.
+system SpeciesArea = {
+    parts: 500,
+    resource: 1.0,
+    agents: [ /* islas con área y número de especies */ ],
+    params: {
+        model: "ces_hill",
+        lambda: 0.5,
+        K: 1.0,
+        alpha_h: 1.2,
+        degeneracy_check: true
+    }
+}
