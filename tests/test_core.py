@@ -1,4 +1,5 @@
 from dataclasses import replace
+import math
 from pathlib import Path
 
 import pytest
@@ -190,3 +191,31 @@ def test_full_memory_is_not_silently_approximated():
     )
     with pytest.raises(SemanticError, match="not implemented"):
         solve(parse(source)["Maquinas"])
+
+
+@pytest.mark.parametrize("literal", ["inf", "infinity", "∞"])
+def test_parser_accepts_all_infinite_K_spellings(literal):
+    source = MAQ.replace("params: {", "params: { K: " + literal + ",")
+    parsed = parse(source)["Maquinas"]
+    assert math.isinf(parsed.params.K)
+
+
+def test_diagnose_does_not_claim_hill_parameters_when_saturation_is_disabled():
+    report = diagnose(parse(MAQ)["Maquinas"])
+    assert report.lambda_identifiable
+    assert not report.K_identifiable
+    assert not report.alpha_h_identifiable
+
+
+def test_simulation_is_deterministic_without_gaussian_noise():
+    system = parse(MAQ)["Maquinas"]
+    noiseless = replace(system, params=replace(system.params, sigma=0.0))
+    first = simulate(noiseless, steps=25, seed=7)
+    second = simulate(noiseless, steps=25, seed=999)
+    assert first.history == second.history
+
+
+def test_simulation_rejects_unsupported_temporal_memory():
+    source = MAQ.replace("params: {", 'params: { model: "full", lambda: 0.5, K: 0.5, memory_order: 3,')
+    with pytest.raises(SemanticError, match="full temporal-memory execution is not implemented"):
+        simulate(parse(source)["Maquinas"], steps=2, seed=1)
