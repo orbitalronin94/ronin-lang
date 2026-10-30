@@ -12,7 +12,7 @@ FIXTURES = Path(__file__).parent / "fixtures" / "conformance"
 
 @pytest.mark.parametrize(
     "filename",
-    ["pusfre.ronin", "ces.ronin", "hill.ronin", "ces_hill.ronin", "full_order1.ronin"],
+    ["pusfre.ronin", "ces.ronin", "hill.ronin", "ces_hill.ronin", "full_order1.ronin", "metadata_nested.ronin"],
 )
 def test_shared_positive_fixtures_validate_and_solve(filename):
     systems = parse((FIXTURES / filename).read_text(encoding="utf-8"))
