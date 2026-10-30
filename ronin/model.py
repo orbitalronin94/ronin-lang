@@ -1,37 +1,48 @@
 from dataclasses import dataclass, field
 from math import inf
-@dataclass
+from typing import Any, List, Optional
+
+
+@dataclass(frozen=True)
 class Agent:
     phi: float
     psi: float
     frequency: float
-@dataclass
+
+
+@dataclass(frozen=True)
 class Params:
+    # RONIN 1.0
     alpha: float = 1.0
     gamma: float = 0.4
     sigma: float = 0.0
     coexistence_delta: float = 0.05
+    # RONIN 1.1 — CES-Saturada
     model: str = "pusfre"
     lambda_: float = 0.0
     K: float = inf
     alpha_h: float = 1.0
     memory_order: int = 1
-    memory_weights: object = None
+    memory_weights: Optional[List[float]] = None
     degeneracy_check: bool = False
     omega_range_report: bool = False
-@dataclass
+
+
+@dataclass(frozen=True)
 class System:
     name: str
     parts: int
     resource: float
-    agents: list
+    agents: List[Agent]
     params: Params = field(default_factory=Params)
+
+
 @dataclass
 class Solution:
-    allocation: list
-    fitness: list
-    coexistence: object = None
-    k_min: object = None
+    allocation: List[float]
+    fitness: List[float]
+    coexistence: Optional[bool] = None
+    k_min: Optional[float] = None
     debt: float = 0.0
     convergence: bool = True
     steps: int = 1
@@ -41,7 +52,9 @@ class Solution:
     alpha_h_used: float = 1.0
     omega_range: float = 0.0
     degeneracy: str = "unknown"
-    warnings: list = field(default_factory=list)
+    warnings: List[str] = field(default_factory=list)
+
+
 @dataclass
 class DegeneracyReport:
     omega_range_orders: float
@@ -50,12 +63,14 @@ class DegeneracyReport:
     K_identifiable: bool
     alpha_h_identifiable: bool
     recommendation: str
-    bootstrap_ci: object = None
+    bootstrap_ci: Optional[dict] = None
+
+
 @dataclass
 class Simulation:
-    history: list
-    final_state: list
+    history: List[List[float]]
+    final_state: List[float]
     steps: int
-    seed: object
-    extinction_events: list = field(default_factory=list)
+    seed: Optional[int]
+    extinction_events: List[int] = field(default_factory=list)
     survivability: float = 1.0

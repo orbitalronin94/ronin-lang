@@ -1,0 +1,17 @@
+system DegeneracyInactive = {
+    parts: 3,
+    resource: 100,
+    agents: [
+        { phi: 0.5, psi: 0.5, frequency: 0.0009 },
+        { phi: 0.5, psi: 0.5, frequency: 0.0090 },
+        { phi: 0.5, psi: 0.5, frequency: 0.9901 }
+    ],
+    params: {
+        model: "ces_hill",
+        lambda: 0.5,
+        K: 0.5,
+        alpha_h: 1.5,
+        degeneracy_check: true,
+        omega_range_report: true
+    }
+}
