@@ -1,0 +1,15 @@
+// Ejemplo 105 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva la declaración system del ejemplo fuente; las instrucciones
+// posteriores (solve/diagnose/print/loops) no pertenecen al parser de la CLI actual.
+system Cartera = {
+    parts: 5,
+    resource: 100,
+    agents: [
+        { name: "Acciones", phi: 0.9, psi: 0.6, frequency: 0.2 },
+        { name: "Bonos", phi: 0.7, psi: 0.9, frequency: 0.2 },
+        { name: "Commodities", phi: 0.8, psi: 0.7, frequency: 0.2 },
+        { name: "Divisas", phi: 0.6, psi: 0.8, frequency: 0.2 },
+        { name: "Cripto", phi: 0.95, psi: 0.3, frequency: 0.2 }
+    ],
+    params: { model: "ces", lambda: 0.4, alpha: 0.9, gamma: 0.4, sigma: 0.15 }
+}
