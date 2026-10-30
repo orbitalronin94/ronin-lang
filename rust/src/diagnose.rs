@@ -20,7 +20,7 @@ pub fn diagnose(system: &System, _bootstrap: usize) -> Result<DegeneracyReport, 
     let recommendation = match state {
         "unknown" => "Insufficient positive Omega observations to estimate the range or Hill identifiability.",
         "inactive" => "Structural degeneracy inactive under the configured parameter constraints.",
-        _ if orders < 1.0 => "Omega spans less than one order of magnitude. K and alpha_h are indistinguishable; expand the range or fix K externally.",
+        _ if orders < 1.0 => "Omega spans less than one order of magnitude. K and alpha_h are indistinguishable; expand the Omega range or fix K externally.",
         _ => "Omega spans between one and three orders of magnitude. Expand the observed Omega range to at least three orders.",
     };
     Ok(DegeneracyReport {

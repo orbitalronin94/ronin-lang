@@ -263,4 +263,45 @@ mod tests {
         let args = vec!["solve".into(), fixture(), "--system".into(), "Missing".into()];
         assert!(execute(&args).unwrap_err().contains("unknown system: Missing"));
     }
+
+    fn degeneracy_fixture() -> String {
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../tests/fixtures/conformance/degeneracy_active.ronin")
+            .to_string_lossy()
+            .into_owned()
+    }
+
+    #[test]
+    fn diagnose_command_emits_python_compatible_report() {
+        let args = vec!["diagnose".into(), degeneracy_fixture()];
+        let output = execute(&args).unwrap();
+        assert!(output.contains("\"degeneracy\":\"active\""));
+        assert!(output.contains("\"lambda_identifiable\":false"));
+        assert!(output.contains("\"K_identifiable\":false"));
+        assert!(output.contains("\"bootstrap_ci\":null"));
+    }
+
+    #[test]
+    fn diagnose_accepts_bootstrap_count_but_reports_unimplemented_ci_as_null() {
+        let args = vec![
+            "diagnose".into(),
+            degeneracy_fixture(),
+            "--bootstrap".into(),
+            "20".into(),
+        ];
+        let output = execute(&args).unwrap();
+        assert!(output.contains("\"bootstrap_ci\":null"));
+    }
+
+    #[test]
+    fn diagnose_rejects_unknown_system_names() {
+        let args = vec![
+            "diagnose".into(),
+            fixture(),
+            "--system".into(),
+            "Missing".into(),
+        ];
+        assert!(execute(&args).unwrap_err().contains("unknown system: Missing"));
+    }
+
 }
