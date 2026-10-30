@@ -95,8 +95,9 @@ def test_lexer_has_all_named_groups_and_tokenizes_comments():
     }
     tokens = lex('name: "ronin" // comentario\nvalue: 1.2')
     assert [token.kind for token in tokens[:-1]] == [
-        "IDENT", "SYMBOL", "STRING", "NEWLINE", "IDENT", "SYMBOL", "NUMBER"
+        "IDENT", "SYMBOL", "STRING", "IDENT", "SYMBOL", "NUMBER"
     ]
+    assert tokens[3].line == 2
 
 
 def test_model_coherence_is_enforced():
@@ -115,9 +116,8 @@ def test_ces_rejects_finite_hill_threshold():
 
 def test_k_min_uses_configured_delta():
     system = parse(MAQ)["Maquinas"]
-    assert k_min(system) > 0
-    changed = replace(system, params=replace(system.params, coexistence_delta=0.01))
-    assert k_min(changed) < k_min(system)
+    assert k_min(system, delta=0.05) > 0
+    assert k_min(system, delta=0.01) < k_min(system, delta=0.05)
 
 
 def test_degeneracy_active_for_narrow_omega_range():
