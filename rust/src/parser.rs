@@ -168,6 +168,10 @@ impl Parser {
             "null" => { self.take(); Ok(Value::Null) }
             "inf" | "infinity" | "∞" => { self.take(); Ok(Value::Number(f64::INFINITY)) }
             _ if token.value.starts_with('"') => Ok(Value::String(self.scalar()?)),
+            _ if token.value.chars().next().map_or(false, |c| c.is_ascii_alphabetic() || c == '_') => {
+                self.take();
+                Ok(Value::String(token.value))
+            }
             _ => {
                 let number = self.number()?;
                 Ok(Value::Number(number))
@@ -345,6 +349,23 @@ pub fn parse(source: &str) -> Result<Vec<System>, String> {
 #[cfg(test)]
 mod tests {
     use super::parse;
+
+
+    #[test]
+    fn parses_bare_identifier_metadata_as_strings() {
+        let source = r#"
+            system Metadata = {
+              parts: 2, resource: 10,
+              agents: [
+                { phi: 0.6, psi: 0.7, frequency: 0.5, niche: robotics, protocol: v2 },
+                { phi: 0.5, psi: 0.8, frequency: 0.5 }
+              ]
+            }
+        "#;
+        let systems = parse(source).unwrap();
+        assert_eq!(systems[0].agents[0].metadata.get("niche"), Some(&crate::ast::Value::String("robotics".into())));
+        assert_eq!(systems[0].agents[0].metadata.get("protocol"), Some(&crate::ast::Value::String("v2".into())));
+    }
 
     #[test]
     fn parses_maquinas_fixture() {
