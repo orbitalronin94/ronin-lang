@@ -1,0 +1,15 @@
+// Ejemplo 107 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva la declaración system del ejemplo fuente; las instrucciones
+// posteriores (solve/diagnose/print/loops) no pertenecen al parser de la CLI actual.
+system Recomendaciones = {
+    parts: 5,
+    resource: 100,
+    agents: [
+        { name: "Noticias", phi: 0.8, psi: 0.7, frequency: 0.2 },
+        { name: "Video", phi: 0.9, psi: 0.6, frequency: 0.2 },
+        { name: "Artículo", phi: 0.7, psi: 0.8, frequency: 0.2 },
+        { name: "Podcast", phi: 0.6, psi: 0.9, frequency: 0.2 },
+        { name: "Social", phi: 0.85, psi: 0.75, frequency: 0.2 }
+    ],
+    params: { model: "ces", lambda: 0.5, alpha: 0.8, gamma: 0.2, sigma: 0.1 }
+}
