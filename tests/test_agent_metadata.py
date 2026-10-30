@@ -1,3 +1,6 @@
+import pytest
+
+from ronin.errors import SyntaxError
 from ronin.parser import parse
 
 
