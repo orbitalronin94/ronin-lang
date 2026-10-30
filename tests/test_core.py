@@ -219,3 +219,20 @@ def test_simulation_rejects_unsupported_temporal_memory():
     source = MAQ.replace("params: {", 'params: { model: "full", lambda: 0.5, K: 0.5, memory_order: 3,')
     with pytest.raises(SemanticError, match="full temporal-memory execution is not implemented"):
         simulate(parse(source)["Maquinas"], steps=2, seed=1)
+
+
+def test_diagnose_reports_unknown_when_fewer_than_two_omegas_are_positive():
+    source = '''
+    system InsufficientOmega = {
+      parts: 2, resource: 100,
+      agents: [
+        { phi: 0.5, psi: 0.5, frequency: 1.0 },
+        { phi: 0.5, psi: 0.5, frequency: 0.0 }
+      ],
+      params: { model: "ces_hill", lambda: 0.5, K: 0.5, alpha_h: 1.5 }
+    }
+    '''
+    report = diagnose(parse(source)["InsufficientOmega"])
+    assert report.degeneracy == "unknown"
+    assert not report.K_identifiable
+    assert not report.alpha_h_identifiable
