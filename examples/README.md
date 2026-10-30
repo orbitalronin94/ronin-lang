@@ -1,37 +1,25 @@
-# Ejemplos de RONIN 1.1
+# Ejemplos RONIN 1.1
 
-**Documentación principal en castellano. English version follows below.**
+La colección del documento maestro adjunto no contiene 130 bloques completos:
 
-## Ejemplos ejecutables
+- Los ejemplos **1–100** se describen como material conservado de una versión anterior, pero sus cuerpos no aparecen en el Markdown entregado. No se han inventado ni reconstruido.
+- Los ejemplos **101–119** conservan sus declaraciones `system` cuando incluyen agentes literales. Los comandos posteriores (`solve`, `simulate`, `diagnose`, bucles) quedan fuera del subconjunto que acepta el parser Python actual.
+- El ejemplo **115** usa `generate_users(10)`; se conserva como plantilla parser-only porque el generador no está implementado.
+- Los ejemplos **120–130** incluyen marcadores de posición, generadores o datos omitidos. Los ficheros identifican expresamente los esqueletos parser-only y no fabrican datasets.
+- El ejemplo 130 usa tres sistemas con composición de parámetros avanzada; se representan como tres declaraciones mínimas para probar el parser.
 
-- `maquinas.ronin`: caso de aceptación PUSFRE.
-- `maquinas_ces.ronin`: extensión CES.
-- `pesca.ronin`: escenario base de cinco agentes.
-- `degeneracy_active.ronin`: rango Ω estrecho; degeneración K–α activa.
-- `degeneracy_inactive.ronin`: rango Ω superior a tres órdenes completos.
+## Verificación
 
-El documento fuente también bosqueja NeuralScaling (46 modelos) y FamaFrench (720 observaciones mensuales), pero ambos ejemplos contienen puntos suspensivos en lugar de todos los registros. El extracto NeuralScaling además proporciona valores de phi y psi superiores a 1, aunque el mismo documento limita ambos a [0,1]. No sustituimos esos datos por observaciones sintéticas: siguen siendo plantillas hasta que se faciliten los datasets y se resuelva la contradicción de rangos.
+`tests/test_examples.py` comprueba que todos los ficheros `.ronin` se parsean y contienen al menos una declaración de sistema. Esto **no** significa que todos sean ejecutables ni que superen la validación semántica: las plantillas con agentes vacíos son deliberadamente parser-only.
 
-## Ejecutar
+## Ejemplos base
 
-Desde la raíz del repositorio:
-
-```bash
-ronin check examples/maquinas.ronin
-ronin solve examples/maquinas.ronin
-ronin solve examples/maquinas_ces.ronin
-ronin simulate examples/pesca.ronin --steps 100 --seed 42
-```
+Maquinas, Pesca, CES y degeneración siguen siendo los fixtures ejecutables y validados por el runtime.
 
 ---
 
 # RONIN 1.1 examples (English)
 
-Runnable fixtures:
+The supplied master document does not include 130 complete examples. Examples 1–100 are referenced as material retained from an earlier edition, but their bodies are absent from the supplied file. Examples 101–130 include literal system declarations, placeholders, generators or omitted datasets. The repository preserves available declarations and marks parser-only scaffolds explicitly; it does not invent missing records.
 
-- `maquinas.ronin`: PUSFRE acceptance case.
-- `maquinas_ces.ronin`: CES extension.
-- `pesca.ronin`: five-agent baseline.
-- `degeneracy_active.ronin` and `degeneracy_inactive.ronin`: active and inactive K–alpha degeneracy cases.
-
-The supplied NeuralScaling and FamaFrench examples are incomplete templates, not runnable datasets. No synthetic observations are substituted for the missing records.
+The example test checks parsing only, not semantic validity or end-to-end execution. The validated runtime fixtures remain Maquinas, Pesca, CES and the degeneracy examples.
