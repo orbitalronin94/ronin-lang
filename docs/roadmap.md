@@ -65,7 +65,7 @@ Trabajo:
 
 ### v0.3 — Python/Rust parity and portable IR (en curso)
 
-**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa, y `scripts/check_ir_parity.py` compara 11 proyectos válidos y cuatro rechazos entre Python y Rust. La comparación de solver está en desarrollo mediante `scripts/check_runtime_parity.py`, que contrasta fitness, allocation, coexistence, k_min, degeneracy y override de delta.
+**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa, y `scripts/check_ir_parity.py` compara 11 proyectos válidos y cuatro rechazos entre Python y Rust. `scripts/check_runtime_parity.py` compara fitness, allocation, coexistence, k_min, degeneracy y override de delta. `ronin-core diagnose` y `scripts/check_diagnostic_parity.py` comparan también rango Ω, identificabilidad, recomendación y estado bootstrap null.
 
 **Objetivo:** hacer que Python y Rust compartan un contrato de datos y ejecución verificable.
 

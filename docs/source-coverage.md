@@ -48,7 +48,7 @@ La fuente proporciona la fórmula de `k_min` e indica que se advierta cuando el 
 
 ## Otros objetivos descritos en el Markdown
 
-- **Rust (Parte VI / 6.1–6.14):** el repositorio implementa AST, lexer/parser para la sintaxis soportada, IR interno y serializador JSON IR v1 con CLI `compile`, además de solver, simulador, diagnóstico y CLI `list`, `check`, `solve`, `run`. Siguen pendientes paridad completa, bindings PyO3/WASM/C y memoria temporal. No se declara runtime completo ni conforme.
+- **Rust (Parte VI / 6.1–6.14):** el repositorio implementa AST, lexer/parser para la sintaxis soportada, IR interno y serializador JSON IR v1 con CLI `compile`, además de solver, simulador, diagnóstico y CLI `list`, `check`, `solve`, `run`, `diagnose`, `compile`. Siguen pendientes paridad completa, bindings PyO3/WASM/C y memoria temporal. No se declara runtime completo ni conforme.
 - **WASM y C (6.13–6.14):** son bocetos de extensión; el generador C contiene puntos suspensivos y no es un backend completo.
 - **RONIN Office (Parte VII):** se describen paneles, mockups y tablas de estado. Este runtime Python no incluye la interfaz Office.
 - **Motor JavaScript (7.9):** el ejemplo contiene puntos suspensivos y no es un backend completo ni conforme.

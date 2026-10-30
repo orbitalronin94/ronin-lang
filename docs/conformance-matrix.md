@@ -28,7 +28,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | CORE-004 | §1.4, N.1.4 | Estimar deuda del sistema | P | N | Python `debt()` devuelve placeholder `0.0`; no es un estimador. Rust no expone un estimador ni un campo deuda normativo |
 | CORE-005 | §1.5 | Calcular geometría del sistema | N | N | No se encontró función ejecutable con contrato de geometría |
 | CORE-006 | §1.6 | Calcular fatiga de enrutamiento | N | N | No se encontró implementación ejecutable |
-| CORE-007 | §1.7, N.1.5 | Diagnosticar rango Ω y degeneración K–α | I | P | `ronin/diagnose.py`, `rust/src/diagnose.rs`; pruebas de umbral y parámetros no identificables |
+| CORE-007 | §1.7, N.1.5 | Diagnosticar rango Ω y degeneración K–α | I | I | Python/Rust comparados por `scripts/check_diagnostic_parity.py` en cinco fixtures, bootstrap=20 y rechazo de entradas inválidas |
 | CORE-008 | §2.3, §3.5 | Rechazar combinaciones incoherentes entre modelo y parámetros | I | P | `ronin/validator.py`; `tests/test_core.py::test_model_coherence_is_enforced`; Rust valida a través de solver |
 
 ## 3. Sintaxis y construcciones del lenguaje
@@ -105,9 +105,9 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | BUILD-009 | §6.11 | Perfilado RONIN | N | N | No hay profiler propio |
 | BUILD-010 | §6.12 | Depurador RONIN | N | N | No hay debugger |
 | BUILD-011 | §6.13 | REPL general del lenguaje | P | N | Existe consola Python básica; no ejecuta el lenguaje completo |
-| BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | P | Python `diagnose`; Rust expone módulo pero no subcomando CLI |
+| BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | I | Python `ronin diagnose`; Rust `ronin-core diagnose FILE [--system NAME] [--bootstrap N]`; bootstrap CI sigue null |
 | BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR |
-| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile | — | I | `rust/src/main.rs`; tests de integración de comandos y compilación IR |
+| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/diagnose/compile | — | I | `rust/src/main.rs`; tests de integración de todos los subcomandos publicados |
 
 ## 8. Runtime de referencia Python — Parte V
 
@@ -137,7 +137,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | RS-005 | 6.6 | Serializar IR con contrato JSON equivalente a Python | I | `rust/src/ir.rs`; `ronin-core compile`; `scripts/check_ir_parity.py` compara 11 fixtures válidos y 4 rechazos entre Python/Rust |
 | RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; `scripts/check_runtime_parity.py` compara 11 proyectos válidos, 4 rechazos y override de delta; faltan otras construcciones/semánticas MDES |
 | RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; tests de semilla reproducible, simplex y steps inválidos; necesita vectores cruzados de conformidad |
-| RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; tests de degeneración activa/inactiva/unknown y fixtures compartidos; bootstrap no implementado |
+| RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`, CLI `diagnose`; paridad de reporte verificada; bootstrap no implementado (CI=null) |
 | RS-009 | 6.10 | CLI Rust list/check/solve/run/compile | I | `rust/src/main.rs`; tests de list/check/solve/run y compile/--output |
 | RS-010 | 6.11 | Suite normativa Rust completa | P | Tests unitarios/parser/CLI presentes; no cubren todas las normas MDES |
 | RS-011 | 6.12 | Bindings Python con PyO3 | N | No existe crate/binding PyO3 en el workspace actual |

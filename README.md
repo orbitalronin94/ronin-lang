@@ -26,6 +26,7 @@ cargo test
 cargo run -- check ../examples/maquinas.ronin
 cargo run -- solve ../examples/maquinas.ronin
 cargo run -- compile ../examples/maquinas.ronin -o ../maquinas.ir.json
+cargo run -- diagnose ../tests/fixtures/conformance/degeneracy_active.ronin --bootstrap 20
 ```
 
 Desde la raíz del repositorio, comprobar paridad entre Python y Rust:
@@ -33,6 +34,7 @@ Desde la raíz del repositorio, comprobar paridad entre Python y Rust:
 ```bash
 python scripts/check_ir_parity.py
 python scripts/check_runtime_parity.py
+python scripts/check_diagnostic_parity.py
 ```
 
 ## Qué incluye v0.1
