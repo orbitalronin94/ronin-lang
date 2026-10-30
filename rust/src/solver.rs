@@ -165,6 +165,39 @@ mod tests {
     }
 
     #[test]
+    fn shared_positive_fixtures_solve_in_rust() {
+        let fixtures = [
+            include_str!("../../tests/fixtures/conformance/pusfre.ronin"),
+            include_str!("../../tests/fixtures/conformance/ces.ronin"),
+            include_str!("../../tests/fixtures/conformance/hill.ronin"),
+            include_str!("../../tests/fixtures/conformance/ces_hill.ronin"),
+            include_str!("../../tests/fixtures/conformance/full_order1.ronin"),
+        ];
+        for source in fixtures {
+            let systems = parser::parse(source).unwrap();
+            assert_eq!(systems.len(), 1);
+            let result = solve(&systems[0], 0.05).unwrap();
+            let total: f64 = result.allocation.iter().sum();
+            assert!((total - systems[0].resource).abs() <= 1e-9);
+            assert_eq!(result.fitness.len(), systems[0].parts);
+        }
+    }
+
+    #[test]
+    fn shared_negative_fixtures_are_rejected_in_rust() {
+        let fixtures = [
+            include_str!("../../tests/fixtures/conformance/invalid_frequency_sum.ronin"),
+            include_str!("../../tests/fixtures/conformance/invalid_pusfre_lambda.ronin"),
+            include_str!("../../tests/fixtures/conformance/invalid_alpha.ronin"),
+            include_str!("../../tests/fixtures/conformance/full_order3_unsupported.ronin"),
+        ];
+        for source in fixtures {
+            let systems = parser::parse(source).unwrap();
+            assert!(solve(&systems[0], 0.05).is_err());
+        }
+    }
+
+    #[test]
     fn rejects_unimplemented_higher_order_temporal_memory() {
         let mut system = maquinas();
         system.params.model = "full".into();

@@ -135,9 +135,9 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | RS-003 | 6.5 | Validación semántica | P | Validación integrada en solver; no cubre el validador completo de MDES |
 | RS-004 | 6.6 | Lowering a IR | I | `rust/src/ir.rs`; tests de campos y metadata |
 | RS-005 | 6.6 | Serializar IR con contrato JSON idéntico a Python | N | No existe comando Rust `compile` ni serializador de IR público |
-| RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; tests Hill/CES/Maquinas/validación; paridad completa no demostrada |
+| RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; tests Hill/CES/Maquinas/validación y corpus compartido de cinco modelos; paridad completa no demostrada |
 | RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; tests de semilla reproducible, simplex y steps inválidos; necesita vectores cruzados de conformidad |
-| RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; tests de degeneración activa/inactiva/unknown; bootstrap no implementado |
+| RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; tests de degeneración activa/inactiva/unknown y fixtures compartidos; bootstrap no implementado |
 | RS-009 | 6.10 | CLI Rust list/check/solve/run | I | `rust/src/main.rs`; tests de comandos |
 | RS-010 | 6.11 | Suite normativa Rust completa | P | Tests unitarios/parser/CLI presentes; no cubren todas las normas MDES |
 | RS-011 | 6.12 | Bindings Python con PyO3 | N | No existe crate/binding PyO3 en el workspace actual |
@@ -160,7 +160,11 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | NORM-010 | N.2 Test 7 | Diagnóstico del dataset Neural Scaling real | A | Datos fuente incompletos y valores phi/psi fuera del rango normativo |
 | NORM-011 | N.3 | Cumplimiento integral de tolerancias, simulación y requisitos | P | Hay pruebas parciales; no procede declarar conformidad global |
 
-## 11. Ejemplos y datos de aceptación
+## 11. Fixtures compartidos de conformidad
+
+El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python como en Rust: cinco perfiles positivos (PUSFRE, CES, Hill, CES-Hill y full/order 1), cuatro casos negativos y tres diagnósticos compartidos. Su catálogo está en `tests/fixtures/conformance/README.md`. No reemplaza los datasets normativos ausentes ni resuelve contradicciones de MDES.
+
+## 12. Ejemplos y datos de aceptación
 
 | ID | Referencia | Estado | Qué demuestra y qué no demuestra |
 |---|---|---|---|
@@ -173,7 +177,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | EX-007 | §8.3, §8.9 | A | NeuralScaling/FamaFrench carecen de registros completos; no son datasets de aceptación |
 | EX-008 | §8.4–8.8 | D | Casos descritos en MDES sin fixtures completos y verificados para el runtime |
 
-## 12. Discrepancias y bloqueos que requieren decisión
+## 13. Discrepancias y bloqueos que requieren decisión
 
 | ID | Fuente | Problema | Tratamiento en la línea base |
 |---|---|---|---|
@@ -185,7 +189,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | OPEN-006 | §2.2 / §3.2 | Catálogo extenso de tipos sin implementación de sistema de tipos | No declarar tipos de dominio completos |
 | OPEN-007 | N.1.4 | Contrato de deuda remite a contenido "sin cambios" no reproducido aquí | Requiere fuente normativa íntegra antes de implementar |
 
-## 13. Criterios para cerrar v0.2
+## 14. Criterios para cerrar v0.2
 
 Esta primera matriz es la línea base, no el cierre del hito. v0.2 podrá declararse completada cuando:
 
@@ -200,7 +204,7 @@ Esta primera matriz es la línea base, no el cierre del hito. v0.2 podrá declar
 
 **No se publica un porcentaje global todavía.** La matriz mezcla requisitos normativos, construcciones de lenguaje, propuestas de plataforma y ejemplos; primero hay que aprobar qué subconjunto constituye el perfil de v1.0. Contar todas las filas por igual daría una métrica engañosa.
 
-## 14. Relación con el roadmap
+## 15. Relación con el roadmap
 
 - v0.2: esta matriz y la suite de conformidad trazable.
 - v0.3: paridad Python/Rust y serialización IR equivalente.

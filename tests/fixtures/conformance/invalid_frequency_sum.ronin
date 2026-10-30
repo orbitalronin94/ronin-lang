@@ -1,0 +1,1 @@
+system InvalidFrequencySum = { parts: 2, resource: 100, agents: [{ phi: 0.8, psi: 1.0, frequency: 0.6 }, { phi: 0.5, psi: 1.0, frequency: 0.3 }], params: { model: "pusfre", lambda: 0.0, K: inf } }

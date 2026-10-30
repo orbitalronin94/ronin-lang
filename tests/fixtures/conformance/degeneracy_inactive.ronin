@@ -1,0 +1,1 @@
+system DegeneracyInactive = { parts: 2, resource: 100, agents: [{ phi: 0.8, psi: 1.0, frequency: 0.0009 }, { phi: 0.5, psi: 1.0, frequency: 0.9991 }], params: { model: "ces_hill", lambda: 0.5, K: 0.5, alpha_h: 1.5 } }
