@@ -417,20 +417,20 @@ mod tests {
             system Escapes = {
               parts: 1, resource: 1,
               agents: [
-                { phi: 1, psi: 1, frequency: 1, note: "say \\"hi\\"; path C:\\\\ronin\\nnext\\t\\u263A" }
+                { phi: 1, psi: 1, frequency: 1, note: "say \"hi\"; path C:\\ronin\nnext\t\u263A" }
               ]
             }
         "#;
         let systems = parse(source).unwrap();
         assert_eq!(
             systems[0].agents[0].metadata.get("note"),
-            Some(&crate::ast::Value::String("say \\"hi\\"; path C:\\\\ronin\\nnext\\t☺".into()))
+            Some(&crate::ast::Value::String("say \"hi\"; path C:\\ronin\nnext\t☺".into()))
         );
     }
 
     #[test]
     fn rejects_unknown_string_escapes() {
-        let source = r#"system Bad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, note: "bad\\q"}] }"#;
+        let source = r#"system Bad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, note: "bad\q"}] }"#;
         assert!(parse(source).unwrap_err().contains("Unsupported string escape"));
     }
 
