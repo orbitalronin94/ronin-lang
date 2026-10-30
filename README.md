@@ -49,14 +49,14 @@ No presentamos como terminado lo que el documento fuente deja como propuesta o p
 - Los intervalos de confianza bootstrap siguen pendientes; `bootstrap_ci` devuelve `null`.
 - La memoria temporal de orden superior a 1 no tiene un kernel normativo implementado y se rechaza en ejecución.
 - Los ejemplos NeuralScaling y FamaFrench del documento contienen puntos suspensivos, no los conjuntos completos. No inventamos observaciones.
-- Rust contiene ahora un esqueleto Cargo con firmas `todo!()`; no es un runtime Rust.
-- [RONIN Office](office/index.html) es un prototipo local funcional de resolución y diagnóstico para PUSFRE, CES y CES-Hill; no implementa los paneles completos ni el DSL general.
+- Rust contiene un runtime parcial con solver CES/Hill, asignación, IR, simulación R.10, diagnóstico y pruebas; siguen pendientes lexer/parser, CLI, bindings externos y memoria temporal.
+- [RONIN Office](office/index.html) incluye prototipos locales de Chat determinista, Sheet CSV, barrido heurístico, Simulator R.10, Agent Studio y Diagnose; no es todavía la suite completa.
 - WASM y C siguen siendo propuestas; no son backends completos.
 - Los ejemplos 101–130 se han incorporado como declaraciones extraídas o plantillas parser-only. Los ejemplos 1–100 no aparecen en el Markdown entregado.
 
 ## Conformidad y discrepancias de la especificación
 
-Consulta [la cobertura de la fuente y las notas de conformidad](docs/source-coverage.md). El Markdown original está archivado en [docs/source/RONIN_1.1_Edicion_Familia.md](docs/source/RONIN_1.1_Edicion_Familia.md), con su aviso de licencia separado en [docs/source/NOTICE.md](docs/source/NOTICE.md).
+Consulta [la cobertura de la fuente y las notas de conformidad](docs/source-coverage.md). El Markdown original está archivado en [docs/source/RONIN_1.1_Edicion_Familia.md](docs/source/RONIN_1.1_Edicion_Familia.md), con su aviso de licencia separado en [docs/source/NOTICE.md](docs/source/NOTICE.md). Las Partes VI–VIII y el anexo normativo también están separados en [docs/README.md](docs/README.md).
 
 ## Contribuir a RONIN
 
