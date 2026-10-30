@@ -11,11 +11,9 @@ def diagnose(system, bootstrap=0):
 
     params = system.params
     orders = omega_range_orders([agent.frequency for agent in system.agents])
-    state = degeneracy_state(
-        orders,
-        params.K != float("inf"),
-        params.alpha_h != 1.0,
-    )
+    K_free = params.K != float("inf")
+    alpha_h_free = params.alpha_h != 1.0
+    state = degeneracy_state(orders, K_free, alpha_h_free)
 
     if state == "inactive":
         recommendation = "Structural degeneracy inactive under the configured parameter constraints."
@@ -30,13 +28,15 @@ def diagnose(system, bootstrap=0):
             "the observed Omega range to at least three orders."
         )
 
+    # K=inf means the Hill scale is fixed/disabled in this runtime.
+    lambda_identifiable = not K_free
     return DegeneracyReport(
         omega_range_orders=orders,
         degeneracy=state,
-        lambda_identifiable=True,
+        lambda_identifiable=lambda_identifiable,
         K_identifiable=(state == "inactive"),
         alpha_h_identifiable=(state == "inactive"),
         recommendation=recommendation,
-        # Bootstrap parameter fitting is only specified, not implemented.
+        # Bootstrap parameter fitting is specified but not implemented.
         bootstrap_ci=None,
     )
