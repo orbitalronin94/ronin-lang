@@ -6,6 +6,7 @@ import pytest
 from ronin.diagnose import diagnose
 from ronin.errors import SemanticError
 from ronin.parser import parse
+from ronin.lexer import PATTERN, lex
 from ronin.semantics import ces_combine, hill, k_min
 from ronin.simulator import simulate
 from ronin.solver import solve
@@ -72,10 +73,30 @@ def test_ces_arithmetic_mean_at_lambda_one():
     assert ces_combine(0.8, 1.0, 0.6, 1.0) == pytest.approx(0.8)
 
 
-def test_ces_near_zero_keeps_pusfre_compatibility():
+def test_ces_near_zero_uses_geometric_mean_not_pusfre():
     source = MAQ.replace("params: {", 'params: { model: "ces", lambda: 1e-7,')
-    result = solve(parse(source)["Maquinas"])
-    assert result.fitness == pytest.approx([0.48, 0.20], abs=1e-9)
+    system = parse(source)["Maquinas"]
+    result = solve(system)
+    expected = [
+        (agent.phi * agent.psi * agent.frequency) ** (1 / 3)
+        for agent in system.agents
+    ]
+    assert result.fitness == pytest.approx(expected, abs=1e-9)
+    assert result.fitness != pytest.approx([0.48, 0.20], abs=1e-9)
+
+
+def test_ces_combine_clamps_nonpositive_log_inputs():
+    assert ces_combine(0.0, -1.0, 0.5, 1e-7) > 0
+
+
+def test_lexer_has_all_named_groups_and_tokenizes_comments():
+    assert set(PATTERN.groupindex) == {
+        "SPACE", "NEWLINE", "COMMENT", "STRING", "NUMBER", "IDENT", "SYMBOL", "OTHER"
+    }
+    tokens = lex('name: "ronin" // comentario\\nvalue: 1.2')
+    assert [token.kind for token in tokens[:-1]] == [
+        "IDENT", "SYMBOL", "STRING", "NEWLINE", "IDENT", "SYMBOL", "NUMBER"
+    ]
 
 
 def test_model_coherence_is_enforced():
