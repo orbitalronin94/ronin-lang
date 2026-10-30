@@ -1,4 +1,4 @@
-use ronin_core::{ir, parser, solver};
+use ronin_core::{diagnose, ir, parser, solver};
 use std::env;
 use std::fs;
 
@@ -54,20 +54,21 @@ fn json_numbers(values: &[f64]) -> String {
 
 fn parse_args(
     args: &[String],
-) -> Result<(String, String, Option<String>, Option<f64>, Option<String>), String> {
+) -> Result<(String, String, Option<String>, Option<f64>, Option<String>, Option<usize>), String> {
     if args.len() < 2 {
         return Err(
             "usage: ronin-core <list|check|solve|run|compile> FILE [--system NAME] [--delta VALUE] [-o PATH]".into()
         );
     }
     let command = args[0].clone();
-    if !["list", "check", "solve", "run", "compile"].contains(&command.as_str()) {
+    if !["list", "check", "solve", "run", "compile", "diagnose"].contains(&command.as_str()) {
         return Err(format!("unknown command: {}", command));
     }
     let file = args[1].clone();
     let mut system = None;
     let mut delta = None;
     let mut output = None;
+    let mut bootstrap = None;
     let mut index = 2;
     while index < args.len() {
         match args[index].as_str() {
@@ -89,6 +90,17 @@ fn parse_args(
                         .map_err(|_| "--delta must be numeric".to_string())?
                 );
             }
+            "--bootstrap" => {
+                index += 1;
+                if index >= args.len() {
+                    return Err("--bootstrap requires an integer".into());
+                }
+                bootstrap = Some(
+                    args[index]
+                        .parse::<usize>()
+                        .map_err(|_| "--bootstrap must be a non-negative integer".to_string())?
+                );
+            }
             "-o" | "--output" => {
                 index += 1;
                 if index >= args.len() {
@@ -103,14 +115,17 @@ fn parse_args(
     if output.is_some() && command != "compile" {
         return Err("--output is only supported by compile".into());
     }
+    if bootstrap.is_some() && command != "diagnose" {
+        return Err("--bootstrap is only supported by diagnose".into());
+    }
     if system.is_some() && command == "compile" {
         return Err("--system is not supported by compile; all systems are compiled".into());
     }
-    Ok((command, file, system, delta, output))
+    Ok((command, file, system, delta, output, bootstrap))
 }
 
 pub fn execute(args: &[String]) -> Result<String, String> {
-    let (command, file, selected, delta, output_path) = parse_args(args)?;
+    let (command, file, selected, delta, output_path, bootstrap) = parse_args(args)?;
     let source = fs::read_to_string(&file)
         .map_err(|error| format!("cannot read {}: {}", file, error))?;
     let systems = parser::parse(&source)?;
@@ -139,6 +154,20 @@ pub fn execute(args: &[String]) -> Result<String, String> {
 
     if command == "list" {
         return Ok(chosen.iter().map(|system| system.name.as_str()).collect::<Vec<_>>().join("\n"));
+    }
+
+    if command == "diagnose" {
+        let system = chosen.first().ok_or_else(|| "project contains no systems".to_string())?;
+        let report = diagnose::diagnose(system, bootstrap.unwrap_or(0))?;
+        return Ok(format!(
+            "{{\"omega_range_orders\":{},\"degeneracy\":{},\"lambda_identifiable\":{},\"K_identifiable\":{},\"alpha_h_identifiable\":{},\"recommendation\":{},\"bootstrap_ci\":null}}",
+            json_number(report.omega_range_orders),
+            json_string(&report.degeneracy),
+            report.lambda_identifiable,
+            report.k_identifiable,
+            report.alpha_h_identifiable,
+            json_string(&report.recommendation),
+        ));
     }
 
     if command == "check" {
@@ -215,6 +244,42 @@ mod tests {
         assert!(output.starts_with("{\"Maquinas\":{"));
         assert!(output.contains("\"allocation\":["));
         assert!(output.contains("\"fitness\":["));
+    }
+
+    #[test]
+    fn diagnose_command_emits_python_compatible_report() {
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../tests/fixtures/conformance/degeneracy_active.ronin")
+            .to_string_lossy()
+            .into_owned();
+        let args = vec!["diagnose".into(), path];
+        let output = execute(&args).unwrap();
+        assert!(output.contains("\"degeneracy\":\"active\""));
+        assert!(output.contains("\"bootstrap_ci\":null"));
+        assert!(output.contains("\"K_identifiable\":false"));
+    }
+
+    #[test]
+    fn diagnose_accepts_bootstrap_flag_without_fabricating_interval() {
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../tests/fixtures/conformance/degeneracy_active.ronin")
+            .to_string_lossy()
+            .into_owned();
+        let args = vec!["diagnose".into(), path, "--bootstrap".into(), "100".into()];
+        let output = execute(&args).unwrap();
+        assert!(output.contains("\"bootstrap_ci\":null"));
+    }
+
+    #[test]
+    fn diagnose_rejects_negative_bootstrap_count() {
+        let args = vec!["diagnose".into(), fixture(), "--bootstrap".into(), "-1".into()];
+        assert!(execute(&args).unwrap_err().contains("--bootstrap must be a non-negative integer"));
+    }
+
+    #[test]
+    fn diagnose_rejects_bootstrap_flag_on_other_commands() {
+        let args = vec!["solve".into(), fixture(), "--bootstrap".into(), "100".into()];
+        assert!(execute(&args).unwrap_err().contains("--bootstrap is only supported by diagnose"));
     }
 
     #[test]
