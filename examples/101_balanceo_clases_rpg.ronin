@@ -1,0 +1,18 @@
+// Ejemplo 101 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva la declaración system del ejemplo fuente; las instrucciones
+// posteriores (solve/diagnose/print/loops) no pertenecen al parser de la CLI actual.
+system BalanceoClases = {
+    parts: 3,
+    resource: 100,
+    agents: [
+        { name: "Guerrero", phi: 0.9, psi: 0.8, frequency: 0.33 },
+        { name: "Mago", phi: 0.95, psi: 0.5, frequency: 0.33 },
+        { name: "Picaro", phi: 0.75, psi: 0.9, frequency: 0.33 }
+    ],
+    params: { model: "ces", lambda: 0.6, alpha: 1.2, gamma: 0.4, sigma: 0.1 },
+    invariants: [
+        "allocation[0] > 25",
+        "allocation[1] > 25",
+        "allocation[2] > 25"
+    ]
+}
