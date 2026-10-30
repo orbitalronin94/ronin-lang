@@ -25,7 +25,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | CORE-001 | §1.1, §2.1 | Declarar sistemas con partes, recurso, agentes y parámetros | I | P | `ronin/parser.py`; `rust/src/parser.rs`; `tests/test_core.py`; tests de parser Rust |
 | CORE-002 | §1.2, N.1 | Resolver un sistema y calcular fitness/asignación | I | P | `ronin/solver.py`, `ronin/semantics.py`; `rust/src/solver.rs`; test normativo Maquinas |
 | CORE-003 | §1.3, §2.3 | Evaluar coexistencia y umbral `k_min` | P | P | `k_min` y campo coexistence existen; falta cerrar el contrato de coexistencia de la fuente |
-| CORE-004 | §1.4, N.1.4 | Estimar deuda del sistema | P | P | Python `debt()` devuelve placeholder `0.0`; no es un estimador. Rust tampoco aporta estimador normativo |
+| CORE-004 | §1.4, N.1.4 | Estimar deuda del sistema | P | N | Python `debt()` devuelve placeholder `0.0`; no es un estimador. Rust no expone un estimador ni un campo deuda normativo |
 | CORE-005 | §1.5 | Calcular geometría del sistema | N | N | No se encontró función ejecutable con contrato de geometría |
 | CORE-006 | §1.6 | Calcular fatiga de enrutamiento | N | N | No se encontró implementación ejecutable |
 | CORE-007 | §1.7, N.1.5 | Diagnosticar rango Ω y degeneración K–α | I | P | `ronin/diagnose.py`, `rust/src/diagnose.rs`; pruebas de umbral y parámetros no identificables |
@@ -85,7 +85,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | INTEROP-003 | §5.3–5.7 | SQL, REST, GraphQL, WebSockets y gRPC | N | N | No implementados |
 | INTEROP-004 | §5.8 | Leer/escribir formatos de archivo generales desde el lenguaje | N | N | La CLI lee archivos .ronin y escribe artefactos concretos; no existe API DSL general |
 | INTEROP-005 | §5.9 | Importar CSV como datos de sistema | N | N | Existe exportación de resultados CSV, no importación CSV al modelo |
-| INTEROP-006 | §5.10 | Importar JSON de datos como proyecto/sistema | P | N | Python exporta JSON IR; no hay parser general de JSON→System |
+| INTEROP-006 | §5.10 | Importar JSON de datos como proyecto/sistema | N | N | La exportación JSON IR no equivale a importar JSON externo como System |
 | INTEROP-007 | §5.11–5.19 | YAML, TOML, XML, Protobuf, MsgPack, BSON, Avro, Parquet y Arrow | N | N | No implementados |
 | INTEROP-008 | §3.2, §5.10 | Exportar IR JSON versionado | I | P | Python `ronin compile`, `tests/test_compile_ir.py`; Rust baja AST→IR pero no tiene CLI compile/serializador equivalente |
 | INTEROP-009 | §5.9 | Exportar resultados a CSV | I | N | Python `ronin run --format csv`; `tests/test_run_csv.py` |
@@ -153,9 +153,9 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | NORM-003 | N.1 paso 8 | Calcular coexistencia y k_min | P | Fórmula k_min y comparación disponibles; contrato de coexistencia requiere cierre |
 | NORM-004 | N.1 paso 9 | Calcular deuda | N | Placeholder 0.0 no satisface estimación normativa |
 | NORM-005 | N.1 pasos 10–11 | Rango Ω, degeneración y advertencias | I | Pruebas de umbral y diagnóstico |
-| NORM-006 | N.2 Tests 1–2 | Compatibilidad Maquinas y PUSFRE explícito | I | `tests/test_core.py::test_maquinas_normative_result` y validación de modelo por defecto |
+| NORM-006 | N.2 Tests 1–2 | Compatibilidad Maquinas y PUSFRE explícito | I | `tests/test_core.py::test_maquinas_normative_result`, `test_explicit_pusfre_matches_legacy_default` |
 | NORM-007 | N.2 Test 3 | CES con lambda→0 recupera PUSFRE | A | La prueba implementada sigue media geométrica; el anexo pide equivalencia PUSFRE. Requiere decisión normativa, no un cambio silencioso |
-| NORM-008 | N.2 Test 4 | Rechazar modelo/parámetros incoherentes | I | `test_model_coherence_is_enforced` |
+| NORM-008 | N.2 Test 4 | Rechazar modelo/parámetros incoherentes | I | `test_explicit_pusfre_matches_legacy_default`, `test_model_coherence_is_enforced` |
 | NORM-009 | N.2 Tests 5–6 | Detectar degeneración activa/inactiva | I | `test_degeneracy_active_for_narrow_omega_range`, `test_degeneracy_inactive_requires_three_full_orders` |
 | NORM-010 | N.2 Test 7 | Diagnóstico del dataset Neural Scaling real | A | Datos fuente incompletos y valores phi/psi fuera del rango normativo |
 | NORM-011 | N.3 | Cumplimiento integral de tolerancias, simulación y requisitos | P | Hay pruebas parciales; no procede declarar conformidad global |

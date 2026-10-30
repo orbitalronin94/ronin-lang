@@ -29,6 +29,19 @@ def test_maquinas_normative_result():
     assert result.coexistence is True
 
 
+def test_explicit_pusfre_matches_legacy_default():
+    default_system = parse(MAQ)["Maquinas"]
+    explicit_source = MAQ.replace(
+        "params: {", 'params: { model: "pusfre", lambda: 0.0,'
+    )
+    explicit_system = parse(explicit_source)["Maquinas"]
+    default_result = solve(default_system)
+    explicit_result = solve(explicit_system)
+    assert explicit_result.fitness == pytest.approx(default_result.fitness, abs=1e-12)
+    assert explicit_result.allocation == pytest.approx(default_result.allocation, abs=1e-12)
+    assert explicit_result.model_used == "pusfre"
+
+
 def test_parser_and_pesca_validation():
     system = parse(PES)["Pesca"]
     assert system.parts == 5
