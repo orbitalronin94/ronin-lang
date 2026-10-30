@@ -72,6 +72,8 @@ def validate_coherence(params):
         raise SemanticError(f'model "{model}" requires finite K')
     if model != "full" and memory_order != 1:
         raise SemanticError(f'model "{model}" requires memory_order = 1')
+    if model == "full" and memory_order > 1:
+        raise SemanticError("full temporal-memory execution is not implemented")
 
     if params.memory_weights is not None:
         weights = params.memory_weights
