@@ -37,7 +37,7 @@ def test_run_empty_file_returns_a_runtime_error(capsys, tmp_path):
     path = tmp_path / "empty.ronin"
     path.write_text("// no systems\n", encoding="utf-8")
 
-    assert main(["run", str(path)]) == 3
+    assert main(["run", str(path)]) == 1
     assert "no system declarations found" in capsys.readouterr().err
 
 
