@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from math import inf
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 
 @dataclass(frozen=True)
@@ -8,6 +8,7 @@ class Agent:
     phi: float
     psi: float
     frequency: float
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
