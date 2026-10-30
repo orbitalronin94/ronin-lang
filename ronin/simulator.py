@@ -1,15 +1,61 @@
 import random
+
 from .model import Simulation
-from .validator import validate,validate_coherence
-def simulate(system,steps=100,seed=None):
-    validate(system); validate_coherence(system.params)
-    if steps<1: raise ValueError("steps must be >=1")
-    rng=random.Random(seed); state=[a.frequency for a in system.agents]; history=[state.copy()]; extinct=[]
+from .validator import validate, validate_coherence
+
+
+def _project_simplex(values):
+    projected = [max(0.0, value) for value in values]
+    total = sum(projected)
+    if total == 0:
+        return [1.0 / len(projected)] * len(projected)
+    return [value / total for value in projected]
+
+
+def simulate(system, steps=100, seed=None):
+    validate(system)
+    validate_coherence(system.params)
+    if steps < 1:
+        raise ValueError("steps must be >= 1")
+    if system.params.model == "full" and system.params.memory_order > 1:
+        raise ValueError("full temporal-memory simulation is not implemented")
+
+    rng = random.Random(seed)
+    state = [agent.frequency for agent in system.agents]
+    history = [state.copy()]
+    extinction_events = []
+    alpha = system.params.alpha
+    sigma = system.params.sigma
+
     for _ in range(steps):
-        w=[a.phi*a.psi*x**system.params.alpha for a,x in zip(system.agents,state)]; total=sum(w)
-        target=[x/total for x in w] if total else [1/len(w)]*len(w)
-        nxt=[max(0,x+.5*(t-x)+rng.gauss(0,system.params.sigma/10)) for x,t in zip(state,target)]
-        z=sum(nxt); state=[x/z for x in nxt] if z else [1/len(nxt)]*len(nxt)
+        weights = [
+            agent.phi * agent.psi * (max(value, 0.0) ** alpha)
+            for agent, value in zip(system.agents, state)
+        ]
+        total = sum(weights)
+        target = (
+            [weight / total for weight in weights]
+            if total
+            else [1.0 / len(state)] * len(state)
+        )
+        proposal = [
+            value + 0.5 * (target_value - value) + rng.gauss(0.0, sigma / 10.0)
+            for value, target_value in zip(state, target)
+        ]
+        state = _project_simplex(proposal)
+        extinction_events.extend(
+            index
+            for index, value in enumerate(state)
+            if value <= 1e-12 and index not in extinction_events
+        )
         history.append(state.copy())
-        extinct.extend(i for i,x in enumerate(state) if x<=1e-12 and i not in extinct)
-    return Simulation(history,state,steps,seed,extinct,sum(x>1e-12 for x in state)/len(state))
+
+    survivability = sum(value > 1e-12 for value in state) / len(state)
+    return Simulation(
+        history=history,
+        final_state=state,
+        steps=steps,
+        seed=seed,
+        extinction_events=extinction_events,
+        survivability=survivability,
+    )
