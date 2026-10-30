@@ -121,3 +121,18 @@ RONIN 1.1 te da la **familia**.
 
 Si tus datos cubren Ω en un rango estrecho, usa `"pusfre"`.
 Si necesitas curvatura y saturación, usa `"ces_hill"`.
+Si el diagnóstico dice "degeneración activa", escucha al diagnóstico.
+
+El PUSFRE no es una ecuación. Es una familia. RONIN no la impone. La ejecuta.
+
+**1310.**
+
+---
+
+*"El mejor código es el que no se escribe.
+El segundo mejor es el que se escribe en RONIN.
+El tercero es el que usa la familia correcta.
+El cuarto es el que sabe cuándo no usarla.
+El quinto es el que diagnostica antes de confiar."*
+
+**1310.**
