@@ -57,7 +57,7 @@ fn parse_args(
 ) -> Result<(String, String, Option<String>, Option<f64>, Option<String>, Option<usize>, Option<usize>, Option<u64>), String> {
     if args.len() < 2 {
         return Err(
-            "usage: ronin-core <list|check|solve|run|compile> FILE [--system NAME] [--delta VALUE] [-o PATH]".into()
+            "usage: ronin-core <list|check|solve|run|compile|diagnose|simulate> FILE [--system NAME] [--delta VALUE] [--steps N] [--seed N] [--bootstrap N] [-o PATH]".into()
         );
     }
     let command = args[0].clone();
@@ -213,7 +213,7 @@ pub fn execute(args: &[String]) -> Result<String, String> {
 
     if command == "check" {
         for system in &chosen {
-            solver::solve(system, delta.unwrap_or(system.params.coexistence_delta))?;
+            solver::validate_system(system)?;
         }
         return Ok(format!("OK: {} system(s) validated", chosen.len()));
     }
@@ -270,6 +270,26 @@ mod tests {
     fn list_command_prints_every_system_name() {
         let args = vec!["list".into(), fixture()];
         assert_eq!(execute(&args).unwrap(), "Maquinas");
+    }
+
+    #[test]
+    fn check_command_validates_without_running_solver() {
+        let path = std::env::temp_dir()
+            .join(format!("ronin-zero-fitness-{}.ronin", std::process::id()));
+        let source = r#"
+            system ZeroFitness = {
+                parts: 2, resource: 10,
+                agents: [
+                    { phi: 0.0, psi: 0.0, frequency: 0.5 },
+                    { phi: 0.0, psi: 0.0, frequency: 0.5 }
+                ]
+            }
+        "#;
+        fs::write(&path, source).unwrap();
+        let args = vec!["check".into(), path.to_string_lossy().into_owned()];
+        let result = execute(&args).unwrap();
+        assert_eq!(result, "OK: 1 system(s) validated");
+        fs::remove_file(path).unwrap();
     }
 
     #[test]
