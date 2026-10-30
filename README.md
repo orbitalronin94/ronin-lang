@@ -25,6 +25,8 @@ Para Rust, desde el directorio `rust/`:
 cargo test
 cargo run -- check ../examples/maquinas.ronin
 cargo run -- solve ../examples/maquinas.ronin
+cargo run -- diagnose ../tests/fixtures/conformance/degeneracy_active.ronin
+cargo run -- simulate ../examples/maquinas.ronin --steps 100 --seed 42
 cargo run -- compile ../examples/maquinas.ronin -o ../maquinas.ir.json
 ```
 
@@ -47,7 +49,7 @@ python scripts/check_runtime_parity.py
 
 ### Núcleo y CLI Rust
 - Lexer/parser para la sintaxis de proyectos actualmente soportada.
-- CLI `ronin-core` (binario Cargo por defecto) con `list`, `check`, `solve` y `run`.
+- CLI `ronin-core` (binario Cargo por defecto) con `list`, `check`, `solve`, `run`, `compile`, `diagnose` y `simulate`.
 - Conservación de metadatos escalares, arrays y objetos anidados.
 - Parámetros extendidos y lowering AST→IR con estructuras alineadas con Python.
 
@@ -88,7 +90,7 @@ Los hitos son objetivos de ingeniería, no afirmaciones de funcionalidades ya en
 - `debt()` continúa siendo un placeholder `0.0`; no existe un estimador normativo ejecutable.
 - Los intervalos bootstrap siguen pendientes y se devuelven como `null`.
 - La memoria temporal de orden superior a 1 no tiene kernel ejecutable.
-- Rust todavía no ofrece paridad completa con Python ni compilación JSON IR equivalente.
+- Rust todavía no ofrece paridad completa con Python; la simulación usa un RNG diferente y no produce las mismas trayectorias bit a bit.
 - WASM, C, bindings externos y la suite completa RONIN Office no están terminados.
 - Algunos ejemplos y datasets de la fuente están incompletos. No se inventan los cuerpos ausentes de los ejemplos 1–100 ni los datos omitidos.
 

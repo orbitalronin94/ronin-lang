@@ -1,4 +1,4 @@
-use ronin_core::{diagnose, ir, parser, solver};
+use ronin_core::{diagnose, ir, parser, simulator, solver};
 use std::env;
 use std::fs;
 
@@ -54,14 +54,14 @@ fn json_numbers(values: &[f64]) -> String {
 
 fn parse_args(
     args: &[String],
-) -> Result<(String, String, Option<String>, Option<f64>, Option<String>, Option<usize>), String> {
+) -> Result<(String, String, Option<String>, Option<f64>, Option<String>, Option<usize>, Option<usize>, Option<u64>), String> {
     if args.len() < 2 {
         return Err(
             "usage: ronin-core <list|check|solve|run|compile> FILE [--system NAME] [--delta VALUE] [-o PATH]".into()
         );
     }
     let command = args[0].clone();
-    if !["list", "check", "solve", "run", "compile", "diagnose"].contains(&command.as_str()) {
+    if !["list", "check", "solve", "run", "compile", "diagnose", "simulate"].contains(&command.as_str()) {
         return Err(format!("unknown command: {}", command));
     }
     let file = args[1].clone();
@@ -69,6 +69,8 @@ fn parse_args(
     let mut delta = None;
     let mut output = None;
     let mut bootstrap = None;
+    let mut steps = None;
+    let mut seed = None;
     let mut index = 2;
     while index < args.len() {
         match args[index].as_str() {
@@ -89,6 +91,22 @@ fn parse_args(
                         .parse::<f64>()
                         .map_err(|_| "--delta must be numeric".to_string())?
                 );
+            }
+            "--steps" => {
+                index += 1;
+                if index >= args.len() {
+                    return Err("--steps requires an integer".into());
+                }
+                steps = Some(args[index].parse::<usize>()
+                    .map_err(|_| "--steps must be a positive integer".to_string())?);
+            }
+            "--seed" => {
+                index += 1;
+                if index >= args.len() {
+                    return Err("--seed requires an unsigned integer".into());
+                }
+                seed = Some(args[index].parse::<u64>()
+                    .map_err(|_| "--seed must be an unsigned integer".to_string())?);
             }
             "--bootstrap" => {
                 index += 1;
@@ -115,17 +133,23 @@ fn parse_args(
     if output.is_some() && command != "compile" {
         return Err("--output is only supported by compile".into());
     }
+    if (steps.is_some() || seed.is_some()) && command != "simulate" {
+        return Err("--steps and --seed are only supported by simulate".into());
+    }
+    if steps == Some(0) {
+        return Err("--steps must be >= 1".into());
+    }
     if bootstrap.is_some() && command != "diagnose" {
         return Err("--bootstrap is only supported by diagnose".into());
     }
     if system.is_some() && command == "compile" {
         return Err("--system is not supported by compile; all systems are compiled".into());
     }
-    Ok((command, file, system, delta, output, bootstrap))
+    Ok((command, file, system, delta, output, bootstrap, steps, seed))
 }
 
 pub fn execute(args: &[String]) -> Result<String, String> {
-    let (command, file, selected, delta, output_path, bootstrap) = parse_args(args)?;
+    let (command, file, selected, delta, output_path, bootstrap, steps, seed) = parse_args(args)?;
     let source = fs::read_to_string(&file)
         .map_err(|error| format!("cannot read {}: {}", file, error))?;
     let systems = parser::parse(&source)?;
@@ -154,6 +178,23 @@ pub fn execute(args: &[String]) -> Result<String, String> {
 
     if command == "list" {
         return Ok(chosen.iter().map(|system| system.name.as_str()).collect::<Vec<_>>().join("\n"));
+    }
+
+    if command == "simulate" {
+        let system = chosen.first().ok_or_else(|| "project contains no systems".to_string())?;
+        let result = simulator::simulate(system, steps.unwrap_or(100), seed)?;
+        let history: Vec<String> = result.history.iter().map(|state| json_numbers(state)).collect();
+        let extinctions = result.extinction_events.iter().map(|index| index.to_string()).collect::<Vec<_>>().join(",");
+        let seed_json = result.seed.map(|value| value.to_string()).unwrap_or_else(|| "null".into());
+        return Ok(format!(
+            "{{\"history\":[{}],\"final_state\":{},\"steps\":{},\"seed\":{},\"extinction_events\":[{}],\"survivability\":{}}}",
+            history.join(","),
+            json_numbers(&result.final_state),
+            result.steps,
+            seed_json,
+            extinctions,
+            json_number(result.survivability),
+        ));
     }
 
     if command == "diagnose" {
@@ -244,6 +285,30 @@ mod tests {
         assert!(output.starts_with("{\"Maquinas\":{"));
         assert!(output.contains("\"allocation\":["));
         assert!(output.contains("\"fitness\":["));
+    }
+
+    #[test]
+    fn simulate_command_emits_reproducible_json_for_explicit_seed() {
+        let args = vec!["simulate".into(), fixture(), "--steps".into(), "8".into(), "--seed".into(), "42".into()];
+        let first = execute(&args).unwrap();
+        let second = execute(&args).unwrap();
+        assert_eq!(first, second);
+        assert!(first.contains("\"steps\":8"));
+        assert!(first.contains("\"seed\":42"));
+        assert!(first.contains("\"history\":["));
+        assert!(first.contains("\"final_state\":["));
+    }
+
+    #[test]
+    fn simulate_command_rejects_zero_steps() {
+        let args = vec!["simulate".into(), fixture(), "--steps".into(), "0".into()];
+        assert!(execute(&args).unwrap_err().contains("--steps must be >= 1"));
+    }
+
+    #[test]
+    fn simulate_flags_are_rejected_for_other_commands() {
+        let args = vec!["solve".into(), fixture(), "--seed".into(), "42".into()];
+        assert!(execute(&args).unwrap_err().contains("only supported by simulate"));
     }
 
     #[test]
