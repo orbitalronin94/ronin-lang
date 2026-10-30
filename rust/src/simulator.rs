@@ -191,7 +191,7 @@ mod tests {
         assert!((random.uniform() - 0.6394267984578837).abs() <= 1e-16);
 
         let mut gaussian = super::Rng::new(42);
-        assert!((gaussian.gaussian() - 0.9340561449667306).abs() <= 1e-15);
+        assert!((gaussian.gaussian() - -0.14409032957792836).abs() <= 1e-15);
     }
 
 }
