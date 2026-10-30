@@ -1,5 +1,6 @@
 import random
 
+from .errors import SemanticError
 from .model import Simulation
 from .validator import validate, validate_coherence
 
@@ -18,7 +19,7 @@ def simulate(system, steps=100, seed=None):
     if steps < 1:
         raise ValueError("steps must be >= 1")
     if system.params.model == "full" and system.params.memory_order > 1:
-        raise ValueError("full temporal-memory simulation is not implemented")
+        raise SemanticError("full temporal-memory execution is not implemented")
 
     rng = random.Random(seed)
     state = [agent.frequency for agent in system.agents]
