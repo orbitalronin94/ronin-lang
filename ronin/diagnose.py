@@ -28,14 +28,18 @@ def diagnose(system, bootstrap=0):
             "the observed Omega range to at least three orders."
         )
 
-    # K=inf means the Hill scale is fixed/disabled in this runtime.
+    # K=inf disables the Hill component; its parameters are not estimable.
+    # With finite K and fixed alpha_h, K can be identified independently.
+    # If both are free, the Omega range must span at least three orders.
     lambda_identifiable = not K_free
+    K_identifiable = K_free and (not alpha_h_free or orders >= 3.0)
+    alpha_h_identifiable = K_free and alpha_h_free and orders >= 3.0
     return DegeneracyReport(
         omega_range_orders=orders,
         degeneracy=state,
         lambda_identifiable=lambda_identifiable,
-        K_identifiable=(state == "inactive"),
-        alpha_h_identifiable=(state == "inactive"),
+        K_identifiable=K_identifiable,
+        alpha_h_identifiable=alpha_h_identifiable,
         recommendation=recommendation,
         # Bootstrap parameter fitting is specified but not implemented.
         bootstrap_ci=None,
