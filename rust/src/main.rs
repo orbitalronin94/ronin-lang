@@ -247,6 +247,42 @@ mod tests {
     }
 
     #[test]
+    fn diagnose_command_emits_python_compatible_report() {
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../tests/fixtures/conformance/degeneracy_active.ronin")
+            .to_string_lossy()
+            .into_owned();
+        let args = vec!["diagnose".into(), path];
+        let output = execute(&args).unwrap();
+        assert!(output.contains("\"degeneracy\":\"active\""));
+        assert!(output.contains("\"bootstrap_ci\":null"));
+        assert!(output.contains("\"K_identifiable\":false"));
+    }
+
+    #[test]
+    fn diagnose_accepts_bootstrap_flag_without_fabricating_interval() {
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../tests/fixtures/conformance/degeneracy_active.ronin")
+            .to_string_lossy()
+            .into_owned();
+        let args = vec!["diagnose".into(), path, "--bootstrap".into(), "100".into()];
+        let output = execute(&args).unwrap();
+        assert!(output.contains("\"bootstrap_ci\":null"));
+    }
+
+    #[test]
+    fn diagnose_rejects_negative_bootstrap_count() {
+        let args = vec!["diagnose".into(), fixture(), "--bootstrap".into(), "-1".into()];
+        assert!(execute(&args).unwrap_err().contains("--bootstrap must be a non-negative integer"));
+    }
+
+    #[test]
+    fn diagnose_rejects_bootstrap_flag_on_other_commands() {
+        let args = vec!["solve".into(), fixture(), "--bootstrap".into(), "100".into()];
+        assert!(execute(&args).unwrap_err().contains("--bootstrap is only supported by diagnose"));
+    }
+
+    #[test]
     fn compile_command_emits_versioned_ir() {
         let args = vec!["compile".into(), fixture()];
         let output = execute(&args).unwrap();
