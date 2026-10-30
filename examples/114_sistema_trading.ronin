@@ -1,0 +1,15 @@
+// Ejemplo 114 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva la declaración system del ejemplo fuente; las instrucciones
+// posteriores (solve/diagnose/print/loops) no pertenecen al parser de la CLI actual.
+system SistemaTrading = {
+    parts: 4,
+    resource: 1000000,
+    agents: [
+        { name: "Momentum", phi: 0.8, psi: 0.6, frequency: 0.3 },
+        { name: "MeanReversion", phi: 0.7, psi: 0.8, frequency: 0.3 },
+        { name: "Arbitrage", phi: 0.9, psi: 0.5, frequency: 0.2 },
+        { name: "Hedging", phi: 0.6, psi: 0.95, frequency: 0.2 }
+    ],
+    params: { model: "ces_hill", lambda: 0.5, K: 1.0, alpha_h: 1.4,
+              alpha: 1.0, gamma: 0.4, sigma: 0.2 }
+}
