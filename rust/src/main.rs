@@ -150,7 +150,7 @@ pub fn execute(args: &[String]) -> Result<String, String> {
 
     let mut entries = Vec::new();
     for system in chosen {
-        let result = solver::solve(system, delta)?;
+
         let result = solver::solve(system, delta.unwrap_or(system.params.coexistence_delta))?;
         let entry = format!(
             "{}:{{\"allocation\":{},\"fitness\":{},\"coexistence\":{},\"k_min\":{},\"model_used\":{},\"lambda_used\":{},\"K_used\":{},\"alpha_h_used\":{},\"omega_range\":{},\"degeneracy\":{}}}",
