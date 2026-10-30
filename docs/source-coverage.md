@@ -6,6 +6,8 @@ Este documento relaciona el comportamiento del repositorio con MDES v0.5 y con e
 
 ## Runtime de referencia Python (v0.1)
 
+La [matriz de trazabilidad MDES v0.5](conformance-matrix.md) contiene IDs por requisito, estado por backend y pruebas asociadas.
+
 | Sección fuente | Estado en el repositorio |
 |---|---|
 | R.3–R.4: modelo de datos y errores | Implementado en `ronin/model.py` y `ronin/errors.py` |
@@ -14,7 +16,7 @@ Este documento relaciona el comportamiento del repositorio con MDES v0.5 y con e
 | R.8–R.9: semántica y solver | PUSFRE, CES, Hill, CES-Hill, asignación, `k_min` y diagnóstico de rango K–α |
 | R.10: simulador | Kernel reproducible de deriva, ruido y simplex |
 | R.11: diagnóstico | Rango Ω, estado de degeneración, identificabilidad y recomendación |
-| R.12: CLI | Comandos `check`, `solve`, `simulate` y `diagnose` |
+| R.12: CLI | Comandos `list`, `check`, `solve`, `simulate`, `diagnose`, `run`, `compile` y `repl` |
 | R.13: pruebas | Pruebas de aceptación y regresión con pytest |
 | R.14: ejemplos | Maquinas, Pesca, CES y ejemplos de degeneración ejecutables |
 
@@ -46,7 +48,7 @@ La fuente proporciona la fórmula de `k_min` e indica que se advierta cuando el 
 
 ## Otros objetivos descritos en el Markdown
 
-- **Rust (Parte VI / 6.1–6.14):** el repositorio implementa ahora lowering AST→IR, validación básica, Hill/CES, asignación, `k_min`, simulación R.10 y diagnóstico, con pruebas de regresión. Sigue faltando lexer/parser Rust, CLI, bindings PyO3/WASM/C y memoria temporal; no se declara runtime completo ni conforme.
+- **Rust (Parte VI / 6.1–6.14):** el repositorio implementa AST, lexer/parser para la sintaxis soportada, IR interno, solver, simulador, diagnóstico y CLI `list`, `check`, `solve`, `run`. Siguen pendientes serialización JSON IR/CLI `compile`, paridad completa, bindings PyO3/WASM/C y memoria temporal. No se declara runtime completo ni conforme.
 - **WASM y C (6.13–6.14):** son bocetos de extensión; el generador C contiene puntos suspensivos y no es un backend completo.
 - **RONIN Office (Parte VII):** se describen paneles, mockups y tablas de estado. Este runtime Python no incluye la interfaz Office.
 - **Motor JavaScript (7.9):** el ejemplo contiene puntos suspensivos y no es un backend completo ni conforme.
@@ -59,7 +61,7 @@ La fuente proporciona la fórmula de `k_min` e indica que se advierta cuando el 
 - **Simulador R.10:** el kernel Python ya implementaba la proyección al símplex, deriva de medio paso, ruido gaussiano con `sigma / 10` y generador local `random.Random(seed)`. Se mantiene esa fórmula del documento y se refuerzan las pruebas de reproducibilidad con semilla y determinismo cuando `sigma = 0`. No se ha cambiado el kernel.
 - **Memoria temporal:** los órdenes superiores a 1 del modelo `full` se rechazan con `SemanticError` y un mensaje explícito; no existe aún implementación de memoria extendida.
 - **Identificabilidad:** el diagnóstico distingue entre la rama Hill desactivada (`K = inf`), un exponente Hill fijado y el caso en que K y alpha_h son libres. El rango Ω de al menos tres órdenes es requisito para informar ambos parámetros libres como identificables.
-- **Rust:** existe un crate con AST, lexer/parser, IR, solver, simulador, diagnóstico y CLI inicial. Las pruebas cubren el subconjunto implementado. No es todavía un backend plenamente conforme ni equivalente al runtime Python.
+- **Rust:** existe un crate con AST, lexer/parser, IR interno, solver, simulador, diagnóstico y CLI inicial. Las pruebas cubren el subconjunto implementado. No es todavía un backend plenamente conforme ni equivalente al runtime Python.
 - **RONIN Office:** `office/index.html` contiene un prototipo local sin dependencias para PUSFRE, CES y CES-Hill, con edición de agentes, asignación y diagnóstico. No implementa todos los paneles de la especificación.
 
 ## Cobertura real de los 130 ejemplos del material fuente

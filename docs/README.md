@@ -7,7 +7,8 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 - [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
 - [Roadmap de v0.1 a v1.0](roadmap.md)
 - [Especificación formal de MDES](spec.md) · [English companion](spec.en.md)
-- [Índice de cobertura y conformidad](source-coverage.md)
+- [Matriz de trazabilidad y conformidad MDES v0.5](conformance-matrix.md) — IDs, estado Python/Rust, pruebas y bloqueos.
+- [Cobertura y límites de implementación](source-coverage.md)
 
 ## Especificación y arquitectura
 
