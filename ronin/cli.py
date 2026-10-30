@@ -12,12 +12,24 @@ from .solver import solve
 from .validator import validate, validate_coherence
 
 
-def _load_first_system(path):
+def _load_systems(path):
     with open(path, encoding="utf-8") as source_file:
         systems = parse(source_file.read())
     if not systems:
         raise RoninError("no system declarations found")
-    return next(iter(systems.values()))
+    return systems
+
+
+def _select_system(systems, name=None):
+    if name is None:
+        return next(iter(systems.values()))
+    try:
+        return systems[name]
+    except KeyError as error:
+        available = ", ".join(systems)
+        raise RoninError(
+            f"unknown system {name!r}; available systems: {available}"
+        ) from error
 
 
 def main(argv=None):
@@ -27,19 +39,25 @@ def main(argv=None):
     )
     commands = parser.add_subparsers(dest="command", required=True)
 
+    command = commands.add_parser("list", help="list systems declared in a file")
+    command.add_argument("file")
+
     for name in ("check", "solve"):
         command = commands.add_parser(name)
         command.add_argument("file")
+        command.add_argument("--system", help="system name (default: first declaration)")
         if name == "solve":
             command.add_argument("--delta", type=float, default=None)
 
     command = commands.add_parser("simulate")
     command.add_argument("file")
+    command.add_argument("--system", help="system name (default: first declaration)")
     command.add_argument("--steps", type=int, default=100)
     command.add_argument("--seed", type=int)
 
     command = commands.add_parser("diagnose")
     command.add_argument("file")
+    command.add_argument("--system", help="system name (default: first declaration)")
     command.add_argument("--bootstrap", type=int, default=0)
 
     commands.add_parser("repl", help="start the interactive RONIN command console")
@@ -51,7 +69,20 @@ def main(argv=None):
             run_repl()
             return 0
 
-        system = _load_first_system(args.file)
+        systems = _load_systems(args.file)
+        if args.command == "list":
+            for name in systems:
+                print(name)
+            return 0
+
+        if args.command == "check" and args.system is None:
+            for system in systems.values():
+                validate(system)
+                validate_coherence(system.params)
+            print(f"OK ({len(systems)} systems)")
+            return 0
+
+        system = _select_system(systems, args.system)
         if args.command == "check":
             validate(system)
             validate_coherence(system.params)
