@@ -4,7 +4,7 @@
 system LotkaCES = {
     parts: 5,
     resource: 1000,
-    agents: [ /* especies con nichos */ ],
+    agents: [ // especies con nichos ],
     params: {
         model: "ces",
         lambda: 0.7,
