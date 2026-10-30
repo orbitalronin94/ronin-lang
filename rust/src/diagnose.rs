@@ -49,6 +49,20 @@ mod tests {
     }
 
     #[test]
+    fn shared_diagnostic_fixtures_match_expected_states() {
+        let cases = [
+            (include_str!("../../tests/fixtures/conformance/degeneracy_active.ronin"), "active"),
+            (include_str!("../../tests/fixtures/conformance/degeneracy_inactive.ronin"), "inactive"),
+            (include_str!("../../tests/fixtures/conformance/degeneracy_unknown.ronin"), "unknown"),
+        ];
+        for (source, expected) in cases {
+            let system = parser::parse(source).unwrap().remove(0);
+            let report = diagnose(&system, 0).unwrap();
+            assert_eq!(report.degeneracy, expected);
+        }
+    }
+
+    #[test]
     fn reports_active_degeneracy_for_narrow_omega_range() {
         let system = hill_system();
         let report = diagnose(&system, 0).unwrap();
