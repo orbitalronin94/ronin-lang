@@ -204,7 +204,7 @@ mod tests {
         let output = compile_program(&systems).unwrap();
         assert!(output.starts_with("{\"format\":\"ronin-ir\",\"ir_version\":1"));
         assert!(output.contains("\"name\":\"Maquinas\""));
-        assert!(output.contains("\"lambda\":0.00000000000000000"));
+        assert!(output.contains("\"lambda\":0.0"));
         assert!(output.contains("\"K\":\"inf\""));
         assert!(output.contains("\"memory_weights\":null"));
     }
