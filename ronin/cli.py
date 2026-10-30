@@ -1,4 +1,5 @@
 import argparse
+import csv
 import json
 import sys
 from dataclasses import asdict
@@ -33,6 +34,23 @@ def _select_system(systems, name=None):
         ) from error
 
 
+def _write_run_csv(systems, results, stream):
+    writer = csv.writer(stream, lineterminator="\n")
+    writer.writerow(("system", "agent_index", "model", "fitness", "allocation"))
+    for name, system in systems.items():
+        result = results[name]
+        for index, (fitness, allocation) in enumerate(
+            zip(result["fitness"], result["allocation"]), start=1
+        ):
+            writer.writerow((
+                name,
+                index,
+                system.params.model,
+                format(fitness, ".17g"),
+                format(allocation, ".17g"),
+            ))
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="ronin")
     parser.add_argument(
@@ -58,6 +76,10 @@ def main(argv=None):
     command.add_argument(
         "--delta", type=float, default=None,
         help="coexistence threshold override applied to every system",
+    )
+    command.add_argument(
+        "--format", choices=("json", "csv"), default="json",
+        help="result format (default: json)",
     )
 
     for name in ("check", "solve"):
@@ -108,7 +130,10 @@ def main(argv=None):
                 name: asdict(solve(system, delta=args.delta))
                 for name, system in systems.items()
             }
-            print(json.dumps(results, indent=2, default=str))
+            if args.format == "csv":
+                _write_run_csv(systems, results, sys.stdout)
+            else:
+                print(json.dumps(results, indent=2, default=str))
             return 0
 
         if args.command == "check" and args.system is None:
