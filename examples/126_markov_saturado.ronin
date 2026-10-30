@@ -4,7 +4,7 @@
 system MarkovSaturado = {
     parts: 8,
     resource: 1.0,
-    agents: [ /* estados con frecuencias */ ],
+    agents: [ // estados con frecuencias ],
     params: {
         model: "hill",
         K: 0.5,
