@@ -1,17 +1,37 @@
-# Example status
+# Ejemplos de RONIN 1.1
 
-Runnable examples:
+**Documentación principal en castellano. English version follows below.**
 
-- `maquinas.ronin`: PUSFRE compatibility acceptance case.
+## Ejemplos ejecutables
+
+- `maquinas.ronin`: caso de aceptación PUSFRE.
+- `maquinas_ces.ronin`: extensión CES.
+- `pesca.ronin`: escenario base de cinco agentes.
+- `degeneracy_active.ronin`: rango Ω estrecho; degeneración K–α activa.
+- `degeneracy_inactive.ronin`: rango Ω superior a tres órdenes completos.
+
+El documento fuente también bosqueja NeuralScaling (46 modelos) y FamaFrench (720 observaciones mensuales), pero ambos ejemplos contienen puntos suspensivos en lugar de todos los registros. El extracto NeuralScaling además proporciona valores de phi y psi superiores a 1, aunque el mismo documento limita ambos a [0,1]. No sustituimos esos datos por observaciones sintéticas: siguen siendo plantillas hasta que se faciliten los datasets y se resuelva la contradicción de rangos.
+
+## Ejecutar
+
+Desde la raíz del repositorio:
+
+```bash
+ronin check examples/maquinas.ronin
+ronin solve examples/maquinas.ronin
+ronin solve examples/maquinas_ces.ronin
+ronin simulate examples/pesca.ronin --steps 100 --seed 42
+```
+
+---
+
+# RONIN 1.1 examples (English)
+
+Runnable fixtures:
+
+- `maquinas.ronin`: PUSFRE acceptance case.
 - `maquinas_ces.ronin`: CES extension.
 - `pesca.ronin`: five-agent baseline.
-- `degeneracy_active.ronin`: narrow Omega range, K-alpha degeneracy active.
-- `degeneracy_inactive.ronin`: Omega range above three full orders.
+- `degeneracy_active.ronin` and `degeneracy_inactive.ronin`: active and inactive K–alpha degeneracy cases.
 
-The supplied RONIN 1.1 document also sketches NeuralScaling (46 models) and
-FamaFrench (720 monthly observations), but both examples contain ellipses
-instead of complete records. The NeuralScaling excerpt also supplies phi and
-psi values above 1 although the same document's validator constrains both to
-[0,1]. No synthetic observations are substituted here: those examples remain
-templates until the source dataset and a resolution of the range conflict are
-provided.
+The supplied NeuralScaling and FamaFrench examples are incomplete templates, not runnable datasets. No synthetic observations are substituted for the missing records.
