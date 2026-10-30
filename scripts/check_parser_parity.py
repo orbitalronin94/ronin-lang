@@ -124,7 +124,12 @@ def main():
         for label, source in VALID_SOURCES.items():
             path = Path(directory) / f"{label}.ronin"
             path.write_text(source, encoding="utf-8")
-            compare(path, True, label, [label.split("_")[0].capitalize() if label != "comments_and_extended_params" else "Coastal"] if False else None)
+            expected_names = {
+            "comments_and_extended_params": ["Coastal"],
+            "escaped_unicode_string": ["Escapes"],
+            "nested_object_and_arrays": ["Nested"],
+        }[label]
+        compare(path, True, label, expected_names)
         for label, source in INVALID_SOURCES.items():
             path = Path(directory) / f"{label}.ronin"
             path.write_text(source, encoding="utf-8")
