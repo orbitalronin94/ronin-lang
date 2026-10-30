@@ -6,6 +6,7 @@ from dataclasses import asdict
 from . import __version__
 from .diagnose import diagnose
 from .errors import RoninError
+from .ir import compile_program
 from .parser import parse
 from .simulator import simulate
 from .solver import solve
@@ -41,6 +42,14 @@ def main(argv=None):
 
     command = commands.add_parser("list", help="list systems declared in a file")
     command.add_argument("file")
+
+    command = commands.add_parser(
+        "compile", help="validate a RONIN file and emit normalized JSON IR"
+    )
+    command.add_argument("file")
+    command.add_argument(
+        "-o", "--output", help="write JSON IR to this path instead of stdout"
+    )
 
     command = commands.add_parser(
         "run", help="solve every system declared in a RONIN file"
@@ -82,6 +91,16 @@ def main(argv=None):
         if args.command == "list":
             for name in systems:
                 print(name)
+            return 0
+
+        if args.command == "compile":
+            ir = compile_program(systems)
+            output = json.dumps(ir, indent=2, ensure_ascii=False, allow_nan=False)
+            if args.output:
+                with open(args.output, "w", encoding="utf-8") as output_file:
+                    output_file.write(output + "\n")
+            else:
+                print(output)
             return 0
 
         if args.command == "run":
