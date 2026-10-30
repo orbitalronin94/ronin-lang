@@ -98,7 +98,7 @@ Los hitos son objetivos de ingeniería, no afirmaciones de funcionalidades ya en
 - `debt()` continúa siendo un placeholder `0.0`; no existe un estimador normativo ejecutable.
 - Los intervalos bootstrap siguen pendientes y se devuelven como `null`.
 - La memoria temporal de orden superior a 1 no tiene kernel ejecutable.
-- Rust todavía no ofrece paridad completa con Python; la simulación usa un RNG diferente y no produce las mismas trayectorias bit a bit.
+- Rust todavía no ofrece paridad completa con Python en todas las áreas; la simulación sí reproduce las trayectorias Python para semillas enteras compartidas con tolerancia 1e-12.
 - WASM, C, bindings externos y la suite completa RONIN Office no están terminados.
 - Algunos ejemplos y datasets de la fuente están incompletos. No se inventan los cuerpos ausentes de los ejemplos 1–100 ni los datos omitidos.
 

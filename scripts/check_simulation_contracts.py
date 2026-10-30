@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check shared simulation invariants without claiming identical RNG streams."""
+"""Compare seeded Python/Rust simulation trajectories and shared invariants."""
 
 import json
 import math
@@ -93,8 +93,15 @@ def main():
         rs = validate(run_rust(path), initial, path, "Rust")
         if len(py["history"]) != len(rs["history"]):
             raise AssertionError(f"simulation contract length differs: {path}")
+        for step, (py_state, rs_state) in enumerate(zip(py["history"], rs["history"])):
+            for index, (left, right) in enumerate(zip(py_state, rs_state)):
+                if not math.isclose(left, right, rel_tol=1e-12, abs_tol=1e-12):
+                    raise AssertionError(
+                        f"seeded trajectory mismatch at {path.name}, step {step}, "
+                        f"agent {index}: Python={left!r}, Rust={right!r}"
+                    )
         print(f"simulation invariants OK: {path.relative_to(ROOT)}")
-    print("Note: random trajectories are intentionally not compared across runtimes.")
+    print("Seeded Python/Rust trajectories match within 1e-12.")
 
 
 if __name__ == "__main__":
