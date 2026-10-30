@@ -10,3 +10,8 @@ Este directorio inicia el workspace de Cargo y refleja los módulos principales 
 - CI ejecuta `cargo check` para verificar que el esqueleto compila.
 
 Esto **no** es todavía el compilador ni runtime Rust conforme. No se han añadido dependencias externas en esta fase.
+
+
+## Especificación completa
+
+La Parte VI original (secciones 6.1–6.14, incluidos AST, lexer/parser, validador, IR, solver, simulador, diagnóstico, CLI, tests, PyO3, WASM y C) se conserva en [`docs/rust-backend-spec.md`](../docs/rust-backend-spec.md). El workspace actual sigue siendo un esqueleto: `todo!()` y las integraciones opcionales no se presentan como implementadas. La especificación describe el destino, no el estado ejecutable actual.
