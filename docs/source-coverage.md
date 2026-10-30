@@ -124,3 +124,6 @@ Green CI certifies only the Python implementation, tests and executable examples
 
 
 **Simulación Rust:** `ronin-core simulate FILE [--steps N] [--seed N]` expone el simulador existente por CLI. La semilla fija reproduce la misma trayectoria dentro de Rust; Python usa `random.Random`, así que las trayectorias no son idénticas entre backends.
+
+
+**Contrato compartido de simulación:** `scripts/check_simulation_contracts.py` ejecuta los mismos fixtures en ambos backends y comprueba historial, dimensiones, simplex, estado inicial, eventos de extinción y supervivencia. No exige igualdad de trayectorias: Python usa `random.Random` y Rust xorshift.
