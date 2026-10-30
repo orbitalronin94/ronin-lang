@@ -78,7 +78,7 @@ function addAgent(phi,psi,frequency){
 }
 function renumber(){[...tbody.rows].forEach((r,i)=>r.querySelector(".agent-number").textContent=String(i+1));}
 function agents(){return [...tbody.rows].map(row=>{const v=[...row.querySelectorAll("input")].map(x=>Number(x.value));return {phi:v[0],psi:v[1],frequency:v[2]};});}
-function hill(omega,K,alphaH){if(!Number.isFinite(K))return omega;const x=Math.pow(Math.max(omega,EPS)/K,alphaH);return x/(1+x);}
+function hill(omega,K,alphaH){if(!Number.isFinite(K))return omega;if(omega<=0)return 0;const x=Math.pow(omega/K,alphaH);return x/(1+x);}
 function cesCombine(phi,psi,omega,lambda){
  const values=[phi,psi,omega].map(x=>Math.max(Number(x),EPS));
  if(Math.abs(lambda)<1e-6)return Math.exp(values.reduce((s,x)=>s+Math.log(x)/3,0));
