@@ -19,10 +19,30 @@ fn json_string(value: &str) -> String {
     out
 }
 
+fn json_number(value: f64) -> String {
+    if value.is_nan() {
+        json_string("nan")
+    } else if value == f64::INFINITY {
+        json_string("inf")
+    } else if value == f64::NEG_INFINITY {
+        json_string("-inf")
+    } else {
+        format!("{:?}", value)
+    }
+}
+
+fn json_option_number(value: Option<f64>) -> String {
+    value.map(json_number).unwrap_or_else(|| "null".into())
+}
+
+fn json_option_bool(value: Option<bool>) -> String {
+    value.map(|item| item.to_string()).unwrap_or_else(|| "null".into())
+}
+
 fn json_numbers(values: &[f64]) -> String {
     let items: Vec<String> = values.iter().map(|value| {
         if value.is_finite() {
-            format!("{:.17}", value)
+            json_number(*value)
         } else if value.is_sign_positive() {
             "\"inf\"".into()
         } else {
@@ -34,7 +54,7 @@ fn json_numbers(values: &[f64]) -> String {
 
 fn parse_args(
     args: &[String],
-) -> Result<(String, String, Option<String>, f64, Option<String>), String> {
+) -> Result<(String, String, Option<String>, Option<f64>, Option<String>), String> {
     if args.len() < 2 {
         return Err(
             "usage: ronin-core <list|check|solve|run|compile> FILE [--system NAME] [--delta VALUE] [-o PATH]".into()
@@ -46,7 +66,7 @@ fn parse_args(
     }
     let file = args[1].clone();
     let mut system = None;
-    let mut delta = 0.05;
+    let mut delta = None;
     let mut output = None;
     let mut index = 2;
     while index < args.len() {
@@ -63,9 +83,11 @@ fn parse_args(
                 if index >= args.len() {
                     return Err("--delta requires a number".into());
                 }
-                delta = args[index]
-                    .parse::<f64>()
-                    .map_err(|_| "--delta must be numeric".to_string())?;
+                delta = Some(
+                    args[index]
+                        .parse::<f64>()
+                        .map_err(|_| "--delta must be numeric".to_string())?
+                );
             }
             "-o" | "--output" => {
                 index += 1;
@@ -121,27 +143,28 @@ pub fn execute(args: &[String]) -> Result<String, String> {
 
     if command == "check" {
         for system in &chosen {
-            solver::solve(system, delta)?;
+            solver::solve(system, delta.unwrap_or(system.params.coexistence_delta))?;
         }
         return Ok(format!("OK: {} system(s) validated", chosen.len()));
     }
 
     let mut entries = Vec::new();
     for system in chosen {
-        let result = solver::solve(system, delta)?;
+
+        let result = solver::solve(system, delta.unwrap_or(system.params.coexistence_delta))?;
         let entry = format!(
-            "{}:{{\"allocation\":{},\"fitness\":{},\"model_used\":{},\"lambda_used\":{:.17},\"K_used\":{},\"alpha_h_used\":{:.17}}}",
+            "{}:{{\"allocation\":{},\"fitness\":{},\"coexistence\":{},\"k_min\":{},\"model_used\":{},\"lambda_used\":{},\"K_used\":{},\"alpha_h_used\":{},\"omega_range\":{},\"degeneracy\":{}}}",
             json_string(&system.name),
             json_numbers(&result.allocation),
             json_numbers(&result.fitness),
+            json_option_bool(result.coexistence),
+            json_option_number(result.k_min),
             json_string(&result.model_used),
-            result.lambda_used,
-            if result.k_used.is_finite() {
-                format!("{:.17}", result.k_used)
-            } else {
-                json_string("inf")
-            },
-            result.alpha_h_used,
+            json_number(result.lambda_used),
+            json_number(result.k_used),
+            json_number(result.alpha_h_used),
+            json_number(result.omega_range_orders),
+            json_string(&result.degeneracy),
         );
         entries.push(entry);
     }
