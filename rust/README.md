@@ -1,15 +1,18 @@
-# Esqueleto Rust de RONIN 1.1
+# Runtime Rust parcial de RONIN 1.1
 
 Este directorio inicia el workspace de Cargo y refleja los módulos principales descritos en la Parte VI del documento maestro.
 
 ## Estado
 
-- AST y estructuras de salida: tipos mínimos en `ast.rs`.
-- IR: estructura y punto de entrada de lowering.
-- Solver, simulador y diagnóstico: firmas públicas con `todo!()` para implementación futura.
-- CI ejecuta `cargo check` para verificar que el esqueleto compila.
+- AST y estructuras de salida: tipos base en `ast.rs`.
+- IR: lowering AST → IR implementado.
+- Solver: validación de parámetros, Hill, CES, asignación, `k_min` y estado de degeneración implementados.
+- Simulator: deriva R.10, ruido gaussiano con RNG local reproducible y proyección al símplex implementados.
+- Diagnose: rango Ω, estado, identificabilidad y recomendación implementados; bootstrap continúa sin ajuste estadístico.
+- Pruebas Rust: caso Maquinas, proyección, reproducibilidad, diagnóstico y rechazo de memoria temporal.
+- CI ejecuta `cargo test` y `cargo check`.
 
-Esto **no** es todavía el compilador ni runtime Rust conforme. No se han añadido dependencias externas en esta fase.
+Esto ya no es solo un esqueleto, pero **no** es todavía el compilador Rust completo ni un runtime conforme: no hay lexer/parser, validador independiente, CLI ni bindings PyO3/WASM/C. La memoria temporal sigue rechazada. La implementación no depende de crates externos.
 
 
 ## Especificación completa
