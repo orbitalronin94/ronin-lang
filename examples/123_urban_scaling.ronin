@@ -4,7 +4,7 @@
 system UrbanScaling = {
     parts: 10000,
     resource: 1.0,
-    agents: [ // PIB, población, infraestructura ],
+    agents: [], // PIB, población, infraestructura ],
     params: {
         model: "ces_hill",
         lambda: 0.5,
