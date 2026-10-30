@@ -7,6 +7,7 @@ pub enum Value {
     Number(f64),
     String(String),
     Array(Vec<Value>),
+    Object(BTreeMap<String, Value>),
 }
 
 #[derive(Clone, Debug, PartialEq)]
