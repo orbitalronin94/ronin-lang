@@ -19,7 +19,7 @@ def solve(system, delta=0.05):
     return Solution(
         allocation=alloc,
         fitness=fs,
-        coexistence=None,
+        coexistence=(system.resource >= k_min(system, delta)) if k_min(system, delta) is not None else None,
         k_min=k_min(system, delta),
         debt=debt(system),
         convergence=True,
