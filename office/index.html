@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RONIN Office — Motor local</title>
+<style>
+:root{color-scheme:light dark;font-family:system-ui,sans-serif}body{max-width:1050px;margin:2rem auto;padding:0 1rem;line-height:1.5}
+h1{margin-bottom:.2rem}.muted{opacity:.72}.panel{border:1px solid #8886;border-radius:12px;padding:1rem;margin:1rem 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.8rem}
+label{display:flex;flex-direction:column;gap:.25rem;font-size:.92rem}
+input,select,button{font:inherit;padding:.55rem;border:1px solid #8888;border-radius:7px}
+button{cursor:pointer}.actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+table{border-collapse:collapse;width:100%;margin-top:.6rem}th,td{padding:.45rem;border-bottom:1px solid #8885;text-align:left}
+td input{width:100%;min-width:5rem;box-sizing:border-box}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#8881;padding:1rem;border-radius:8px}
+#error{color:#d65;font-weight:600;min-height:1.5rem}
+small{opacity:.75}
+</style>
+</head>
+<body>
+<h1>RONIN Office</h1>
+<p class="muted">Motor local de referencia para PUSFRE, CES y CES-Hill. No envía datos a ningún servidor.</p>
+<section class="panel">
+<h2>Sistema</h2>
+<div class="grid">
+<label>Modelo
+<select id="model"><option value="pusfre">PUSFRE</option><option value="ces">CES</option><option value="ces_hill">CES-Hill</option></select>
+</label>
+<label>Recurso total
+<input id="resource" type="number" min="0" step="any" value="100">
+</label>
+<label>Alpha (PUSFRE)
+<input id="alpha" type="number" min="0.5" max="2.5" step="any" value="1">
+</label>
+<label>Lambda (CES)
+<input id="lambda" type="number" min="-1" max="2" step="any" value="0.5">
+</label>
+<label>K (Hill)
+<input id="k" type="number" min="0.0000001" step="any" value="1">
+</label>
+<label>Alpha-Hill
+<input id="alphaH" type="number" min="0.0000001" step="any" value="1.5">
+</label>
+<label>Delta de coexistencia
+<input id="delta" type="number" min="0.000001" max="0.1" step="any" value="0.05">
+</label>
+</div>
+<h3>Agentes</h3>
+<table>
+<thead><tr><th>Agente</th><th>phi</th><th>psi</th><th>frequency</th><th></th></tr></thead>
+<tbody id="agents"></tbody>
+</table>
+<div class="actions">
+<button id="add">Añadir agente</button>
+<button id="normalize" type="button">Normalizar frecuencias</button>
+<button id="solve">Resolver y diagnosticar</button>
+</div>
+<p id="error" role="alert"></p>
+</section>
+<section class="panel">
+<h2>Resultado</h2>
+<pre id="result">Introduce los datos y pulsa «Resolver y diagnosticar».</pre>
+</section>
+<p><small>Alcance: prototipo de interfaz y motor JavaScript independiente. No sustituye al parser, validador ni runtime Python. La memoria temporal, bootstrap y los paneles completos descritos en la especificación todavía no están implementados aquí.</small></p>
+<script>
+"use strict";
+const EPS=1e-12;
+const tbody=document.getElementById("agents");
+function addAgent(phi,psi,frequency){
+ const row=document.createElement("tr");
+ row.innerHTML='<td class="agent-number"></td><td><input aria-label="phi" type="number" min="0" max="1" step="any"></td><td><input aria-label="psi" type="number" min="0" max="1" step="any"></td><td><input aria-label="frequency" type="number" min="0" max="1" step="any"></td><td><button type="button" class="remove">Quitar</button></td>';
+ row.querySelectorAll("input")[0].value=phi;
+ row.querySelectorAll("input")[1].value=psi;
+ row.querySelectorAll("input")[2].value=frequency;
+ row.querySelector(".remove").addEventListener("click",()=>{row.remove();renumber();});
+ tbody.appendChild(row);renumber();
+}
+function renumber(){[...tbody.rows].forEach((r,i)=>r.querySelector(".agent-number").textContent=String(i+1));}
+function agents(){return [...tbody.rows].map(row=>{const v=[...row.querySelectorAll("input")].map(x=>Number(x.value));return {phi:v[0],psi:v[1],frequency:v[2]};});}
+function hill(omega,K,alphaH){if(!Number.isFinite(K))return omega;const x=Math.pow(Math.max(omega,EPS)/K,alphaH);return x/(1+x);}
+function cesCombine(phi,psi,omega,lambda){
+ const values=[phi,psi,omega].map(x=>Math.max(Number(x),EPS));
+ if(Math.abs(lambda)<1e-6)return Math.exp(values.reduce((s,x)=>s+Math.log(x)/3,0));
+ return values.reduce((s,x)=>s+Math.pow(x,lambda)/3,0)**(1/lambda);
+}
+function solve(){
+ const model=document.getElementById("model").value;
+ const resource=Number(document.getElementById("resource").value);
+ const alpha=Number(document.getElementById("alpha").value);
+ const lambda=Number(document.getElementById("lambda").value);
+ const K=model==="ces_hill"?Number(document.getElementById("k").value):Infinity;
+ const alphaH=Number(document.getElementById("alphaH").value);
+ const delta=Number(document.getElementById("delta").value);
+ const as=agents();
+ if(as.length<2)throw Error("El sistema necesita al menos dos agentes.");
+ if(!Number.isFinite(resource)||resource<0)throw Error("El recurso debe ser finito y no negativo.");
+ if(as.some(a=>![a.phi,a.psi,a.frequency].every(Number.isFinite)||a.phi<0||a.phi>1||a.psi<0||a.psi>1||a.frequency<0||a.frequency>1))throw Error("phi, psi y frequency deben estar en [0,1].");
+ const freqSum=as.reduce((s,a)=>s+a.frequency,0);
+ if(Math.abs(freqSum-1)>1e-9)throw Error("Las frecuencias deben sumar 1 (tolerancia 1e-9).");
+ if(model==="pusfre"&&(!Number.isFinite(alpha)||alpha<.5||alpha>2.5))throw Error("alpha debe estar en [0.5, 2.5].");
+ if(model!=="pusfre"&&(!Number.isFinite(lambda)||lambda< -1||lambda>2||Math.abs(lambda)<1e-9))throw Error("lambda debe estar en [-1,2] y ser distinto de cero.");
+ if(model==="ces_hill"&&(!(K>0)||!(alphaH>0)||!Number.isFinite(alphaH)))throw Error("K y alpha_h deben ser positivos y finitos.");
+ const fitness=as.map(a=>{
+   if(model==="pusfre")return a.phi*a.psi*Math.pow(a.frequency,alpha);
+   const omega=model==="ces_hill"?hill(a.frequency,K,alphaH):a.frequency;
+   return cesCombine(a.phi,a.psi,omega,lambda);
+ });
+ const total=fitness.reduce((s,x)=>s+x,0);
+ if(!(total>0))throw Error("La suma de fitness es cero; no se puede asignar.");
+ const allocation=fitness.map(x=>resource*x/total);
+ const omegas=as.map(a=>a.frequency).filter(x=>x>0);
+ const orders=omegas.length>1?Math.log10(Math.max(...omegas)/Math.min(...omegas)):0;
+ const KFree=Number.isFinite(K), alphaHFree=model==="ces_hill"&&Math.abs(alphaH-1)>1e-9;
+ const degeneracy=KFree&&alphaHFree&&orders<3?"active":"inactive";
+ const KIdentifiable=KFree&&(!alphaHFree||orders>=3);
+ const alphaHIdentifiable=KFree&&alphaHFree&&orders>=3;
+ const products=as.map(a=>a.phi*a.psi), minProduct=Math.min(...products);
+ const kMin=minProduct<=0?null:as.length*(Math.max(...products)/minProduct)/Math.log(as.length/delta);
+ const report={
+  model,fitness,allocation,allocation_sum:allocation.reduce((s,x)=>s+x,0),
+  coexistence:kMin===null?null:resource>=kMin,k_min:kMin,
+  omega_range_orders:orders,degeneracy,
+  lambda_identifiable:model!=="ces_hill",
+  K_identifiable:KIdentifiable,alpha_h_identifiable:alphaHIdentifiable,
+  recommendation:degeneracy==="active"?"K y alpha_h no son identificables por separado con este rango de Omega.":"La degeneración K-alpha_h está inactiva bajo estas restricciones."
+ };
+ document.getElementById("error").textContent="";
+ document.getElementById("result").textContent=JSON.stringify(report,null,2);
+}
+document.getElementById("add").addEventListener("click",()=>addAgent(.5,.5,1/Math.max(2,tbody.rows.length+1)));
+document.getElementById("normalize").addEventListener("click",()=>{
+ const rows=[...tbody.rows],sum=rows.reduce((s,r)=>s+Number(r.querySelectorAll("input")[2].value),0);
+ if(sum<=0){document.getElementById("error").textContent="No se pueden normalizar frecuencias con suma cero.";return;}
+ rows.forEach(r=>r.querySelectorAll("input")[2].value=Number(r.querySelectorAll("input")[2].value)/sum);
+ document.getElementById("error").textContent="";
+});
+document.getElementById("solve").addEventListener("click",()=>{try{solve();}catch(e){document.getElementById("error").textContent=e.message;document.getElementById("result").textContent="";}});
+document.getElementById("model").addEventListener("change",e=>{
+ const hillMode=e.target.value==="ces_hill";
+ document.getElementById("k").disabled=!hillMode;
+ document.getElementById("alphaH").disabled=!hillMode;
+ document.getElementById("alpha").disabled=e.target.value!=="pusfre";
+ document.getElementById("lambda").disabled=e.target.value==="pusfre";
+});
+addAgent(.8,1,.6);addAgent(.5,1,.4);
+</script>
+</body>
+</html>
