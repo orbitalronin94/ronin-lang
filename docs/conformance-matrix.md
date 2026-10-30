@@ -135,7 +135,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | RS-003 | 6.5 | Validación semántica | P | Validación integrada en solver; no cubre el validador completo de MDES |
 | RS-004 | 6.6 | Lowering a IR | I | `rust/src/ir.rs`; tests de campos y metadata |
 | RS-005 | 6.6 | Serializar IR con contrato JSON idéntico a Python | N | No existe comando Rust `compile` ni serializador de IR público |
-| RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; paridad completa no demostrada |
+| RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; tests Hill/CES/Maquinas/validación; paridad completa no demostrada |
 | RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; necesita vectores cruzados de conformidad |
 | RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; bootstrap no implementado |
 | RS-009 | 6.10 | CLI Rust list/check/solve/run | I | `rust/src/main.rs`; tests de comandos |
@@ -155,8 +155,8 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | NORM-005 | N.1 pasos 10–11 | Rango Ω, degeneración y advertencias | I | Pruebas de umbral y diagnóstico |
 | NORM-006 | N.2 Tests 1–2 | Compatibilidad Maquinas y PUSFRE explícito | I | `tests/test_core.py::test_maquinas_normative_result`, `test_explicit_pusfre_matches_legacy_default` |
 | NORM-007 | N.2 Test 3 | CES con lambda→0 recupera PUSFRE | A | La prueba implementada sigue media geométrica; el anexo pide equivalencia PUSFRE. Requiere decisión normativa, no un cambio silencioso |
-| NORM-008 | N.2 Test 4 | Rechazar modelo/parámetros incoherentes | I | `test_explicit_pusfre_matches_legacy_default`, `test_model_coherence_is_enforced` |
-| NORM-009 | N.2 Tests 5–6 | Detectar degeneración activa/inactiva | I | `test_degeneracy_active_for_narrow_omega_range`, `test_degeneracy_inactive_requires_three_full_orders` |
+| NORM-008 | N.2 Test 4 | Rechazar modelo/parámetros incoherentes | I | `test_explicit_pusfre_matches_legacy_default`, `test_model_coherence_is_enforced`; Rust `rejects_model_parameter_incoherence` |
+| NORM-009 | N.2 Tests 5–6 | Detectar degeneración activa/inactiva | I | `test_degeneracy_active_for_narrow_omega_range`, `test_degeneracy_inactive_requires_three_full_orders`; Rust solver tests cubren el cálculo de fitness y errores |
 | NORM-010 | N.2 Test 7 | Diagnóstico del dataset Neural Scaling real | A | Datos fuente incompletos y valores phi/psi fuera del rango normativo |
 | NORM-011 | N.3 | Cumplimiento integral de tolerancias, simulación y requisitos | P | Hay pruebas parciales; no procede declarar conformidad global |
 

@@ -87,3 +87,91 @@ pub fn solve(system: &System, delta: f64) -> Result<Solution, String> {
         omega_range_orders:orders, degeneracy,
     })
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::{ces_combine, hill, solve};
+    use crate::parser;
+
+    const MAQUINAS: &str = include_str!("../../examples/maquinas.ronin");
+
+    fn maquinas() -> crate::ast::System {
+        parser::parse(MAQUINAS).unwrap().remove(0)
+    }
+
+    fn close(actual: f64, expected: f64, tolerance: f64) {
+        assert!(
+            (actual - expected).abs() <= tolerance,
+            "expected {expected:.15}, got {actual:.15}"
+        );
+    }
+
+    #[test]
+    fn hill_identity_midpoint_and_zero_match_reference() {
+        close(hill(0.5, f64::INFINITY, 1.5), 0.5, 1e-12);
+        close(hill(0.5, 0.5, 1.0), 0.5, 1e-12);
+        close(hill(0.0, 0.5, 1.0), 0.0, 1e-12);
+    }
+
+    #[test]
+    fn ces_at_lambda_one_is_the_weighted_arithmetic_mean() {
+        close(
+            ces_combine(0.8, 1.0, 0.6, 1.0, [1.0 / 3.0; 3]),
+            0.8,
+            1e-12,
+        );
+    }
+
+    #[test]
+    fn maquinas_matches_normative_pusfre_fitness_and_allocation() {
+        let result = solve(&maquinas(), 0.05).unwrap();
+        close(result.fitness[0], 0.48, 1e-12);
+        close(result.fitness[1], 0.20, 1e-12);
+        close(result.allocation[0], 70.58823529411765, 1e-9);
+        close(result.allocation[1], 29.411764705882355, 1e-9);
+        close(result.allocation.iter().sum(), 100.0, 1e-9);
+        assert_eq!(result.model_used, "pusfre");
+    }
+
+    #[test]
+    fn ces_near_zero_uses_geometric_mean() {
+        let mut system = maquinas();
+        system.params.model = "ces".into();
+        system.params.lambda = 1e-7;
+        let result = solve(&system, 0.05).unwrap();
+
+        for (index, agent) in system.agents.iter().enumerate() {
+            let expected = (agent.phi * agent.psi * agent.frequency).powf(1.0 / 3.0);
+            close(result.fitness[index], expected, 1e-9);
+        }
+        assert!((result.fitness[0] - 0.48).abs() > 1e-3);
+    }
+
+    #[test]
+    fn rejects_model_parameter_incoherence() {
+        let mut system = maquinas();
+        system.params.lambda = 0.5;
+        let error = solve(&system, 0.05).unwrap_err();
+        assert!(error.contains("requires lambda = 0"));
+    }
+
+    #[test]
+    fn rejects_frequency_sum_outside_tolerance() {
+        let mut system = maquinas();
+        system.agents[0].frequency = 0.3;
+        let error = solve(&system, 0.05).unwrap_err();
+        assert!(error.contains("frequencies must sum to 1"));
+    }
+
+    #[test]
+    fn rejects_unimplemented_higher_order_temporal_memory() {
+        let mut system = maquinas();
+        system.params.model = "full".into();
+        system.params.lambda = 0.5;
+        system.params.k = 0.5;
+        system.params.memory_order = 3;
+        let error = solve(&system, 0.05).unwrap_err();
+        assert!(error.contains("temporal-memory execution is not implemented"));
+    }
+}
