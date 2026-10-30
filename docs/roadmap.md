@@ -33,7 +33,7 @@ Entregado:
 - Validación, solver PUSFRE/CES/Hill/CES-Hill, asignación, simulación y diagnóstico.
 - Proyectos multi-sistema, ejecución completa y salida JSON/CSV.
 - Compilación Python a JSON IR validado.
-- Parser y CLI Rust iniciales; metadatos anidados y parámetros extendidos.
+- Parser Rust para el subconjunto compartido, metadatos anidados y parámetros extendidos; CLI `list`, `check`, `solve`, `run`, `compile`, `diagnose` y `simulate`, con exportación CSV en `run`.
 - Pruebas automatizadas y CI para los trabajos integrados.
 
 No implica:
