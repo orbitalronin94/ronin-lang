@@ -26,9 +26,13 @@ El ejemplo normativo `examples/maquinas.ronin` debe producir:
 
 La asignación se normaliza respecto al recurso configurado. CI ejecuta las pruebas en Python 3.9–3.12 y comprueba este caso de aceptación.
 
+## Documentación
+
+La documentación extensa está en [docs/README.md](docs/README.md): [tutorial](docs/tutorial.md), [especificación formal](docs/spec.md), [arquitectura del compilador](docs/compiler.md) y [apéndice CES-Saturada](docs/family.md). El castellano es el idioma principal; los archivos `.en.md` son resúmenes de acompañamiento en inglés.
+
 ## Qué está implementado
 
-- Lexer con ubicación línea/columna, cadenas, literales numéricos y comentarios.
+- Lexer con ubicación línea/columna, cadenas, literales numéricos, comentarios y el símbolo `∞`.
 - Parser para declaraciones `system`, agentes en línea y bloques `params`.
 - Validación de rangos, suma de frecuencias y coherencia entre modelos.
 - Rutas de fitness PUSFRE, CES, Hill y CES-Hill.
@@ -37,7 +41,7 @@ La asignación se normaliza respecto al recurso configurado. CI ejecuta las prue
 - Diagnóstico del rango Ω y degeneración K–α.
 - CLI: `check`, `solve`, `simulate` y `diagnose`.
 
-## Límites conocidos: lo que todavía no está terminado
+## Prototipos y límites conocidos: lo que todavía no está terminado
 
 No presentamos como terminado lo que el documento fuente deja como propuesta o pendiente:
 
@@ -45,7 +49,10 @@ No presentamos como terminado lo que el documento fuente deja como propuesta o p
 - Los intervalos de confianza bootstrap siguen pendientes; `bootstrap_ci` devuelve `null`.
 - La memoria temporal de orden superior a 1 no tiene un kernel normativo implementado y se rechaza en ejecución.
 - Los ejemplos NeuralScaling y FamaFrench del documento contienen puntos suspensivos, no los conjuntos completos. No inventamos observaciones.
-- Rust, WASM, C, RONIN Office y el motor JavaScript aparecen como arquitectura, bocetos o propuestas; no son backends completos de este runtime Python.
+- Rust contiene ahora un esqueleto Cargo con firmas `todo!()`; no es un runtime Rust.
+- [RONIN Office](office/index.html) es un prototipo local funcional de resolución y diagnóstico para PUSFRE, CES y CES-Hill; no implementa los paneles completos ni el DSL general.
+- WASM y C siguen siendo propuestas; no son backends completos.
+- Los ejemplos 101–130 se han incorporado como declaraciones extraídas o plantillas parser-only. Los ejemplos 1–100 no aparecen en el Markdown entregado.
 
 ## Conformidad y discrepancias de la especificación
 
