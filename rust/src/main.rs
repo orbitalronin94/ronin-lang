@@ -52,9 +52,17 @@ fn json_numbers(values: &[f64]) -> String {
     format!("[{}]", items.join(","))
 }
 
+fn csv_field(value: &str) -> String {
+    if value.contains(',') || value.contains('"') || value.contains('\n') || value.contains('\r') {
+        format!("\"{}\"", value.replace('"', "\"\""))
+    } else {
+        value.to_string()
+    }
+}
+
 fn parse_args(
     args: &[String],
-) -> Result<(String, String, Option<String>, Option<f64>, Option<String>, Option<usize>, Option<usize>, Option<u64>), String> {
+) -> Result<(String, String, Option<String>, Option<f64>, Option<String>, Option<usize>, Option<usize>, Option<u64>, Option<String>), String> {
     if args.len() < 2 {
         return Err(
             "usage: ronin-core <list|check|solve|run|compile|diagnose|simulate> FILE [--system NAME] [--delta VALUE] [--steps N] [--seed N] [--bootstrap N] [-o PATH]".into()
@@ -71,6 +79,7 @@ fn parse_args(
     let mut bootstrap = None;
     let mut steps = None;
     let mut seed = None;
+    let mut output_format = None;
     let mut index = 2;
     while index < args.len() {
         match args[index].as_str() {
@@ -108,6 +117,13 @@ fn parse_args(
                 seed = Some(args[index].parse::<u64>()
                     .map_err(|_| "--seed must be an unsigned integer".to_string())?);
             }
+            "--format" => {
+                index += 1;
+                if index >= args.len() {
+                    return Err("--format requires json or csv".into());
+                }
+                output_format = Some(args[index].clone());
+            }
             "--bootstrap" => {
                 index += 1;
                 if index >= args.len() {
@@ -139,17 +155,25 @@ fn parse_args(
     if steps == Some(0) {
         return Err("--steps must be >= 1".into());
     }
+    if let Some(ref value) = output_format {
+        if !["json", "csv"].contains(&value.as_str()) {
+            return Err("--format must be json or csv".into());
+        }
+        if command != "run" {
+            return Err("--format is only supported by run".into());
+        }
+    }
     if bootstrap.is_some() && command != "diagnose" {
         return Err("--bootstrap is only supported by diagnose".into());
     }
     if system.is_some() && command == "compile" {
         return Err("--system is not supported by compile; all systems are compiled".into());
     }
-    Ok((command, file, system, delta, output, bootstrap, steps, seed))
+    Ok((command, file, system, delta, output, bootstrap, steps, seed, output_format))
 }
 
 pub fn execute(args: &[String]) -> Result<String, String> {
-    let (command, file, selected, delta, output_path, bootstrap, steps, seed) = parse_args(args)?;
+    let (command, file, selected, delta, output_path, bootstrap, steps, seed, output_format) = parse_args(args)?;
     let source = fs::read_to_string(&file)
         .map_err(|error| format!("cannot read {}: {}", file, error))?;
     let systems = parser::parse(&source)?;
@@ -219,9 +243,20 @@ pub fn execute(args: &[String]) -> Result<String, String> {
     }
 
     let mut entries = Vec::new();
+    let mut csv_rows = Vec::new();
     for system in chosen {
 
         let result = solver::solve(system, delta.unwrap_or(system.params.coexistence_delta))?;
+        for (index, (fitness, allocation)) in result.fitness.iter().zip(result.allocation.iter()).enumerate() {
+            csv_rows.push(format!(
+                "{},{},{},{:.17},{:.17}",
+                csv_field(&system.name),
+                index + 1,
+                csv_field(&system.params.model),
+                fitness,
+                allocation,
+            ));
+        }
         let entry = format!(
             "{}:{{\"allocation\":{},\"fitness\":{},\"coexistence\":{},\"k_min\":{},\"model_used\":{},\"lambda_used\":{},\"K_used\":{},\"alpha_h_used\":{},\"omega_range\":{},\"degeneracy\":{}}}",
             json_string(&system.name),
@@ -237,6 +272,12 @@ pub fn execute(args: &[String]) -> Result<String, String> {
             json_string(&result.degeneracy),
         );
         entries.push(entry);
+    }
+    if command == "run" && output_format.as_deref() == Some("csv") {
+        let mut csv = String::from("system,agent_index,model,fitness,allocation\n");
+        csv.push_str(&csv_rows.join("\n"));
+        csv.push('\n');
+        return Ok(csv);
     }
     Ok(format!("{{{}}}", entries.join(",")))
 }
@@ -255,7 +296,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::execute;
+    use super::{csv_field, execute};
     use std::fs;
     use std::path::PathBuf;
 
@@ -296,6 +337,38 @@ mod tests {
     fn check_command_validates_project() {
         let args = vec!["check".into(), fixture()];
         assert_eq!(execute(&args).unwrap(), "OK: 1 system(s) validated");
+    }
+
+    #[test]
+    fn run_command_exports_csv_with_one_row_per_agent() {
+        let args = vec!["run".into(), fixture(), "--format".into(), "csv".into()];
+        let output = execute(&args).unwrap();
+        let lines: Vec<&str> = output.lines().collect();
+        assert_eq!(lines[0], "system,agent_index,model,fitness,allocation");
+        assert_eq!(lines.len(), 3);
+        assert!(lines[1].starts_with("Maquinas,1,pusfre,"));
+        assert!(lines[2].starts_with("Maquinas,2,pusfre,"));
+    }
+
+    #[test]
+    fn run_command_keeps_json_as_default_format() {
+        let args = vec!["run".into(), fixture()];
+        let output = execute(&args).unwrap();
+        assert!(output.starts_with("{\"Maquinas\":{"));
+    }
+
+    #[test]
+    fn format_option_is_restricted_to_run_and_known_values() {
+        let args = vec!["solve".into(), fixture(), "--format".into(), "csv".into()];
+        assert!(execute(&args).unwrap_err().contains("--format is only supported by run"));
+        let args = vec!["run".into(), fixture(), "--format".into(), "xml".into()];
+        assert!(execute(&args).unwrap_err().contains("--format must be json or csv"));
+    }
+
+    #[test]
+    fn csv_field_quotes_commas_quotes_and_newlines() {
+        assert_eq!(csv_field("a,b"), "\"a,b\"");
+        assert_eq!(csv_field("say \"hi\""), "\"say \"\"hi\"\"\"");
     }
 
     #[test]
