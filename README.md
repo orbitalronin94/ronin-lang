@@ -62,4 +62,6 @@ placeholders. This repository does not misrepresent those as completed:
 ## Source discrepancies tracked
 
 See [docs/source-coverage.md](docs/source-coverage.md) for the exact source
-conflicts preserved rather than silently guessed or rewritten.
+conflicts preserved rather than silently guessed or rewritten. The complete
+source Markdown is archived at [docs/source/RONIN_1.1_Edicion_Familia.md](docs/source/RONIN_1.1_Edicion_Familia.md)
+with its separate licensing notice in [docs/source/NOTICE.md](docs/source/NOTICE.md).
