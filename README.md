@@ -25,6 +25,7 @@ Para Rust, desde el directorio `rust/`:
 cargo test
 cargo run -- check ../examples/maquinas.ronin
 cargo run -- solve ../examples/maquinas.ronin
+cargo run -- run ../examples/maquinas.ronin --format csv
 cargo run -- diagnose ../tests/fixtures/conformance/degeneracy_active.ronin
 cargo run -- simulate ../examples/maquinas.ronin --steps 100 --seed 42
 cargo run -- compile ../examples/maquinas.ronin -o ../maquinas.ir.json
@@ -37,6 +38,7 @@ python scripts/check_ir_parity.py
 python scripts/check_runtime_parity.py
 python scripts/check_simulation_contracts.py
 python scripts/check_diagnostic_parity.py
+python scripts/check_csv_parity.py
 ```
 
 ## Qué incluye v0.1

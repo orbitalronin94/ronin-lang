@@ -140,7 +140,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; `scripts/check_runtime_parity.py` compara 11 proyectos válidos, 4 rechazos y override de delta; faltan otras construcciones/semánticas MDES |
 | RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; tests de semilla reproducible, simplex y steps inválidos; necesita vectores cruzados de conformidad |
 | RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; tests de degeneración activa/inactiva/unknown y fixtures compartidos; bootstrap no implementado |
-| RS-009 | 6.10 | CLI Rust list/check/solve/run/compile/diagnose/simulate | I | `rust/src/main.rs`; tests de CLI, informe diagnóstico y simulación con semilla fija; RNG distinto al de Python |
+| RS-009 | 6.10 | CLI Rust list/check/solve/run/compile/diagnose/simulate | I | `rust/src/main.rs`; tests de CLI, informe diagnóstico, simulación y exportación CSV; RNG distinto al de Python |
 | RS-010 | 6.11 | Suite normativa Rust completa | P | Tests unitarios/parser/CLI presentes; no cubren todas las normas MDES |
 | RS-011 | 6.12 | Bindings Python con PyO3 | N | No existe crate/binding PyO3 en el workspace actual |
 | RS-012 | 6.13 | Backend WASM | N | No implementado |
