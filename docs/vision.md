@@ -57,9 +57,3 @@ La ecuación era una foto. La familia es una película.
 **1310.**
 
 ---
-
-# ANEXO NORMATIVO V1.1
-
-## N.1 CONTRATO DE IMPLEMENTACIÓN
-
-### N.1.1 Orden de evaluación
