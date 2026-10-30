@@ -49,12 +49,12 @@ jobs:
           ronin diagnose examples/degeneracy_inactive.ronin > diagnose.json
           python -c "import json; d=json.load(open('diagnose.json')); assert d['degeneracy']=='inactive'; assert d['omega_range_orders']>=3.0"
 
-  rust-skeleton:
-    name: Rust architecture skeleton / cargo check
+  rust-runtime:
+    name: Rust runtime / cargo test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Install stable Rust
         uses: dtolnay/rust-toolchain@stable
-      - name: Check architecture skeleton
-        run: cargo check --manifest-path rust/Cargo.toml
+      - name: Run Rust unit and integration tests
+        run: cargo test --manifest-path rust/Cargo.toml
