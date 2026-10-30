@@ -113,35 +113,55 @@ fn system_ir_json(system: &SystemIr) -> String {
         .agents
         .iter()
         .map(|agent| {
-            format!(
-                "{{\"phi\":{},\"psi\":{},\"frequency\":{},\"metadata\":{}}}",
-                json_number(agent.phi),
-                json_number(agent.psi),
-                json_number(agent.frequency),
-                json_metadata(&agent.metadata),
-            )
+            let mut out = String::from("{\"phi\":");
+            out.push_str(&json_number(agent.phi));
+            out.push_str(",\"psi\":");
+            out.push_str(&json_number(agent.psi));
+            out.push_str(",\"frequency\":");
+            out.push_str(&json_number(agent.frequency));
+            out.push_str(",\"metadata\":");
+            out.push_str(&json_metadata(&agent.metadata));
+            out.push('}');
+            out
         })
         .collect();
+
     let params = &system.params;
-    format!(
-        "{{\"name\":{},\"parts\":{},\"resource\":{},\"agents\":[{}],\"params\":{{\"alpha\":{},\"gamma\":{},\"sigma\":{},\"coexistence_delta\":{},\"model\":{},\"lambda\":{},\"K\":{},\"alpha_h\":{},\"memory_order\":{},\"memory_weights\":{},\"degeneracy_check\":{},\"omega_range_report\":{}}}}}}",
-        json_string(&system.name),
-        system.parts,
-        json_number(system.resource),
-        agents.join(","),
-        json_number(params.alpha),
-        json_number(params.gamma),
-        json_number(params.sigma),
-        json_number(params.coexistence_delta),
-        json_string(&params.model),
-        json_number(params.lambda),
-        json_number(params.k),
-        json_number(params.alpha_h),
-        params.memory_order,
-        json_memory_weights(&params.memory_weights),
-        params.degeneracy_check,
-        params.omega_range_report,
-    )
+    let mut out = String::from("{\"name\":");
+    out.push_str(&json_string(&system.name));
+    out.push_str(",\"parts\":");
+    out.push_str(&system.parts.to_string());
+    out.push_str(",\"resource\":");
+    out.push_str(&json_number(system.resource));
+    out.push_str(",\"agents\":[");
+    out.push_str(&agents.join(","));
+    out.push_str("],\"params\":{");
+    out.push_str("\"alpha\":");
+    out.push_str(&json_number(params.alpha));
+    out.push_str(",\"gamma\":");
+    out.push_str(&json_number(params.gamma));
+    out.push_str(",\"sigma\":");
+    out.push_str(&json_number(params.sigma));
+    out.push_str(",\"coexistence_delta\":");
+    out.push_str(&json_number(params.coexistence_delta));
+    out.push_str(",\"model\":");
+    out.push_str(&json_string(&params.model));
+    out.push_str(",\"lambda\":");
+    out.push_str(&json_number(params.lambda));
+    out.push_str(",\"K\":");
+    out.push_str(&json_number(params.k));
+    out.push_str(",\"alpha_h\":");
+    out.push_str(&json_number(params.alpha_h));
+    out.push_str(",\"memory_order\":");
+    out.push_str(&params.memory_order.to_string());
+    out.push_str(",\"memory_weights\":");
+    out.push_str(&json_memory_weights(&params.memory_weights));
+    out.push_str(",\"degeneracy_check\":");
+    out.push_str(&params.degeneracy_check.to_string());
+    out.push_str(",\"omega_range_report\":");
+    out.push_str(&params.omega_range_report.to_string());
+    out.push_str("}}");
+    out
 }
 
 /// Validate every system and emit the same versioned JSON IR shape as Python.
