@@ -1,0 +1,10 @@
+[package]
+name = "ronin-core"
+version = "1.1.0"
+edition = "2021"
+description = "Esqueleto arquitectónico del núcleo RONIN"
+license = "MIT"
+
+[workspace]
+resolver = "2"
+members = ["."]
