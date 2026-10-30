@@ -13,11 +13,11 @@ class Token:
 
 
 PATTERN = re.compile(
-    r'(?P<SPACE>[ \\t\\r]+)|(?P<NEWLINE>\\n)|(?P<COMMENT>//[^\\n]*)|'
-    r'(?P<STRING>"(?:\\\\.|[^"\\\\])*")|'
-    r'(?P<NUMBER>[+-]?(?:\\d+\\.\\d*|\\.\\d+|\\d+)(?:[eE][+-]?\\d+)?)|'
+    r'(?P<SPACE>[ \t\r]+)|(?P<NEWLINE>\n)|(?P<COMMENT>//[^\n]*)|'
+    r'(?P<STRING>"(?:\\.|[^"\\])*")|'
+    r'(?P<NUMBER>[+-]?(?:\d+\.\d*|\.\d+|\d+)(?:[eE][+-]?\d+)?)|'
     r'(?P<IDENT>[A-Za-z_][A-Za-z0-9_]*)|'
-    r'(?P<SYMBOL>[{}\\[\\](),:=])|(?P<OTHER>.)'
+    r'(?P<SYMBOL>[{}\[\](),:=])|(?P<OTHER>.)'
 )
 
 
