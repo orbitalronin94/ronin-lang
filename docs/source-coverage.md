@@ -115,3 +115,5 @@ Green CI certifies only the Python implementation, tests and executable examples
 - **Parte VII — RONIN Office:** la especificación completa está en [`office-spec.md`](office-spec.md). `office/index.html` ofrece ahora prototipos locales para Chat determinista, Sheet CSV, barrido heurístico de alpha, Simulator R.10, Agent Studio y Diagnose. No equivale a la suite completa.
 - **Parte VIII — Futuro:** transcrita en [`vision.md`](vision.md). La fuente marca 8.1–8.5 como “sin cambios estructurales”; no se han rellenado con conjeturas.
 - **Anexo normativo v1.1:** disponible en [`normative-annex.md`](normative-annex.md), incluyendo orden de evaluación, tests normativos, conformidad, estado de extensiones y política de afirmaciones verificables.
+
+- **Parte V — Runtime Python:** el texto fuente R.1–R.16 se ha separado en [`python-runtime-spec.md`](python-runtime-spec.md), manteniendo los límites de implementación y las notas de conformidad.
