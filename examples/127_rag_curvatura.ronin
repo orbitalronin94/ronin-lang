@@ -1,0 +1,15 @@
+// Ejemplo 127 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva el bloque system; los comandos externos al bloque no forman parte
+// del subconjunto que acepta actualmente el parser Python.
+system RAGCurvado = {
+    parts: 1000,
+    resource: 100,
+    agents: [ /* documentos con embeddings */ ],
+    params: {
+        model: "ces",
+        lambda: 0.5,
+        alpha: 1.0,
+        gamma: 0.4,
+        sigma: 0.15
+    }
+}
