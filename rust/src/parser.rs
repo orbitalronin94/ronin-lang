@@ -135,12 +135,57 @@ impl Parser {
 
     fn scalar(&mut self) -> Result<String, String> {
         let token = self.take();
-        if token.value.starts_with('"') && token.value.ends_with('"') {
-            let inner = &token.value[1..token.value.len() - 1];
-            Ok(inner.replace("\\\\", "\\"))
-        } else {
-            Ok(token.value)
+        if !(token.value.starts_with('"') && token.value.ends_with('"')) {
+            return Ok(token.value);
         }
+
+        // Decode JSON-style escapes while preserving Unicode scalar values.
+        // UTF-16 code units are used so escaped surrogate pairs work as expected.
+        let inner = &token.value[1..token.value.len() - 1];
+        let mut chars = inner.chars().peekable();
+        let mut units = Vec::new();
+        while let Some(ch) = chars.next() {
+            if ch != '\\\\' {
+                let mut buffer = [0u16; 2];
+                units.extend_from_slice(ch.encode_utf16(&mut buffer));
+                continue;
+            }
+
+            let escaped = chars.next().ok_or_else(|| {
+                format!("Incomplete string escape at {}:{}", token.line, token.column)
+            })?;
+            match escaped {
+                '"' => units.push('"' as u16),
+                '\\\\' => units.push('\\\\' as u16),
+                '/' => units.push('/' as u16),
+                'b' => units.push(8),
+                'f' => units.push(12),
+                'n' => units.push('\\n' as u16),
+                'r' => units.push('\\r' as u16),
+                't' => units.push('\\t' as u16),
+                'u' => {
+                    let mut digits = String::with_capacity(4);
+                    for _ in 0..4 {
+                        let digit = chars.next().ok_or_else(|| {
+                            format!("Incomplete Unicode escape at {}:{}", token.line, token.column)
+                        })?;
+                        digits.push(digit);
+                    }
+                    let code = u16::from_str_radix(&digits, 16).map_err(|_| {
+                        format!("Invalid Unicode escape at {}:{}", token.line, token.column)
+                    })?;
+                    units.push(code);
+                }
+                other => return Err(format!(
+                    "Unsupported string escape \\\\{} at {}:{}",
+                    other, token.line, token.column
+                )),
+            }
+        }
+
+        String::from_utf16(&units).map_err(|_| {
+            format!("Invalid Unicode surrogate sequence at {}:{}", token.line, token.column)
+        })
     }
 
     fn value(&mut self) -> Result<crate::ast::Value, String> {
@@ -364,6 +409,29 @@ mod tests {
         let systems = parse(source).unwrap();
         assert_eq!(systems[0].agents[0].metadata.get("niche"), Some(&crate::ast::Value::String("robotics".into())));
         assert_eq!(systems[0].agents[0].metadata.get("protocol"), Some(&crate::ast::Value::String("v2".into())));
+    }
+
+    #[test]
+    fn decodes_string_escapes_and_unicode() {
+        let source = r#"
+            system Escapes = {
+              parts: 1, resource: 1,
+              agents: [
+                { phi: 1, psi: 1, frequency: 1, note: "say \\"hi\\"; path C:\\\\ronin\\nnext\\t\\u263A" }
+              ]
+            }
+        "#;
+        let systems = parse(source).unwrap();
+        assert_eq!(
+            systems[0].agents[0].metadata.get("note"),
+            Some(&crate::ast::Value::String("say \\"hi\\"; path C:\\\\ronin\\nnext\\t☺".into()))
+        );
+    }
+
+    #[test]
+    fn rejects_unknown_string_escapes() {
+        let source = r#"system Bad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, note: "bad\\q"}] }"#;
+        assert!(parse(source).unwrap_err().contains("Unsupported string escape"));
     }
 
     #[test]
