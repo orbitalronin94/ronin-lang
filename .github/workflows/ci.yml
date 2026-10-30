@@ -59,14 +59,14 @@ jobs:
       - name: Install stable Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Rust / parser conformance
-        run: cargo test --manifest-path rust/Cargo.toml --lib parser::
+        run: "cargo test --manifest-path rust/Cargo.toml --lib parser::"
       - name: Rust / solver and numerical contracts
-        run: cargo test --manifest-path rust/Cargo.toml --lib solver::
+        run: "cargo test --manifest-path rust/Cargo.toml --lib solver::"
       - name: Rust / diagnostic contracts
-        run: cargo test --manifest-path rust/Cargo.toml --lib diagnose::
+        run: "cargo test --manifest-path rust/Cargo.toml --lib diagnose::"
       - name: Rust / simulation contracts
-        run: cargo test --manifest-path rust/Cargo.toml --lib simulator::
+        run: "cargo test --manifest-path rust/Cargo.toml --lib simulator::"
       - name: Rust / IR lowering
-        run: cargo test --manifest-path rust/Cargo.toml --lib ir::
+        run: "cargo test --manifest-path rust/Cargo.toml --lib ir::"
       - name: Rust / CLI integration
         run: cargo test --manifest-path rust/Cargo.toml --bin ronin-rust
