@@ -4,7 +4,7 @@
 system FamaFrench = {
     parts: 720,
     resource: 1.0,
-    agents: [ // retornos mensuales 1963-2023 ],
+    agents: [], // retornos mensuales 1963-2023 ],
     params: {
         model: "pusfre",  // la elección correcta
         alpha: 1.0,
