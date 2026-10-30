@@ -1,0 +1,14 @@
+// Ejemplo 108 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva la declaración system del ejemplo fuente; las instrucciones
+// posteriores (solve/diagnose/print/loops) no pertenecen al parser de la CLI actual.
+system Kubernetes = {
+    parts: 4,
+    resource: 100,
+    agents: [
+        { name: "Web", phi: 0.8, psi: 0.9, frequency: 0.25 },
+        { name: "API", phi: 0.85, psi: 0.85, frequency: 0.25 },
+        { name: "DB", phi: 0.7, psi: 0.95, frequency: 0.25 },
+        { name: "Cache", phi: 0.9, psi: 0.8, frequency: 0.25 }
+    ],
+    params: { model: "pusfre", alpha: 1.0, gamma: 0.2, sigma: 0.05 }
+}
