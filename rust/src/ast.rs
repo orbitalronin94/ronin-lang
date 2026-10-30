@@ -1,8 +1,20 @@
+use std::collections::BTreeMap;
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum Value {
+    Null,
+    Bool(bool),
+    Number(f64),
+    String(String),
+    Array(Vec<Value>),
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct Agent {
     pub phi: f64,
     pub psi: f64,
     pub frequency: f64,
+    pub metadata: BTreeMap<String, Value>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -16,6 +28,9 @@ pub struct Params {
     pub alpha_h: f64,
     pub memory_order: usize,
     pub coexistence_delta: f64,
+    pub memory_weights: Option<Vec<f64>>,
+    pub degeneracy_check: bool,
+    pub omega_range_report: bool,
 }
 
 #[derive(Clone, Debug, PartialEq)]

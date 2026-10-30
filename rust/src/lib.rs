@@ -9,4 +9,4 @@ pub mod parser;
 pub mod simulator;
 pub mod solver;
 
-pub use ast::{Agent, DegeneracyReport, Params, Simulation, Solution, System};
+pub use ast::{Agent, DegeneracyReport, Params, Simulation, Solution, System, Value};

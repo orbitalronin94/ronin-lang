@@ -136,9 +136,53 @@ impl Parser {
     fn scalar(&mut self) -> Result<String, String> {
         let token = self.take();
         if token.value.starts_with('"') && token.value.ends_with('"') {
-            Ok(token.value[1..token.value.len() - 1].to_string())
+            let inner = &token.value[1..token.value.len() - 1];
+            Ok(inner.replace("\\\\", "\\"))
         } else {
             Ok(token.value)
+        }
+    }
+
+    fn value(&mut self) -> Result<crate::ast::Value, String> {
+        use crate::ast::Value;
+        let token = self.current().clone();
+        match token.value.as_str() {
+            "[" => {
+                self.take();
+                let mut values = Vec::new();
+                while self.current().value != "]" {
+                    if self.current().value.is_empty() {
+                        return Err(format!("Unterminated array at {}:{}", token.line, token.column));
+                    }
+                    values.push(self.value()?);
+                    if self.current().value == "," { self.take(); }
+                    else if self.current().value != "]" {
+                        return Err(format!("Expected ',' or ']' at {}:{}", self.current().line, self.current().column));
+                    }
+                }
+                self.expect("]")?;
+                Ok(Value::Array(values))
+            }
+            "true" => { self.take(); Ok(Value::Bool(true)) }
+            "false" => { self.take(); Ok(Value::Bool(false)) }
+            "null" => { self.take(); Ok(Value::Null) }
+            "inf" | "infinity" | "∞" => { self.take(); Ok(Value::Number(f64::INFINITY)) }
+            _ if token.value.starts_with('"') => Ok(Value::String(self.scalar()?)),
+            _ if token.value.chars().next().map_or(false, |c| c.is_ascii_alphabetic() || c == '_') => {
+                self.take();
+                Ok(Value::String(token.value))
+            }
+            _ => {
+                let number = self.number()?;
+                Ok(Value::Number(number))
+            }
+        }
+    }
+
+    fn required_number(value: crate::ast::Value, field: &str) -> Result<f64, String> {
+        match value {
+            crate::ast::Value::Number(number) => Ok(number),
+            _ => Err(format!("Agent field {} must be numeric", field)),
         }
     }
 
@@ -150,27 +194,22 @@ impl Parser {
 
     fn agent(&mut self) -> Result<Agent, String> {
         self.expect("{")?;
-        let mut fields = std::collections::HashMap::new();
+        let mut fields = std::collections::BTreeMap::new();
         while self.current().value != "}" {
-            if self.current().value.is_empty() {
-                return Err("Unterminated agent block".into());
-            }
+            if self.current().value.is_empty() { return Err("Unterminated agent block".into()); }
             let key = self.identifier()?;
             self.expect(":")?;
-            let value = self.number()?;
+            let value = self.value()?;
             if fields.insert(key.clone(), value).is_some() {
                 return Err(format!("Duplicate agent field: {}", key));
             }
             self.optional_comma();
         }
         self.expect("}")?;
-        let phi = fields.remove("phi").ok_or("Missing agent field: phi")?;
-        let psi = fields.remove("psi").ok_or("Missing agent field: psi")?;
-        let frequency = fields.remove("frequency").ok_or("Missing agent field: frequency")?;
-        if !fields.is_empty() {
-            return Err(format!("Unknown agent field: {}", fields.keys().next().unwrap()));
-        }
-        Ok(Agent { phi, psi, frequency })
+        let phi = Self::required_number(fields.remove("phi").ok_or("Missing agent field: phi")?, "phi")?;
+        let psi = Self::required_number(fields.remove("psi").ok_or("Missing agent field: psi")?, "psi")?;
+        let frequency = Self::required_number(fields.remove("frequency").ok_or("Missing agent field: frequency")?, "frequency")?;
+        Ok(Agent { phi, psi, frequency, metadata: fields })
     }
 
     fn agents(&mut self) -> Result<Vec<Agent>, String> {
@@ -189,38 +228,49 @@ impl Parser {
     }
 
     fn params(&mut self) -> Result<Params, String> {
+        use crate::ast::Value;
         self.expect("{")?;
         let mut params = Params {
             alpha: 1.0, gamma: 0.4, sigma: 0.0, model: "pusfre".into(),
             lambda: 0.0, k: f64::INFINITY, alpha_h: 1.0,
             memory_order: 1, coexistence_delta: 0.05,
+            memory_weights: None, degeneracy_check: false, omega_range_report: false,
         };
         let mut seen = std::collections::HashSet::new();
         while self.current().value != "}" {
-            if self.current().value.is_empty() {
-                return Err("Unterminated params block".into());
-            }
+            if self.current().value.is_empty() { return Err("Unterminated params block".into()); }
             let key = self.identifier()?;
             self.expect(":")?;
-            if !seen.insert(key.clone()) {
-                return Err(format!("Duplicate params field: {}", key));
-            }
+            if !seen.insert(key.clone()) { return Err(format!("Duplicate params field: {}", key)); }
+            let value = self.value()?;
+            let number = |v: Value| match v { Value::Number(n) => Ok(n), _ => Err(format!("Parameter {} must be numeric", key)) };
             match key.as_str() {
-                "model" => params.model = self.scalar()?,
-                "alpha" => params.alpha = self.number()?,
-                "gamma" => params.gamma = self.number()?,
-                "sigma" => params.sigma = self.number()?,
-                "coexistence_delta" => params.coexistence_delta = self.number()?,
-                "lambda" => params.lambda = self.number()?,
-                "K" | "k" => params.k = self.number()?,
-                "alpha_h" => params.alpha_h = self.number()?,
+                "model" => match value { Value::String(s) => params.model=s, _ => return Err("model must be a string".into()) },
+                "alpha" => params.alpha=number(value)?,
+                "gamma" => params.gamma=number(value)?,
+                "sigma" => params.sigma=number(value)?,
+                "coexistence_delta" => params.coexistence_delta=number(value)?,
+                "lambda" => params.lambda=number(value)?,
+                "K" | "k" => params.k=number(value)?,
+                "alpha_h" => params.alpha_h=number(value)?,
                 "memory_order" => {
-                    let value = self.number()?;
-                    if !value.is_finite() || value < 0.0 || value.fract() != 0.0 {
+                    let n=number(value)?;
+                    if !n.is_finite() || n < 0.0 || n.fract()!=0.0 || n > usize::MAX as f64 {
                         return Err("memory_order must be a non-negative integer".into());
                     }
-                    params.memory_order = value as usize;
+                    params.memory_order=n as usize;
                 }
+                "memory_weights" => match value {
+                    Value::Array(items) => {
+                        let mut weights=Vec::new();
+                        for item in items { match item { Value::Number(n)=>weights.push(n), _=>return Err("memory_weights must contain only numbers".into()) } }
+                        params.memory_weights=Some(weights);
+                    },
+                    Value::Null => params.memory_weights=None,
+                    _ => return Err("memory_weights must be an array or null".into()),
+                },
+                "degeneracy_check" => match value { Value::Bool(v)=>params.degeneracy_check=v, _=>return Err("degeneracy_check must be boolean".into()) },
+                "omega_range_report" => match value { Value::Bool(v)=>params.omega_range_report=v, _=>return Err("omega_range_report must be boolean".into()) },
                 _ => return Err(format!("Unknown params field: {}", key)),
             }
             self.optional_comma();
@@ -242,6 +292,7 @@ impl Parser {
             alpha: 1.0, gamma: 0.4, sigma: 0.0, model: "pusfre".into(),
             lambda: 0.0, k: f64::INFINITY, alpha_h: 1.0,
             memory_order: 1, coexistence_delta: 0.05,
+            memory_weights: None, degeneracy_check: false, omega_range_report: false,
         };
         let mut seen = std::collections::HashSet::new();
         while self.current().value != "}" {
@@ -298,6 +349,23 @@ pub fn parse(source: &str) -> Result<Vec<System>, String> {
 mod tests {
     use super::parse;
 
+
+    #[test]
+    fn parses_bare_identifier_metadata_as_strings() {
+        let source = r#"
+            system Metadata = {
+              parts: 2, resource: 10,
+              agents: [
+                { phi: 0.6, psi: 0.7, frequency: 0.5, niche: robotics, protocol: v2 },
+                { phi: 0.5, psi: 0.8, frequency: 0.5 }
+              ]
+            }
+        "#;
+        let systems = parse(source).unwrap();
+        assert_eq!(systems[0].agents[0].metadata.get("niche"), Some(&crate::ast::Value::String("robotics".into())));
+        assert_eq!(systems[0].agents[0].metadata.get("protocol"), Some(&crate::ast::Value::String("v2".into())));
+    }
+
     #[test]
     fn parses_maquinas_fixture() {
         let systems = parse(include_str!("../../examples/maquinas.ronin")).unwrap();
@@ -335,4 +403,12 @@ mod tests {
         let unknown = "system S = { parts: 2, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}], params: { typo: 1 } }";
         assert!(parse(unknown).unwrap_err().contains("Unknown params field: typo"));
     }
+
+    #[test]
+    fn parses_supported_numeric_project_fixture() {
+        let systems = parse(include_str!("../../examples/maquinas.ronin")).unwrap();
+        assert_eq!(systems.len(), 1);
+        assert_eq!(systems[0].agents.len(), 2);
+    }
+
 }
