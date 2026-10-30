@@ -69,4 +69,4 @@ jobs:
       - name: Rust / IR lowering
         run: "cargo test --manifest-path rust/Cargo.toml --lib ir::"
       - name: Rust / CLI integration
-        run: cargo test --manifest-path rust/Cargo.toml --bin ronin-rust
+        run: cargo test --manifest-path rust/Cargo.toml --bin ronin-core

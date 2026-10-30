@@ -39,7 +39,7 @@ cargo run -- solve ../examples/maquinas.ronin
 
 ### Núcleo y CLI Rust
 - Lexer/parser para la sintaxis de proyectos actualmente soportada.
-- CLI `ronin-rust` con `list`, `check`, `solve` y `run`.
+- CLI `ronin-core` (binario Cargo por defecto) con `list`, `check`, `solve` y `run`.
 - Conservación de metadatos escalares, arrays y objetos anidados.
 - Parámetros extendidos y lowering AST→IR con estructuras alineadas con Python.
 
