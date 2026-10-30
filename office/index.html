@@ -21,6 +21,14 @@ small{opacity:.75}
 <body>
 <h1>RONIN Office</h1>
 <p class="muted">Motor local de referencia para PUSFRE, CES y CES-Hill. No envía datos a ningún servidor.</p>
+<nav class="actions" aria-label="Paneles de RONIN Office">
+<button type="button" data-tab="chat">Chat</button><button type="button" data-tab="sheet">Sheet</button><button type="button" data-tab="optimizer">Optimizer</button><button type="button" data-tab="simulator">Simulator</button><button type="button" data-tab="studio">Agent Studio</button><button type="button" data-tab="diagnose">Diagnose</button>
+</nav>
+<section class="panel office-tab" id="tab-chat"><h2>Chat local</h2><p class="muted">Ayuda determinista; no usa un LLM ni envía datos.</p><label>Consulta<textarea id="chat-prompt" rows="3" placeholder="¿Qué significa degeneracy active?"></textarea></label><div class="actions"><button id="chat-send" type="button">Consultar</button></div><pre id="chat-answer">Puedo explicar los paneles y los campos del motor local.</pre></section>
+<section class="panel office-tab" id="tab-sheet" hidden><h2>Sheet — agentes</h2><p>Tabla sincronizada con importación y exportación CSV.</p><div class="actions"><button id="sheet-export" type="button">Exportar CSV</button><label>Importar CSV <input id="sheet-import" type="file" accept=".csv,text/csv"></label></div><div id="sheet-table"></div></section>
+<section class="panel office-tab" id="tab-optimizer" hidden><h2>Optimizer — barrido de alpha</h2><p>Heurística local que maximiza la menor cuota asignada; no es un optimizador global.</p><button id="optimize" type="button">Ejecutar barrido</button><pre id="optimizer-result">Pendiente.</pre></section>
+<section class="panel office-tab" id="tab-simulator" hidden><h2>Simulator — dinámica R.10</h2><div class="grid"><label>Pasos <input id="sim-steps" type="number" min="1" max="10000" value="100"></label><label>Sigma <input id="sim-sigma" type="number" min="0" step="any" value="0.02"></label><label>Seed <input id="sim-seed" type="number" step="1" value="42"></label></div><button id="simulate" type="button">Simular</button><pre id="sim-result">Deriva de medio paso, ruido gaussiano sigma/10 y proyección al símplex.</pre></section>
+<section class="panel office-tab" id="tab-studio" hidden><h2>Agent Studio</h2><div class="grid"><label>Nombre <input id="studio-name" value="Nuevo agente"></label><label>Phi <input id="studio-phi" type="number" min="0" max="1" step="any" value="0.5"></label><label>Psi <input id="studio-psi" type="number" min="0" max="1" step="any" value="0.5"></label><label>Frequency <input id="studio-frequency" type="number" min="0" max="1" step="any" value="0.1"></label></div><button id="studio-add" type="button">Crear agente</button><p id="studio-status" role="status"></p></section>
 <section class="panel">
 <h2>Sistema</h2>
 <div class="grid">
