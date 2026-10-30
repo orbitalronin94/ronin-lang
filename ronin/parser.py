@@ -47,8 +47,10 @@ class Parser:
             value = token.value
             if value.lower() in ("inf", "infinity"):
                 return math.inf
-            if value in ("true", "false"):
-                return value == "true"
+            if value.lower() == "null":
+                return None
+            if value.lower() in ("true", "false"):
+                return value.lower() == "true"
             return value
         if token.value == "[":
             self.take()
@@ -94,6 +96,8 @@ class Parser:
             )
         except KeyError as error:
             raise SyntaxError(f"Missing agent field: {error.args[0]}") from error
+        except (TypeError, ValueError) as error:
+            raise SyntaxError(f"Invalid agent numeric value: {error}") from error
 
     def agents(self):
         self.expect("[")
@@ -121,6 +125,9 @@ class Parser:
         K = fields.get("K", math.inf)
         if isinstance(K, str) and K.lower() in ("inf", "infinity"):
             K = math.inf
+        memory_order = fields.get("memory_order", 1)
+        if isinstance(memory_order, bool) or not float(memory_order).is_integer():
+            raise SyntaxError("memory_order must be an integer")
         try:
             return Params(
                 alpha=float(fields.get("alpha", 1.0)),
@@ -131,7 +138,7 @@ class Parser:
                 lambda_=float(fields.get("lambda", 0.0)),
                 K=float(K),
                 alpha_h=float(fields.get("alpha_h", 1.0)),
-                memory_order=int(fields.get("memory_order", 1)),
+                memory_order=int(memory_order),
                 memory_weights=fields.get("memory_weights"),
                 degeneracy_check=bool(fields.get("degeneracy_check", False)),
                 omega_range_report=bool(fields.get("omega_range_report", False)),
@@ -164,9 +171,12 @@ class Parser:
             if name in systems:
                 raise SyntaxError(f"Duplicate system {name}")
             try:
+                parts = fields["parts"]
+                if isinstance(parts, bool) or not float(parts).is_integer():
+                    raise ValueError("parts must be an integer")
                 systems[name] = System(
                     name=name,
-                    parts=int(fields["parts"]),
+                    parts=int(parts),
                     resource=float(fields["resource"]),
                     agents=fields["agents"],
                     params=fields.get("params", Params()),
