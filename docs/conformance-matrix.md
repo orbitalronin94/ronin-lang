@@ -42,6 +42,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | LANG-003 | §2.4 | Parsear campos numéricos del agente | I | I | `phi`, `psi`, `frequency`; tests de parser y solver |
 | LANG-004 | §2.5 | Conservar metadatos extendidos del agente | I | I | Python metadata; Rust `Value` incluye arrays/objetos; tests `test_agent_metadata.py` y parser Rust |
 | LANG-005 | §2.6 | Parsear arrays y estructuras anidadas en valores admitidos | P | P | Arrays y objetos admitidos en datos/metadata; no equivale a expresiones o estructuras generales del lenguaje |
+| PARSER-001 | R.5–R.6 | Aceptación léxica/sintáctica equivalente en el subconjunto compartido | I | I | `scripts/check_parser_parity.py`; cadenas escapadas, Unicode, metadata anidada, duplicados y entradas malformadas |
 | LANG-006 | §2.7 | Declarar y evaluar funciones puras RONIN | N | N | No existe parser/evaluador general de funciones |
 | LANG-007 | §2.8 | Ejecutar funciones impuras | N | N | No existe runtime general de funciones impuras |
 | LANG-008 | §2.9 | Parsear la sintaxis DSL `simulate ... with {...}` | N | N | Simulación disponible como API/CLI, no como sentencia general del lenguaje |
