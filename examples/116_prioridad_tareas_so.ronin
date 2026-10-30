@@ -1,0 +1,16 @@
+// Ejemplo 116 de RONIN 1.1 — extracto del documento maestro.
+// Se conserva la declaración system del ejemplo fuente; las instrucciones
+// posteriores (solve/diagnose/print/loops) no pertenecen al parser de la CLI actual.
+system TareasSO = {
+    parts: 6,
+    resource: 100,
+    agents: [
+        { name: "Kernel", phi: 0.95, psi: 0.99, frequency: 0.3 },
+        { name: "Servicios", phi: 0.8, psi: 0.9, frequency: 0.25 },
+        { name: "Usuario", phi: 0.7, psi: 0.8, frequency: 0.2 },
+        { name: "Background", phi: 0.5, psi: 0.85, frequency: 0.15 },
+        { name: "Red", phi: 0.85, psi: 0.75, frequency: 0.05 },
+        { name: "Disco", phi: 0.6, psi: 0.95, frequency: 0.05 }
+    ],
+    params: { model: "ces", lambda: 0.5, alpha: 1.1, gamma: 0.3, sigma: 0.05 }
+}
