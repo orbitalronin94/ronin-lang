@@ -1,0 +1,5 @@
+// Ejemplo 120 de RONIN 1.1 — extracto del documento maestro.
+// PLANTILLA PARSER-ONLY: la fuente contiene marcadores/generadores sin datos.
+system Ejemplo120Template = {
+ parts: 2, resource: 1.0, agents: [], params: { model: "ces_hill", lambda: 0.5, K: 1.0, alpha_h: 1.5 }
+}
