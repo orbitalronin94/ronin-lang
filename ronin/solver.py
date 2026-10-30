@@ -16,6 +16,7 @@ def solve(system, delta=0.05):
     if deg == "active":
         warnings.append(f"K-alpha_h degeneracy active (Omega range={orders:.2f} orders)")
     p = system.params
+    delta = p.coexistence_delta if delta is None else delta
     minimum = k_min(system, delta)
     return Solution(
         allocation=alloc,
