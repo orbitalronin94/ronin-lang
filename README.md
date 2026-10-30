@@ -26,9 +26,21 @@ El ejemplo normativo `examples/maquinas.ronin` debe producir:
 
 La asignación se normaliza respecto al recurso configurado. CI ejecuta las pruebas en Python 3.9–3.12 y comprueba este caso de aceptación.
 
-## Documentación
+## Documentación y manuales
 
-La documentación extensa está en [docs/README.md](docs/README.md): [tutorial](docs/tutorial.md), [especificación formal](docs/spec.md), [arquitectura del compilador](docs/compiler.md) y [apéndice CES-Saturada](docs/family.md). El castellano es el idioma principal; los archivos `.en.md` son resúmenes de acompañamiento en inglés.
+**¿Es tu primera vez con RONIN? Empieza por el [Manual para principiantes — Tutorial para mortales](docs/tutorial.md).** Explica desde cero qué es un sistema, cómo declarar agentes y recursos, cómo resolver tu primer modelo y cómo interpretar los resultados. No necesitas empezar leyendo la especificación formal.
+
+Rutas de lectura:
+
+1. [Manual para principiantes (castellano)](docs/tutorial.md) · [Beginner tutorial (English companion)](docs/tutorial.en.md)
+2. [Índice completo de documentación](docs/README.md)
+3. [Especificación formal del lenguaje](docs/spec.md)
+4. [Arquitectura y extensión del compilador](docs/compiler.md)
+5. [Familia matemática CES-Saturada](docs/family.md)
+6. [Runtime Python: especificación y comportamiento](docs/python-runtime-spec.md)
+7. [Cobertura de la fuente, conformidad y límites conocidos](docs/source-coverage.md)
+
+El castellano es el idioma principal; los archivos `.en.md` son resúmenes de acompañamiento en inglés.
 
 ## Qué está implementado
 
