@@ -92,10 +92,12 @@ class Parser:
         if self.token.value == ",":
             self.take()
         try:
+            required = {key: fields.pop(key) for key in ("phi", "psi", "frequency")}
             return Agent(
-                phi=float(fields["phi"]),
-                psi=float(fields["psi"]),
-                frequency=float(fields["frequency"]),
+                phi=float(required["phi"]),
+                psi=float(required["psi"]),
+                frequency=float(required["frequency"]),
+                metadata=fields,
             )
         except KeyError as error:
             raise SyntaxError(f"Missing agent field: {error.args[0]}") from error

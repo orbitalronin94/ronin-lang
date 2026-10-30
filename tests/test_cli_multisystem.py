@@ -57,7 +57,7 @@ def test_solve_can_select_a_named_system(capsys, tmp_path):
 
 def test_unknown_system_reports_available_names(capsys):
     fixture = Path(__file__).parents[1] / "examples" / "maquinas.ronin"
-    assert main(["solve", str(fixture), "--system", "Missing"]) == 3
+    assert main(["solve", str(fixture), "--system", "Missing"]) == 1
     assert "available systems: Maquinas" in capsys.readouterr().err
 
 

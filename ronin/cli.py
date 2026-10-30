@@ -42,6 +42,15 @@ def main(argv=None):
     command = commands.add_parser("list", help="list systems declared in a file")
     command.add_argument("file")
 
+    command = commands.add_parser(
+        "run", help="solve every system declared in a RONIN file"
+    )
+    command.add_argument("file")
+    command.add_argument(
+        "--delta", type=float, default=None,
+        help="coexistence threshold override applied to every system",
+    )
+
     for name in ("check", "solve"):
         command = commands.add_parser(name)
         command.add_argument("file")
@@ -75,6 +84,14 @@ def main(argv=None):
                 print(name)
             return 0
 
+        if args.command == "run":
+            results = {
+                name: asdict(solve(system, delta=args.delta))
+                for name, system in systems.items()
+            }
+            print(json.dumps(results, indent=2, default=str))
+            return 0
+
         if args.command == "check" and args.system is None:
             for system in systems.values():
                 validate(system)
@@ -82,7 +99,7 @@ def main(argv=None):
             print(f"OK ({len(systems)} systems)")
             return 0
 
-        system = _select_system(systems, args.system)
+        system = _select_system(systems, getattr(args, "system", None))
         if args.command == "check":
             validate(system)
             validate_coherence(system.params)
