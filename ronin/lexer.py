@@ -18,7 +18,7 @@ PATTERN = re.compile(
     | (?P<NEWLINE>\n)
     | (?P<COMMENT>//[^\n]*)
     | (?P<STRING>"(?:\\.|[^"\\])*")
-    | (?P<NUMBER>(?:\d+\.\d*|\.\d+|\d+)(?:[eE][+-]?\d+)?)
+    | (?P<NUMBER>[+-]?(?:\d+\.\d*|\.\d+|\d+)(?:[eE][+-]?\d+)?)
     | (?P<IDENT>[A-Za-z_][A-Za-z0-9_]*)
     | (?P<SYMBOL>[{}\[\](),:=])
     | (?P<OTHER>.)
