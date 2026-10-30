@@ -42,6 +42,9 @@ class Parser:
         if token.kind == "STRING":
             self.take()
             return json.loads(token.value)
+        if token.value == "∞":
+            self.take()
+            return math.inf
         if token.kind == "IDENT":
             self.take()
             value = token.value
@@ -123,7 +126,7 @@ class Parser:
         if self.token.value == ",":
             self.take()
         K = fields.get("K", math.inf)
-        if isinstance(K, str) and K.lower() in ("inf", "infinity"):
+        if isinstance(K, str) and K.lower() in ("inf", "infinity", "∞"):
             K = math.inf
         memory_order = fields.get("memory_order", 1)
         if isinstance(memory_order, bool) or not float(memory_order).is_integer():
