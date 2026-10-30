@@ -383,4 +383,26 @@ mod tests {
         let unknown = "system S = { parts: 2, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}], params: { typo: 1 } }";
         assert!(parse(unknown).unwrap_err().contains("Unknown params field: typo"));
     }
+
+    #[test]
+    fn parses_all_example_fixtures() {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../examples");
+        let entries = std::fs::read_dir(&root).expect("examples directory should exist");
+        let mut count = 0usize;
+        for entry in entries {
+            let path = entry.expect("example entry").path();
+            if path.extension().and_then(|ext| ext.to_str()) != Some("ronin") {
+                continue;
+            }
+            let source = std::fs::read_to_string(&path)
+                .unwrap_or_else(|error| panic!("{}: {}", path.display(), error));
+            parse(&source).unwrap_or_else(|error| {
+                panic!("failed to parse {}: {}", path.display(), error)
+            });
+            count += 1;
+        }
+        assert!(count >= 30, "expected the published example corpus, found {}", count);
+    }
+
 }
