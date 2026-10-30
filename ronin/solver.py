@@ -16,11 +16,12 @@ def solve(system, delta=0.05):
     if deg == "active":
         warnings.append(f"K-alpha_h degeneracy active (Omega range={orders:.2f} orders)")
     p = system.params
+    minimum = k_min(system, delta)
     return Solution(
         allocation=alloc,
         fitness=fs,
-        coexistence=(system.resource >= k_min(system, delta)) if k_min(system, delta) is not None else None,
-        k_min=k_min(system, delta),
+        coexistence=(system.resource >= minimum) if minimum is not None else None,
+        k_min=minimum,
         debt=debt(system),
         convergence=True,
         steps=1,
