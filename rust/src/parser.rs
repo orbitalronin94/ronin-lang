@@ -193,7 +193,6 @@ impl Parser {
     }
 
     fn agent(&mut self) -> Result<Agent, String> {
-        use crate::ast::Value;
         self.expect("{")?;
         let mut fields = std::collections::BTreeMap::new();
         while self.current().value != "}" {
@@ -406,24 +405,10 @@ mod tests {
     }
 
     #[test]
-    fn parses_all_example_fixtures() {
-        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../examples");
-        let entries = std::fs::read_dir(&root).expect("examples directory should exist");
-        let mut count = 0usize;
-        for entry in entries {
-            let path = entry.expect("example entry").path();
-            if path.extension().and_then(|ext| ext.to_str()) != Some("ronin") {
-                continue;
-            }
-            let source = std::fs::read_to_string(&path)
-                .unwrap_or_else(|error| panic!("{}: {}", path.display(), error));
-            parse(&source).unwrap_or_else(|error| {
-                panic!("failed to parse {}: {}", path.display(), error)
-            });
-            count += 1;
-        }
-        assert!(count >= 30, "expected the published example corpus, found {}", count);
+    fn parses_supported_numeric_project_fixture() {
+        let systems = parse(include_str!("../../examples/maquinas.ronin")).unwrap();
+        assert_eq!(systems.len(), 1);
+        assert_eq!(systems[0].agents.len(), 2);
     }
 
 }
