@@ -129,3 +129,6 @@ Green CI certifies only the Python implementation, tests and executable examples
 **Contrato compartido de simulación:** `scripts/check_simulation_contracts.py` ejecuta los mismos fixtures en ambos backends y comprueba historial, dimensiones, simplex, estado inicial, eventos de extinción y supervivencia. No exige igualdad de trayectorias: Python usa `random.Random` y Rust xorshift.
 
 **Paridad de diagnóstico:** `scripts/check_diagnostic_parity.py` compara ambos informes para los tres estados de degeneración y el caso válido de fitness cero. El campo bootstrap sigue siendo `null`.
+
+
+**Paridad de RNG:** Rust replica el generador MT19937, `random()` de 53 bits y el `gauss()` cacheado de Python. `scripts/check_simulation_contracts.py` compara ahora las trayectorias con semilla fija en 12 proyectos con tolerancia 1e-12; las ejecuciones sin semilla siguen siendo independientes.
