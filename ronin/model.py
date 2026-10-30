@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from math import inf
-from typing import Any, List, Optional
+from typing import List, Optional
 
 
 @dataclass(frozen=True)
