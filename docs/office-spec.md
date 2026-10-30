@@ -332,9 +332,3 @@ El humano sueña. RONIN construye.
 **1310.**
 
 ---
-
-# PARTE VIII — EL FUTURO: RONIN COMO LENGUAJE DE SISTEMAS
-
-## 8.1 VISIÓN: SISTEMAS QUE SE DISEÑAN SOLOS
-
-*(Sin cambios estructurales.)*
