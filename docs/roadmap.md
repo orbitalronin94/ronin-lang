@@ -68,7 +68,7 @@ Trabajo:
 **Objetivo:** hacer que Python y Rust compartan un contrato de datos y ejecución verificable.
 
 Trabajo:
-- Implementar `ronin-rust compile` con salida JSON IR equivalente al compilador Python.
+- Consolidar `ronin-core compile` con salida JSON IR equivalente al compilador Python y cubrir diferencias de validación restantes.
 - Definir fixtures de entrada y salidas IR canónicas.
 - Ejecutar los mismos proyectos en ambos runtimes y comparar asignaciones, fitness y diagnósticos.
 - Alinear errores, valores por defecto, precisión numérica y serialización de valores no finitos.

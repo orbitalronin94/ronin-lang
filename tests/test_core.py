@@ -249,3 +249,17 @@ def test_diagnose_reports_unknown_when_fewer_than_two_omegas_are_positive():
     assert report.degeneracy == "unknown"
     assert not report.K_identifiable
     assert not report.alpha_h_identifiable
+
+
+def test_memory_weights_require_matching_order_and_unit_sum():
+    length_source = MAQ.replace(
+        "params: {", "params: { memory_order: 1, memory_weights: [0.5, 0.5],"
+    )
+    with pytest.raises(SemanticError, match="memory_weights length"):
+        validate_coherence(parse(length_source)["Maquinas"].params)
+
+    sum_source = MAQ.replace(
+        "params: {", "params: { memory_order: 1, memory_weights: [0.5],"
+    )
+    with pytest.raises(SemanticError, match="memory_weights must sum to 1"):
+        validate_coherence(parse(sum_source)["Maquinas"].params)

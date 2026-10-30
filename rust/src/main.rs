@@ -1,4 +1,4 @@
-use ronin_core::{parser, solver};
+use ronin_core::{ir, parser, solver};
 use std::env;
 use std::fs;
 
@@ -21,54 +21,98 @@ fn json_string(value: &str) -> String {
 
 fn json_numbers(values: &[f64]) -> String {
     let items: Vec<String> = values.iter().map(|value| {
-        if value.is_finite() { format!("{:.17}", value) } else if value.is_sign_positive() { "\"inf\"".into() } else { "\"-inf\"".into() }
+        if value.is_finite() {
+            format!("{:.17}", value)
+        } else if value.is_sign_positive() {
+            "\"inf\"".into()
+        } else {
+            "\"-inf\"".into()
+        }
     }).collect();
     format!("[{}]", items.join(","))
 }
 
-fn parse_args(args: &[String]) -> Result<(String, String, Option<String>, f64), String> {
+fn parse_args(
+    args: &[String],
+) -> Result<(String, String, Option<String>, f64, Option<String>), String> {
     if args.len() < 2 {
-        return Err("usage: ronin-rust <list|check|solve|run> FILE [--system NAME] [--delta VALUE]".into());
+        return Err(
+            "usage: ronin-core <list|check|solve|run|compile> FILE [--system NAME] [--delta VALUE] [-o PATH]".into()
+        );
     }
     let command = args[0].clone();
-    if !["list", "check", "solve", "run"].contains(&command.as_str()) {
+    if !["list", "check", "solve", "run", "compile"].contains(&command.as_str()) {
         return Err(format!("unknown command: {}", command));
     }
     let file = args[1].clone();
     let mut system = None;
     let mut delta = 0.05;
+    let mut output = None;
     let mut index = 2;
     while index < args.len() {
         match args[index].as_str() {
             "--system" => {
                 index += 1;
-                if index >= args.len() { return Err("--system requires a name".into()); }
+                if index >= args.len() {
+                    return Err("--system requires a name".into());
+                }
                 system = Some(args[index].clone());
             }
             "--delta" => {
                 index += 1;
-                if index >= args.len() { return Err("--delta requires a number".into()); }
-                delta = args[index].parse::<f64>().map_err(|_| "--delta must be numeric".to_string())?;
+                if index >= args.len() {
+                    return Err("--delta requires a number".into());
+                }
+                delta = args[index]
+                    .parse::<f64>()
+                    .map_err(|_| "--delta must be numeric".to_string())?;
+            }
+            "-o" | "--output" => {
+                index += 1;
+                if index >= args.len() {
+                    return Err("--output requires a path".into());
+                }
+                output = Some(args[index].clone());
             }
             option => return Err(format!("unknown option: {}", option)),
         }
         index += 1;
     }
-    Ok((command, file, system, delta))
+    if output.is_some() && command != "compile" {
+        return Err("--output is only supported by compile".into());
+    }
+    if system.is_some() && command == "compile" {
+        return Err("--system is not supported by compile; all systems are compiled".into());
+    }
+    Ok((command, file, system, delta, output))
 }
 
 pub fn execute(args: &[String]) -> Result<String, String> {
-    let (command, file, selected, delta) = parse_args(args)?;
+    let (command, file, selected, delta, output_path) = parse_args(args)?;
     let source = fs::read_to_string(&file)
         .map_err(|error| format!("cannot read {}: {}", file, error))?;
     let systems = parser::parse(&source)?;
-    if systems.is_empty() { return Err("project contains no systems".into()); }
+    if systems.is_empty() {
+        return Err("project contains no systems".into());
+    }
+
+    if command == "compile" {
+        let output = ir::compile_program(&systems)?;
+        if let Some(path) = output_path {
+            fs::write(&path, format!("{}\n", output))
+                .map_err(|error| format!("cannot write {}: {}", path, error))?;
+            return Ok(String::new());
+        }
+        return Ok(output);
+    }
 
     let chosen: Vec<_> = systems.iter().filter(|system| {
         selected.as_ref().map_or(true, |name| &system.name == name)
     }).collect();
     if let Some(name) = selected.as_ref() {
-        if chosen.is_empty() { return Err(format!("unknown system: {}", name)); }
+        if chosen.is_empty() {
+            return Err(format!("unknown system: {}", name));
+        }
     }
 
     if command == "list" {
@@ -76,7 +120,9 @@ pub fn execute(args: &[String]) -> Result<String, String> {
     }
 
     if command == "check" {
-        for system in &chosen { solver::solve(system, delta)?; }
+        for system in &chosen {
+            solver::solve(system, delta)?;
+        }
         return Ok(format!("OK: {} system(s) validated", chosen.len()));
     }
 
@@ -90,7 +136,11 @@ pub fn execute(args: &[String]) -> Result<String, String> {
             json_numbers(&result.fitness),
             json_string(&result.model_used),
             result.lambda_used,
-            if result.k_used.is_finite() { format!("{:.17}", result.k_used) } else { json_string("inf") },
+            if result.k_used.is_finite() {
+                format!("{:.17}", result.k_used)
+            } else {
+                json_string("inf")
+            },
             result.alpha_h_used,
         );
         entries.push(entry);
@@ -101,9 +151,10 @@ pub fn execute(args: &[String]) -> Result<String, String> {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     match execute(&args) {
-        Ok(output) => println!("{}", output),
+        Ok(output) if !output.is_empty() => println!("{}", output),
+        Ok(_) => {}
         Err(error) => {
-            eprintln!("ronin-rust: {}", error);
+            eprintln!("ronin-core: {}", error);
             std::process::exit(1);
         }
     }
@@ -112,6 +163,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::execute;
+    use std::fs;
     use std::path::PathBuf;
 
     fn fixture() -> String {
@@ -128,7 +180,7 @@ mod tests {
     }
 
     #[test]
-        fn check_command_validates_project() {
+    fn check_command_validates_project() {
         let args = vec!["check".into(), fixture()];
         assert_eq!(execute(&args).unwrap(), "OK: 1 system(s) validated");
     }
@@ -140,6 +192,47 @@ mod tests {
         assert!(output.starts_with("{\"Maquinas\":{"));
         assert!(output.contains("\"allocation\":["));
         assert!(output.contains("\"fitness\":["));
+    }
+
+    #[test]
+    fn compile_command_emits_versioned_ir() {
+        let args = vec!["compile".into(), fixture()];
+        let output = execute(&args).unwrap();
+        assert!(output.starts_with("{\"format\":\"ronin-ir\",\"ir_version\":1"));
+        assert!(output.contains("\"name\":\"Maquinas\""));
+        assert!(output.contains("\"K\":\"inf\""));
+    }
+
+    #[test]
+    fn compile_command_writes_ir_to_requested_file() {
+        let path = std::env::temp_dir()
+            .join(format!("ronin-ir-{}.json", std::process::id()));
+        let args = vec![
+            "compile".into(),
+            fixture(),
+            "--output".into(),
+            path.to_string_lossy().into_owned(),
+        ];
+        assert_eq!(execute(&args).unwrap(), "");
+        let output = fs::read_to_string(&path).unwrap();
+        assert!(output.contains("\"format\":\"ronin-ir\""));
+        fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn compile_rejects_invalid_project() {
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../tests/fixtures/conformance/invalid_frequency_sum.ronin")
+            .to_string_lossy()
+            .into_owned();
+        let args = vec!["compile".into(), path];
+        assert!(execute(&args).unwrap_err().contains("frequencies must sum to 1"));
+    }
+
+    #[test]
+    fn compile_rejects_system_filter() {
+        let args = vec!["compile".into(), fixture(), "--system".into(), "Maquinas".into()];
+        assert!(execute(&args).unwrap_err().contains("--system is not supported"));
     }
 
     #[test]

@@ -25,6 +25,7 @@ Para Rust, desde el directorio `rust/`:
 cargo test
 cargo run -- check ../examples/maquinas.ronin
 cargo run -- solve ../examples/maquinas.ronin
+cargo run -- compile ../examples/maquinas.ronin -o ../maquinas.ir.json
 ```
 
 ## Qué incluye v0.1

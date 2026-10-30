@@ -54,7 +54,23 @@ fn validate(system: &System, delta: f64) -> Result<(), String> {
     if ["hill","ces_hill","full"].contains(&p.model.as_str()) && !p.k.is_finite() { return Err(format!("model \"{}\" requires finite K",p.model)); }
     if p.model != "full" && p.memory_order != 1 { return Err(format!("model \"{}\" requires memory_order = 1",p.model)); }
     if p.model == "full" && p.memory_order > 1 { return Err("full temporal-memory execution is not implemented".into()); }
+    if let Some(weights) = &p.memory_weights {
+        if weights.len() != p.memory_order {
+            return Err("memory_weights length must equal memory_order".into());
+        }
+        if weights.iter().any(|weight| !weight.is_finite() || *weight < 0.0) {
+            return Err("memory_weights must be finite and non-negative numbers".into());
+        }
+        let total: f64 = weights.iter().sum();
+        if (total - 1.0).abs() > TOL {
+            return Err("memory_weights must sum to 1".into());
+        }
+    }
     Ok(())
+}
+
+pub fn validate_system(system: &System) -> Result<(), String> {
+    validate(system, system.params.coexistence_delta)
 }
 
 pub fn solve(system: &System, delta: f64) -> Result<Solution, String> {
@@ -195,6 +211,18 @@ mod tests {
             let systems = parser::parse(source).unwrap();
             assert!(solve(&systems[0], 0.05).is_err());
         }
+    }
+
+    #[test]
+    fn rejects_invalid_memory_weight_length_and_sum() {
+        let mut system = maquinas();
+        system.params.memory_weights = Some(vec![0.5, 0.5]);
+        let length_error = solve(&system, 0.05).unwrap_err();
+        assert!(length_error.contains("memory_weights length"));
+
+        system.params.memory_weights = Some(vec![0.5]);
+        let sum_error = solve(&system, 0.05).unwrap_err();
+        assert!(sum_error.contains("memory_weights must sum to 1"));
     }
 
     #[test]
