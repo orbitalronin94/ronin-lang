@@ -63,12 +63,14 @@ Trabajo:
 - Ningún ejemplo incompleto se presenta como aceptación ejecutable.
 - La cobertura reportada se calcula desde la matriz, no por estimación subjetiva.
 
-### v0.3 — Python/Rust parity and portable IR
+### v0.3 — Python/Rust parity and portable IR (en curso)
+
+**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa, y `scripts/check_ir_parity.py` compara 11 proyectos válidos y cuatro rechazos entre Python y Rust. La comparación de solver está en desarrollo mediante `scripts/check_runtime_parity.py`, que contrasta fitness, allocation, coexistence, k_min, degeneracy y override de delta.
 
 **Objetivo:** hacer que Python y Rust compartan un contrato de datos y ejecución verificable.
 
 Trabajo:
-- Consolidar `ronin-core compile` con salida JSON IR equivalente al compilador Python y cubrir diferencias de validación restantes.
+- Consolidar `ronin-core compile` con salida JSON IR equivalente al compilador Python y cerrar diferencias de validación restantes.
 - Definir fixtures de entrada y salidas IR canónicas.
 - Ejecutar los mismos proyectos en ambos runtimes y comparar asignaciones, fitness y diagnósticos.
 - Alinear errores, valores por defecto, precisión numérica y serialización de valores no finitos.
