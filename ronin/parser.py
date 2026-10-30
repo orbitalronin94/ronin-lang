@@ -34,6 +34,12 @@ class Parser:
             raise SyntaxError(f"Expected identifier at {token.line}:{token.column}")
         return token.value
 
+    @staticmethod
+    def add_field(fields, key, value, scope):
+        if key in fields:
+            raise SyntaxError(f"Duplicate {scope} field: {key}")
+        fields[key] = value
+
     def value(self):
         token = self.token
         if token.kind == "NUMBER":
@@ -87,7 +93,7 @@ class Parser:
             if self.token.kind == "EOF":
                 raise SyntaxError("Unterminated agent")
             key, value = self.field()
-            fields[key] = value
+            self.add_field(fields, key, value, "agent")
         self.take()
         if self.token.value == ",":
             self.take()
@@ -123,7 +129,7 @@ class Parser:
             if self.token.kind == "EOF":
                 raise SyntaxError("Unterminated params block")
             key, value = self.field()
-            fields[key] = value
+            self.add_field(fields, key, value, "params")
         self.take()
         if self.token.value == ",":
             self.take()
@@ -165,13 +171,14 @@ class Parser:
                 key = self.identifier()
                 self.expect(":")
                 if key == "agents":
-                    fields[key] = self.agents()
+                    value = self.agents()
                 elif key == "params":
-                    fields[key] = self.params()
+                    value = self.params()
                 else:
-                    fields[key] = self.value()
+                    value = self.value()
                     if self.token.value == ",":
                         self.take()
+                self.add_field(fields, key, value, f"system {name}")
             self.take()
             if name in systems:
                 raise SyntaxError(f"Duplicate system {name}")
