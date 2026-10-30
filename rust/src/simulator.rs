@@ -1,5 +1,5 @@
 use crate::ast::{Simulation, System};
-use crate::solver::solve;
+use crate::solver::validate_system;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub fn project_simplex(values: &[f64]) -> Vec<f64> {
@@ -32,7 +32,7 @@ impl Rng {
 
 pub fn simulate(system: &System, steps: usize, seed: Option<u64>) -> Result<Simulation, String> {
     if steps < 1 { return Err("steps must be >= 1".into()); }
-    solve(system, system.params.coexistence_delta)?;
+    validate_system(system)?;
     let actual_seed = seed.unwrap_or_else(|| SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos() as u64);
     let mut rng = Rng::new(actual_seed);
     let mut state: Vec<f64> = system.agents.iter().map(|a|a.frequency).collect();
@@ -90,4 +90,16 @@ mod tests {
         let error = simulate(&system(), 0, Some(1)).unwrap_err();
         assert!(error.contains("steps must be >= 1"));
     }
+    #[test]
+    fn simulation_handles_valid_zero_fitness_with_uniform_fallback() {
+        let source = include_str!("../../tests/fixtures/conformance/valid_zero_fitness_check_only.ronin");
+        let system = parser::parse(source).unwrap().remove(0);
+        let result = simulate(&system, 4, Some(11)).unwrap();
+        assert_eq!(result.history.len(), 5);
+        for state in result.history {
+            assert!((state[0] - 0.5).abs() <= 1e-12);
+            assert!((state[1] - 0.5).abs() <= 1e-12);
+        }
+    }
+
 }

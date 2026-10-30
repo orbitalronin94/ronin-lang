@@ -35,6 +35,8 @@ Desde la raíz del repositorio, comprobar paridad entre Python y Rust:
 ```bash
 python scripts/check_ir_parity.py
 python scripts/check_runtime_parity.py
+python scripts/check_simulation_contracts.py
+python scripts/check_diagnostic_parity.py
 ```
 
 ## Qué incluye v0.1

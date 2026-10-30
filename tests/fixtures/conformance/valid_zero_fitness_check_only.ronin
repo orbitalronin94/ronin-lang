@@ -1,0 +1,8 @@
+system ZeroFitness = {
+  parts: 2,
+  resource: 10,
+  agents: [
+    { phi: 0.0, psi: 0.0, frequency: 0.5 },
+    { phi: 0.0, psi: 0.0, frequency: 0.5 }
+  ]
+}
