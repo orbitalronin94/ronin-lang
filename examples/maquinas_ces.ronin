@@ -1,0 +1,15 @@
+system MaquinasCES = {
+    parts: 2,
+    resource: 100,
+    agents: [
+        { phi: 0.8, psi: 1.0, frequency: 0.6 },
+        { phi: 0.5, psi: 1.0, frequency: 0.4 }
+    ],
+    params: {
+        model: "ces",
+        lambda: 0.5,
+        alpha: 1.0,
+        gamma: 0.4,
+        sigma: 0.1
+    }
+}
