@@ -39,6 +39,8 @@ def validate(system, tolerance=1e-9):
     for name, value, lower, upper in bounded:
         if not math.isfinite(value) or not lower <= value <= upper:
             raise SemanticError(f"{name} outside [{lower},{upper}]")
+    if params.coexistence_delta == 0:
+        raise SemanticError("coexistence_delta must be greater than 0")
     return True
 
 
