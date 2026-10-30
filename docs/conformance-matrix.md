@@ -136,8 +136,8 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | RS-004 | 6.6 | Lowering a IR | I | `rust/src/ir.rs`; tests de campos y metadata |
 | RS-005 | 6.6 | Serializar IR con contrato JSON idéntico a Python | N | No existe comando Rust `compile` ni serializador de IR público |
 | RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; tests Hill/CES/Maquinas/validación; paridad completa no demostrada |
-| RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; necesita vectores cruzados de conformidad |
-| RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; bootstrap no implementado |
+| RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; tests de semilla reproducible, simplex y steps inválidos; necesita vectores cruzados de conformidad |
+| RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; tests de degeneración activa/inactiva/unknown; bootstrap no implementado |
 | RS-009 | 6.10 | CLI Rust list/check/solve/run | I | `rust/src/main.rs`; tests de comandos |
 | RS-010 | 6.11 | Suite normativa Rust completa | P | Tests unitarios/parser/CLI presentes; no cubren todas las normas MDES |
 | RS-011 | 6.12 | Bindings Python con PyO3 | N | No existe crate/binding PyO3 en el workspace actual |

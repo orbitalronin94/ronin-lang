@@ -30,3 +30,60 @@ pub fn diagnose(system: &System, _bootstrap: usize) -> Result<DegeneracyReport, 
         recommendation:recommendation.to_string(),
     })
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::diagnose;
+    use crate::parser;
+
+    const MAQUINAS: &str = include_str!("../../examples/maquinas.ronin");
+
+    fn hill_system() -> crate::ast::System {
+        let mut system = parser::parse(MAQUINAS).unwrap().remove(0);
+        system.params.model = "ces_hill".into();
+        system.params.lambda = 0.5;
+        system.params.k = 0.5;
+        system.params.alpha_h = 1.5;
+        system
+    }
+
+    #[test]
+    fn reports_active_degeneracy_for_narrow_omega_range() {
+        let system = hill_system();
+        let report = diagnose(&system, 0).unwrap();
+        assert_eq!(report.degeneracy, "active");
+        assert!(report.omega_range_orders < 3.0);
+        assert!(!report.k_identifiable);
+        assert!(!report.alpha_h_identifiable);
+    }
+
+    #[test]
+    fn reports_inactive_degeneracy_for_three_orders() {
+        let mut system = hill_system();
+        let mut third = system.agents[0].clone();
+        system.agents[0].frequency = 0.0009;
+        system.agents[1].frequency = 0.0090;
+        third.frequency = 0.9901;
+        system.agents.push(third);
+        system.parts = 3;
+
+        let report = diagnose(&system, 0).unwrap();
+        assert_eq!(report.degeneracy, "inactive");
+        assert!(report.omega_range_orders >= 3.0);
+        assert!(report.k_identifiable);
+        assert!(report.alpha_h_identifiable);
+    }
+
+    #[test]
+    fn reports_unknown_when_fewer_than_two_omegas_are_positive() {
+        let mut system = hill_system();
+        system.agents[0].frequency = 1.0;
+        system.agents[1].frequency = 0.0;
+
+        let report = diagnose(&system, 0).unwrap();
+        assert_eq!(report.degeneracy, "unknown");
+        assert!(!report.k_identifiable);
+        assert!(!report.alpha_h_identifiable);
+    }
+}
