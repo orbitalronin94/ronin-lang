@@ -6,6 +6,7 @@ La documentación canónica de este repositorio se mantiene **primero en castell
 - [Especificación formal, secciones 0–14](spec.md) · [English companion](spec.en.md)
 - [Arquitectura y extensión del compilador](compiler.md) · [English companion](compiler.en.md)
 - [Apéndice matemático CES-Saturada](family.md) · [English companion](family.en.md)
+- [Parte V — Runtime de referencia Python](python-runtime-spec.md) · [English summary](python-runtime-spec.en.md)
 - [Parte VI — Especificación del backend Rust](rust-backend-spec.md) · [English summary](rust-backend-spec.en.md)
 - [Parte VII — Especificación de RONIN Office](office-spec.md) · [English summary](office-spec.en.md)
 - [Parte VIII — Visión de futuro](vision.md) · [English summary](vision.en.md)
