@@ -93,7 +93,7 @@ def test_lexer_has_all_named_groups_and_tokenizes_comments():
     assert set(PATTERN.groupindex) == {
         "SPACE", "NEWLINE", "COMMENT", "STRING", "NUMBER", "IDENT", "SYMBOL", "OTHER"
     }
-    tokens = lex('name: "ronin" // comentario\\nvalue: 1.2')
+    tokens = lex('name: "ronin" // comentario\nvalue: 1.2')
     assert [token.kind for token in tokens[:-1]] == [
         "IDENT", "SYMBOL", "STRING", "NEWLINE", "IDENT", "SYMBOL", "NUMBER"
     ]
