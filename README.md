@@ -2,7 +2,7 @@
 
 **Implementación inicial del lenguaje RONIN basada en la especificación completa MDES v0.5.** La documentación canónica se mantiene primero en castellano.
 
-RONIN Runtime **v0.1** es una versión temprana y funcional: incluye un runtime de referencia en Python, un núcleo/CLI en Rust en desarrollo, herramientas de validación y resolución, exportación de resultados y compilación Python a JSON IR. No representa todavía la implementación completa de MDES v0.5.
+RONIN Runtime **v0.1** es una versión temprana y funcional: incluye un runtime de referencia en Python, un núcleo/CLI Rust con parser, solver, simulación, diagnóstico y exportación JSON/CSV, herramientas de validación y resolución, exportación de resultados y compilación a JSON IR en Python y Rust. No representa todavía la implementación completa de MDES v0.5.
 
 > **Versionado del proyecto:** v0.1 identifica el estado del software. **MDES v0.5** identifica la versión de la especificación de diseño. Son versiones independientes. El material fuente conserva sus rótulos editoriales originales cuando corresponde.
 
