@@ -1,5 +1,5 @@
 use crate::ast::{DegeneracyReport, System};
-use crate::solver::solve;
+use crate::solver::validate_system;
 
 pub fn omega_range_orders(system: &System) -> f64 {
     let values: Vec<f64> = system.agents.iter().map(|a| a.frequency).filter(|x| *x > 0.0).collect();
@@ -10,7 +10,7 @@ pub fn omega_range_orders(system: &System) -> f64 {
 }
 
 pub fn diagnose(system: &System, _bootstrap: usize) -> Result<DegeneracyReport, String> {
-    solve(system, system.params.coexistence_delta)?;
+    validate_system(system)?;
     let p = &system.params;
     let positive = system.agents.iter().filter(|a| a.frequency > 0.0).count();
     let orders = omega_range_orders(system);
@@ -50,4 +50,13 @@ mod tests {
             assert_eq!(diagnose(&system, 0).unwrap().degeneracy, expected);
         }
     }
+    #[test]
+    fn diagnosis_does_not_require_positive_total_fitness() {
+        let source = include_str!("../../tests/fixtures/conformance/valid_zero_fitness_check_only.ronin");
+        let system = parser::parse(source).unwrap().remove(0);
+        let report = diagnose(&system, 0).unwrap();
+        assert_eq!(report.degeneracy, "inactive");
+        assert!(report.lambda_identifiable);
+    }
+
 }

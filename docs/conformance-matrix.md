@@ -121,6 +121,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | PY-006 | R.8–R.9 | Semántica CES-Saturada y solver | P | PUSFRE/CES/Hill/CES-Hill; `debt()` sigue placeholder y existen discrepancias normativas |
 | PY-007 | R.10 | Simulador con semilla reproducible | I | `ronin/simulator.py`; tests de normalización, semilla y sigma=0 |
 | SIM-002 | R.10 | Invariantes de simulación comunes entre Python y Rust | I | I | `scripts/check_simulation_contracts.py`; contrasta estructura, simplex, semilla, estado inicial y supervivencia; no compara trayectorias RNG |
+| SIM-003 | R.11 | Informes de diagnóstico equivalentes en el corpus compartido | I | I | `scripts/check_diagnostic_parity.py`; compara estado, identificabilidad, recomendación, rango Ω y `bootstrap_ci` |
 | PY-008 | R.11 | Diagnóstico K–α y bootstrap CI | P | Rango/degeneración implementados; bootstrap devuelve null |
 | PY-009 | R.12 | CLI de referencia | I | `ronin/cli.py`; list/check/solve/simulate/diagnose/run/compile/repl |
 | PY-010 | R.13 | Tests normativos y regresión | P | Suite pytest existente; faltan vectores completos para todos los requisitos MDES |

@@ -30,3 +30,9 @@ These synthetic RONIN files are a shared input corpus for the Python and Rust im
 | degeneracy_unknown.ronin | unknown — fewer than two positive frequencies |
 
 All fixtures use synthetic values. They do not replace normative examples or missing real datasets in MDES v0.5. Expected behavior is tested by both implementations where the corresponding feature exists.
+
+## Check-only fixture
+
+| File | Purpose |
+|---|---|
+| valid_zero_fitness_check_only.ronin | Semantically valid project with zero total fitness; validation, diagnosis and simulation accept it, while `solve` reports undefined allocation |

@@ -22,6 +22,7 @@ VALID = [
     ROOT / "tests" / "fixtures" / "conformance" / "ces_hill.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "full_order1.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "metadata_nested.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "valid_zero_fitness_check_only.ronin",
 ]
 STEPS = 12
 SEED = 73
