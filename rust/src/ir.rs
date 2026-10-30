@@ -22,5 +22,5 @@ impl From<&Agent> for AgentIr {
 }
 
 pub fn lower_system(system: &System) -> SystemIr {
-    todo!("Implementar lowering AST -> IR según Parte IV")
+    SystemIr { name: system.name.clone(), resource: system.resource, agents: system.agents.iter().map(AgentIr::from).collect(), params: system.params.clone() }
 }
