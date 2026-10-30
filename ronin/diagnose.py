@@ -10,12 +10,18 @@ def diagnose(system, bootstrap=0):
         raise ValueError("bootstrap must be >= 0")
 
     params = system.params
-    orders = omega_range_orders([agent.frequency for agent in system.agents])
+    omegas = [agent.frequency for agent in system.agents if agent.frequency > 0]
+    orders = omega_range_orders(omegas)
     K_free = params.K != float("inf")
     alpha_h_free = params.alpha_h != 1.0
-    state = degeneracy_state(orders, K_free, alpha_h_free)
+    state = (
+        "unknown" if len(omegas) < 2
+        else degeneracy_state(orders, K_free, alpha_h_free)
+    )
 
-    if state == "inactive":
+    if state == "unknown":
+        recommendation = "Insufficient positive Omega observations to estimate the range or Hill identifiability."
+    elif state == "inactive":
         recommendation = "Structural degeneracy inactive under the configured parameter constraints."
     elif orders < 1.0:
         recommendation = (
@@ -32,8 +38,8 @@ def diagnose(system, bootstrap=0):
     # With finite K and fixed alpha_h, K can be identified independently.
     # If both are free, the Omega range must span at least three orders.
     lambda_identifiable = not K_free
-    K_identifiable = K_free and (not alpha_h_free or orders >= 3.0)
-    alpha_h_identifiable = K_free and alpha_h_free and orders >= 3.0
+    K_identifiable = state != "unknown" and K_free and (not alpha_h_free or orders >= 3.0)
+    alpha_h_identifiable = state != "unknown" and K_free and alpha_h_free and orders >= 3.0
     return DegeneracyReport(
         omega_range_orders=orders,
         degeneracy=state,
