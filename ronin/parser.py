@@ -46,6 +46,12 @@ class Parser:
             raise ValueError(f"{field} must be numeric")
         return float(value)
 
+    @staticmethod
+    def string(value, field):
+        if not isinstance(value, str):
+            raise ValueError(f"{field} must be a string")
+        return value
+
     def value(self):
         token = self.token
         if token.kind == "NUMBER":
