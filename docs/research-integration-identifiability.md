@@ -221,6 +221,13 @@ Contrato numérico:
 
 El score solo es comparable entre diseños que usan la misma parametrización, escalas, pesos y ridge. La regularización permite comparar candidatos numéricamente, pero no convierte una FIM singular en evidencia de identificabilidad: el informe local sigue exponiendo el rango deficiente. Esta implementación es una extensión de investigación, no una nueva regla semántica de MDES.
 
+### Sensibilidad global de primer orden (Sobol)
+
+Se incorpora sobol_first_order para estimar índices de primer orden a partir de salidas ya calculadas para las matrices A, B y los híbridos A_B^i. El runtime no genera las muestras ni simula el modelo; el llamador debe garantizar que A y B sean independientes y que cada híbrido corresponda al parámetro correcto.
+
+El estimador sigue la forma de Saltelli con varianza poblacional combinada de A y B. La salida incluye el número de muestras, número de parámetros, índices sin recortar, escala de salida y varianza normalizada. Los índices pueden quedar fuera de [0,1] por error de muestreo; no se fuerzan a un rango plausible. La API no calcula interacciones de segundo orden, intervalos de confianza ni un tamaño muestral suficiente. Esas tareas requieren un protocolo de muestreo y validación específico.
+
+
 
 ## 7. Reglas de implementación v1.0
 
