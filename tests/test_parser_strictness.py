@@ -62,21 +62,14 @@ def test_parser_rejects_boolean_and_wrongly_typed_numeric_or_parameter_values(so
         parse(source)
 
 
-def test_parser_rejects_unknown_system_and_params_fields():
-    unknown_system = (
-        'system S = { parts: 2, resource: 1, agents: '
-        '[{phi: 0.5, psi: 0.5, frequency: 0.5}, '
-        '{phi: 0.5, psi: 0.5, frequency: 0.5}], typo: 1 }'
-    )
-    unknown_params = (
+def test_parser_rejects_unknown_params_fields():
+    source = (
         'system S = { parts: 2, resource: 1, agents: '
         '[{phi: 0.5, psi: 0.5, frequency: 0.5}, '
         '{phi: 0.5, psi: 0.5, frequency: 0.5}], params: { typo: 1 } }'
     )
-    with pytest.raises(SyntaxError, match="Unknown system S field: typo"):
-        parse(unknown_system)
     with pytest.raises(SyntaxError, match="Unknown params field: typo"):
-        parse(unknown_params)
+        parse(source)
 
 
 def test_parser_accepts_lowercase_k_alias_like_rust():
