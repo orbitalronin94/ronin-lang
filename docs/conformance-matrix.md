@@ -194,6 +194,7 @@ El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python co
 | OPEN-006 | §2.2 / §3.2 | Catálogo extenso de tipos sin implementación de sistema de tipos | No declarar tipos de dominio completos |
 | OPEN-007 | N.1.4 | Contrato de deuda remite a contenido "sin cambios" no reproducido aquí | Requiere fuente normativa íntegra antes de implementar |
 | OPEN-008 | Papers Hill §4, Teorema 4.1 | El paper afirma rango 1 para la transformación (K, n_H) → (A, n_H), pero su Jacobiano tiene determinante no nulo para K,n_H > 0; además alterna entre “solo A” y “A y n_H” | No elevar su conclusión a semántica normativa. Mantener FIM/SVD local y status estructural unknown/not_assessed hasta corregir derivación y dominio. |
+| OPEN-009 | Papers PBPK §3.2, Propiedad 3.2 | La singularidad de una FIM local/finita no prueba por sí sola no-identificabilidad estructural global; además, los umbrales de condición dependen de escalado y parametrización | Tratar FIM como diagnóstico local/práctico. Exigir simetría/invariante o análisis estructural global para afirmaciones estructurales; calibrar umbrales por dominio. |
 
 ## 14. Criterios para cerrar v0.2
 
