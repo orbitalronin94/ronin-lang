@@ -73,3 +73,57 @@ def test_hill_design_accepts_one_shot_iterables():
     )
     assert report.observations == 4
     assert report.omega_range_orders == pytest.approx(3.0)
+
+
+from ronin.identifiability import diagnose_jacobian, diagnose_sir_early_phase
+
+
+def test_generic_jacobian_diagnostic_detects_rank_and_weak_direction():
+    report = diagnose_jacobian(
+        [[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]],
+        parameter_names=("K", "alpha_h"),
+    )
+    assert report.local_rank == 1
+    assert report.local_rank_status == "rank_deficient"
+    assert len(report.weak_directions) == 1
+    assert report.structural_status == "not_assessed"
+
+
+def test_generic_jacobian_uses_parameter_scales_and_weights():
+    report = diagnose_jacobian(
+        [[1.0, 0.0], [0.0, 1.0]],
+        weights=[4.0, 1.0],
+        parameter_scales=[2.0, 1.0],
+        parameter_names=("x", "y"),
+    )
+    assert report.local_rank == 2
+    assert report.singular_values == pytest.approx((4.0, 1.0))
+    assert report.fim_condition_number == pytest.approx(16.0)
+
+
+def test_sir_early_phase_reports_identifiable_combinations_not_individuals():
+    report = diagnose_sir_early_phase(
+        range(0, 31), beta=0.4, gamma=0.15, rho=0.1, I0=100.0, sigma=0.1
+    )
+    assert report.local_information.local_rank == 2
+    assert report.local_information.parameters == 4
+    assert report.structural_status == "non_identifiable_under_early_phase_approximation"
+    assert report.growth_rate == pytest.approx(0.25)
+    assert report.observed_amplitude == pytest.approx(4.0)
+    assert len(report.local_information.weak_directions) == 2
+
+
+def test_sir_early_phase_requires_distinct_times_and_positive_parameters():
+    with pytest.raises(ValueError, match="distinct"):
+        diagnose_sir_early_phase([1.0, 1.0], 0.4, 0.15, 0.1, 100.0, 0.1)
+    with pytest.raises(ValueError, match="beta"):
+        diagnose_sir_early_phase([1.0, 2.0], 0.0, 0.15, 0.1, 100.0, 0.1)
+
+
+@pytest.mark.parametrize(
+    "jacobian",
+    [[], [[]], [[1.0, 2.0], [1.0]], [[True]], [[math.inf]]],
+)
+def test_generic_jacobian_rejects_invalid_matrices(jacobian):
+    with pytest.raises(ValueError):
+        diagnose_jacobian(jacobian)
