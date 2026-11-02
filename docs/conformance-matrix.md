@@ -91,7 +91,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | INTEROP-006 | §5.10 | Importar JSON de datos como proyecto/sistema | N | N | La exportación JSON IR no equivale a importar JSON externo como System |
 | INTEROP-007 | §5.11–5.19 | YAML, TOML, XML, Protobuf, MsgPack, BSON, Avro, Parquet y Arrow | N | N | No implementados |
 | INTEROP-008 | §3.2, §5.10 | Exportar IR JSON versionado | I | I | Python `ronin compile`; Rust `ronin-core compile`; ambos validan y emiten IR v1 con metadata y valores no finitos normalizados |
-| INTEROP-009 | §5.9 | Exportar resultados a CSV | I | N | Python `ronin run --format csv`; `tests/test_run_csv.py` |
+| INTEROP-009 | §5.9 | Exportar resultados a CSV | I | I | Python `ronin run --format csv`; Rust `ronin-core run --format csv`; `scripts/check_csv_parity.py` compara exportaciones en proyectos compartidos y multi-sistema |
 
 ## 7. Compilación, ejecución y herramientas
 
@@ -103,12 +103,12 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | BUILD-004 | §6.3 | Generar C | N | N | No hay backend C |
 | BUILD-005 | §6.4 | Generar código Python | N | N | No hay codegen Python |
 | BUILD-006 | §6.5–6.8 | LLVM, JVM, .NET y JavaScript codegen | N | N | No implementados |
-| BUILD-007 | §6.9 | Ejecutar/resolver proyecto desde CLI | I | P | Python `run` multi-sistema; Rust `run` alias de solve para sistemas parseados |
+| BUILD-007 | §6.9 | Ejecutar/resolver proyecto desde CLI | I | I | Python `run` y Rust `run` procesan todos los sistemas por defecto; `scripts/check_cli_selection_parity.py` y `scripts/check_csv_parity.py` fijan selección y salida multi-sistema |
 | BUILD-008 | §6.10 | Niveles de optimización `-O0`…`-O3` | N | N | No hay pipeline de optimización |
 | BUILD-009 | §6.11 | Perfilado RONIN | N | N | No hay profiler propio |
 | BUILD-010 | §6.12 | Depurador RONIN | N | N | No hay debugger |
 | BUILD-011 | §6.13 | REPL general del lenguaje | P | N | Existe consola Python básica; no ejecuta el lenguaje completo |
-| BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | P | Python `diagnose`; Rust expone módulo pero no subcomando CLI |
+| BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | I | Python `ronin diagnose`; Rust `ronin-core diagnose`; `scripts/check_diagnostic_parity.py` y `scripts/check_d_optimal_parity.py`, `check_sobol_parity.py`, `check_hill_d_optimal_parity.py` cubren diagnósticos del runtime y APIs científicas por separado |
 | BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR |
 | BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile/diagnose/simulate | — | I | `rust/src/main.rs`; pruebas CLI y paridad de selección multi-sistema; `bootstrap_ci` permanece null porque el estimador no está implementado |
 
