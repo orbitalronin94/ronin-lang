@@ -52,6 +52,12 @@ class Parser:
             raise ValueError(f"{field} must be a string")
         return value
 
+    @staticmethod
+    def boolean(value, field):
+        if not isinstance(value, bool):
+            raise ValueError(f"{field} must be boolean")
+        return value
+
     def value(self):
         token = self.token
         if token.kind == "NUMBER":
@@ -182,6 +188,12 @@ class Parser:
         if isinstance(K, str) and K.lower() in ("inf", "infinity", "∞"):
             K = math.inf
         memory_order = fields.get("memory_order", 1)
+        memory_weights = fields.get("memory_weights")
+        if memory_weights is not None and (
+            not isinstance(memory_weights, list)
+            or any(isinstance(item, bool) or not isinstance(item, (int, float)) for item in memory_weights)
+        ):
+            raise SyntaxError("memory_weights must be an array of numbers or null")
         try:
             memory_order = self.number(memory_order, "memory_order")
             if not memory_order.is_integer() or memory_order < 0:
@@ -196,9 +208,9 @@ class Parser:
                 K=self.number(K, "K"),
                 alpha_h=self.number(fields.get("alpha_h", 1.0), "alpha_h"),
                 memory_order=int(memory_order),
-                memory_weights=fields.get("memory_weights"),
-                degeneracy_check=bool(fields.get("degeneracy_check", False)),
-                omega_range_report=bool(fields.get("omega_range_report", False)),
+                memory_weights=memory_weights,
+                degeneracy_check=self.boolean(fields.get("degeneracy_check", False), "degeneracy_check"),
+                omega_range_report=self.boolean(fields.get("omega_range_report", False), "omega_range_report"),
             )
         except (TypeError, ValueError) as error:
             raise SyntaxError(f"Invalid params value: {error}") from error
