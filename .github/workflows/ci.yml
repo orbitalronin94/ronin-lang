@@ -32,7 +32,7 @@ jobs:
       - name: Python / parser and metadata conformance
         run: pytest -q tests/test_parser_strictness.py tests/test_examples.py tests/test_agent_metadata.py
       - name: Python / numerical runtime and shared fixtures
-        run: pytest -q tests/test_core.py tests/test_conformance_fixtures.py
+        run: pytest -q tests/test_core.py tests/test_conformance_fixtures.py tests/test_identifiability.py
       - name: Python / CLI, IR and REPL contracts
         run: pytest -q tests/test_cli_multisystem.py tests/test_cli_run.py tests/test_run_csv.py tests/test_compile_ir.py tests/test_repl.py
       - name: Check executable examples
@@ -64,6 +64,8 @@ jobs:
         run: "cargo test --manifest-path rust/Cargo.toml --lib solver::"
       - name: Rust / diagnostic contracts
         run: "cargo test --manifest-path rust/Cargo.toml --lib diagnose::"
+      - name: Rust / Hill design identifiability
+        run: "cargo test --manifest-path rust/Cargo.toml --lib identifiability::"
       - name: Rust / simulation contracts
         run: "cargo test --manifest-path rust/Cargo.toml --lib simulator::"
       - name: Rust / IR lowering
