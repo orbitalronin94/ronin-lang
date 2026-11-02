@@ -174,6 +174,141 @@ pub fn diagnose_hill_design(
     })
 }
 
+fn logdet_positive_definite(matrix: &[Vec<f64>]) -> Result<f64, String> {
+    let size = matrix.len();
+    let mut lower = vec![vec![0.0; size]; size];
+    for row in 0..size {
+        for column in 0..=row {
+            let mut value = matrix[row][column];
+            for index in 0..column {
+                value -= lower[row][index] * lower[column][index];
+            }
+            if row == column {
+                if !value.is_finite() || value <= 0.0 {
+                    return Err("regularized information matrix is not positive definite".into());
+                }
+                lower[row][column] = value.sqrt();
+            } else {
+                lower[row][column] = value / lower[column][column];
+            }
+        }
+    }
+    let log_determinant = 2.0 * (0..size).map(|index| lower[index][index].ln()).sum::<f64>();
+    if !log_determinant.is_finite() {
+        return Err("D-optimal log determinant is outside the supported numeric range".into());
+    }
+    Ok(log_determinant)
+}
+
+/// Greedily select candidate observation rows by normalized D-optimality.
+///
+/// The ridge is dimensionless and the returned score is only comparable
+/// under the same parameterization, scales, weights and ridge. This is not
+/// a structural-identifiability certificate.
+pub fn d_optimal_design(
+    jacobian: &[Vec<f64>],
+    n_samples: usize,
+    weights: Option<&[f64]>,
+    parameter_names: Option<&[String]>,
+    parameter_scales: Option<&[f64]>,
+    relative_tolerance: f64,
+    ridge: f64,
+) -> Result<DOptimalDesign, String> {
+    if n_samples == 0 || n_samples > jacobian.len() {
+        return Err("n_samples must be between 1 and the number of candidates".into());
+    }
+    if !ridge.is_finite() || ridge <= 0.0 {
+        return Err("ridge must be finite and positive".into());
+    }
+    // Reuse the public diagnostic to enforce the same matrix, weight, name,
+    // scale and tolerance contract.
+    diagnose_jacobian(
+        jacobian, weights, parameter_names, parameter_scales, relative_tolerance,
+    )?;
+
+    let rows = jacobian.len();
+    let columns = jacobian[0].len();
+    let observation_weights = weights.map_or_else(|| vec![1.0; rows], |values| values.to_vec());
+    let scales = parameter_scales.map_or_else(|| vec![1.0; columns], |values| values.to_vec());
+
+    let mut weighted_rows = Vec::with_capacity(rows);
+    let mut jacobian_scale = 0.0f64;
+    for (row, weight) in jacobian.iter().zip(observation_weights.iter()) {
+        let root_weight = weight.sqrt();
+        let weighted: Vec<f64> = row.iter().zip(scales.iter())
+            .map(|(value, scale)| value * root_weight * scale)
+            .collect();
+        if weighted.iter().any(|value| !value.is_finite()) {
+            return Err("weighted/scaled Jacobian overflow; rescale inputs".into());
+        }
+        jacobian_scale = weighted.iter().fold(jacobian_scale, |largest, value| largest.max(value.abs()));
+        weighted_rows.push(weighted);
+    }
+
+    let normalized_rows: Vec<Vec<f64>> = weighted_rows.iter().map(|row| {
+        if jacobian_scale > 0.0 {
+            row.iter().map(|value| value / jacobian_scale).collect()
+        } else {
+            vec![0.0; columns]
+        }
+    }).collect();
+
+    let mut information = vec![vec![0.0; columns]; columns];
+    let mut selected = Vec::with_capacity(n_samples);
+    for _ in 0..n_samples {
+        let mut best_index = None;
+        let mut best_score = f64::NEG_INFINITY;
+        for candidate in 0..rows {
+            if selected.contains(&candidate) {
+                continue;
+            }
+            let mut trial = information.clone();
+            for left in 0..columns {
+                for right in 0..columns {
+                    trial[left][right] += normalized_rows[candidate][left] * normalized_rows[candidate][right];
+                }
+                trial[left][left] += ridge;
+            }
+            let score = logdet_positive_definite(&trial)?;
+            if score > best_score {
+                best_score = score;
+                best_index = Some(candidate);
+            }
+        }
+        let chosen = best_index.ok_or_else(|| "no remaining design candidates".to_string())?;
+        selected.push(chosen);
+        for left in 0..columns {
+            for right in 0..columns {
+                information[left][right] += normalized_rows[chosen][left] * normalized_rows[chosen][right];
+            }
+        }
+    }
+
+    let mut final_regularized = information.clone();
+    for index in 0..columns {
+        final_regularized[index][index] += ridge;
+    }
+    let log_determinant = logdet_positive_definite(&final_regularized)?;
+    let selected_rows: Vec<Vec<f64>> = selected.iter().map(|index| jacobian[*index].clone()).collect();
+    let selected_weights: Vec<f64> = selected.iter().map(|index| observation_weights[*index]).collect();
+    let local_information = diagnose_jacobian(
+        &selected_rows,
+        Some(&selected_weights),
+        parameter_names,
+        Some(&scales),
+        relative_tolerance,
+    )?;
+
+    Ok(DOptimalDesign {
+        selected_indices: selected,
+        log_determinant,
+        normalized_information_matrix: information,
+        jacobian_scale,
+        ridge,
+        local_information,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::diagnose_hill_design;
@@ -264,6 +399,16 @@ pub struct SIREarlyPhaseDiagnostic {
     pub observed_amplitude: f64,
     pub structural_status: String,
     pub assumptions: Vec<String>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct DOptimalDesign {
+    pub selected_indices: Vec<usize>,
+    pub log_determinant: f64,
+    pub normalized_information_matrix: Vec<Vec<f64>>,
+    pub jacobian_scale: f64,
+    pub ridge: f64,
+    pub local_information: LocalInformationDiagnostic,
 }
 
 fn symmetric_eigen(mut matrix: Vec<Vec<f64>>) -> (Vec<f64>, Vec<Vec<f64>>) {
