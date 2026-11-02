@@ -192,5 +192,6 @@ def test_d_optimal_design_is_stable_under_common_jacobian_scale(factor):
 
     assert scaled.selected_indices == base.selected_indices
     assert scaled.log_determinant == pytest.approx(base.log_determinant)
-    assert scaled.normalized_information_matrix == pytest.approx(base.normalized_information_matrix)
+    for scaled_row, base_row in zip(scaled.normalized_information_matrix, base.normalized_information_matrix):
+        assert scaled_row == pytest.approx(base_row)
     assert scaled.jacobian_scale / factor == pytest.approx(base.jacobian_scale)
