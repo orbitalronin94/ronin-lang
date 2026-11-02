@@ -93,7 +93,14 @@ pub fn solve(system: &System, delta: f64) -> Result<Solution, String> {
     let orders = if positive.len() > 1 { (positive.iter().cloned().fold(f64::NEG_INFINITY,f64::max) / positive.iter().cloned().fold(f64::INFINITY,f64::min)).log10() } else { 0.0 };
     let k_free = !p.k.is_infinite();
     let alpha_h_free = p.alpha_h != 1.0;
-    let degeneracy = if k_free && alpha_h_free && orders < 3.0 { "active" } else { "inactive" }.to_string();
+    let positive_omegas = system.agents.iter().filter(|agent| agent.frequency > 0.0).count();
+    let degeneracy = if positive_omegas < 2 {
+        "unknown"
+    } else if k_free && alpha_h_free && orders < 3.0 {
+        "active"
+    } else {
+        "inactive"
+    }.to_string();
     let q: Vec<f64> = system.agents.iter().map(|a|a.phi*a.psi).collect();
     let min_q = q.iter().cloned().fold(f64::INFINITY,f64::min);
     let k_min = if min_q <= 0.0 { None } else { Some(system.parts as f64 * q.iter().cloned().fold(0.0,f64::max) / min_q / ((system.parts as f64 / delta).ln())) };
@@ -213,6 +220,15 @@ mod tests {
             let systems = parser::parse(source).unwrap();
             assert!(solve(&systems[0], 0.05).is_err());
         }
+    }
+
+
+    #[test]
+    fn solve_reports_unknown_degeneracy_with_insufficient_positive_omegas() {
+        let source = include_str!("../../tests/fixtures/conformance/degeneracy_unknown.ronin");
+        let system = parser::parse(source).unwrap().remove(0);
+        let result = solve(&system, 0.05).unwrap();
+        assert_eq!(result.degeneracy, "unknown");
     }
 
     #[test]
