@@ -24,7 +24,7 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 - [Parte VII — Especificación de RONIN Office](office-spec.md) · [English summary](office-spec.en.md)
 - [Parte VIII — Visión de futuro](vision.md) · [English summary](vision.en.md)
 - [Anexo normativo](normative-annex.md) · [English summary](normative-annex.en.md)
-- [Integración de investigación sobre identificabilidad](research-integration-identifiability.md) — propuesta v1.0 para distinguir identificabilidad estructural, local, práctica y estimabilidad.
+- [Inicio práctico de diagnósticos científicos](research-diagnostics-quickstart.md) · [Integración de investigación sobre identificabilidad](research-integration-identifiability.md) — propuesta v1.0 para distinguir identificabilidad estructural, local, práctica y estimabilidad.
 - [Auditoría del corpus Papers](research-corpus-audit.md) — revisión crítica de Hill, PBPK, SIR, el protocolo de 50 dominios y Testing 1310.
 - [Auditoría complementaria del Tratado y CASCABEL](research-treatise-cascabel-audit.md) — evaluación del anexo ejecutable, pre-registro, comparación sintética y límites de integración de CASCABEL.
 
