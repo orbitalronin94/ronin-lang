@@ -184,10 +184,13 @@ class Parser:
         unknown = sorted(set(fields) - allowed)
         if unknown:
             raise SyntaxError(f"Unknown params field: {unknown[0]}")
-        K = fields.get("K", fields.get("k", math.inf))
-        K = self.number(K, "K")
-        memory_order = fields.get("memory_order", 1)
-        memory_order = self.number(memory_order, "memory_order")
+        if "K" in fields and "k" in fields:
+            raise SyntaxError("Duplicate params field: K/k")
+        try:
+            K = self.number(fields.get("K", fields.get("k", math.inf)), "K")
+            memory_order = self.number(fields.get("memory_order", 1), "memory_order")
+        except (TypeError, ValueError) as error:
+            raise SyntaxError(f"Invalid params value: {error}") from error
         if not memory_order.is_integer():
             raise SyntaxError("memory_order must be an integer")
         memory_weights = fields.get("memory_weights")
