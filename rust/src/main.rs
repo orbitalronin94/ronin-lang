@@ -461,14 +461,14 @@ mod tests {
     }
 
     #[test]
-    fn diagnose_accepts_bootstrap_flag_without_fabricating_interval() {
+    fn diagnose_rejects_unimplemented_bootstrap_request() {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../tests/fixtures/conformance/degeneracy_active.ronin")
             .to_string_lossy()
             .into_owned();
         let args = vec!["diagnose".into(), path, "--bootstrap".into(), "100".into()];
-        let output = execute(&args).unwrap();
-        assert!(output.contains("\"bootstrap_ci\":null"));
+        let error = execute(&args).unwrap_err();
+        assert!(error.contains("bootstrap is not implemented"));
     }
 
     #[test]
