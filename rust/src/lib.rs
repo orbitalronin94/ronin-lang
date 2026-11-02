@@ -14,4 +14,5 @@ pub use ast::{Agent, DegeneracyReport, Params, Simulation, Solution, System, Val
 pub use identifiability::{
     d_optimal_design, diagnose_hill_design, diagnose_jacobian, diagnose_sir_early_phase,
     DOptimalDesign, HillDesignDiagnostic, LocalInformationDiagnostic, SIREarlyPhaseDiagnostic,
+    SobolFirstOrderDiagnostic, sobol_first_order,
 };
