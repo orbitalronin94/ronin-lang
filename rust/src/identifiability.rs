@@ -411,7 +411,12 @@ pub fn d_optimal_hill_design(
 
     let mut jacobian = Vec::with_capacity(omega_candidates.len());
     for omega in omega_candidates {
-        let log_ratio = omega.ln() - k.ln();
+        let ratio = omega / k;
+        let log_ratio = if ratio.is_finite() && ratio > 0.0 {
+            ratio.ln()
+        } else {
+            omega.ln() - k.ln()
+        };
         let z = alpha_h * log_ratio;
         let (derivative_log_k, derivative_log_alpha) = if !z.is_finite() || z.abs() > 745.0 {
             (0.0, 0.0)
