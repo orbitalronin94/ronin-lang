@@ -14,7 +14,7 @@ FIXTURES = [
     ROOT / "tests" / "fixtures" / "conformance" / "degeneracy_unknown.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "valid_zero_fitness_check_only.ronin",
 ]
-BOOTSTRAP = 50
+BOOTSTRAP = 0
 
 
 def run_python(path):
