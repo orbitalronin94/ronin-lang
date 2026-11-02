@@ -236,3 +236,308 @@ mod tests {
         assert!(diagnose_hill_design(&[0.1, f64::NAN], 1.0, 1.5, 0.05, 1e-12, 0.1).is_err());
     }
 }
+
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct LocalInformationDiagnostic {
+    pub observations: usize,
+    pub parameters: usize,
+    pub parameter_names: Vec<String>,
+    pub parameter_scales: Vec<f64>,
+    pub singular_values: Vec<f64>,
+    pub fim_condition_number: f64,
+    pub local_rank: usize,
+    pub local_rank_status: String,
+    pub weak_directions: Vec<Vec<f64>>,
+    pub relative_tolerance: f64,
+    pub structural_status: String,
+    pub practical_status: String,
+    pub estimability_status: String,
+    pub noise_model: String,
+    pub assumptions: Vec<String>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SIREarlyPhaseDiagnostic {
+    pub local_information: LocalInformationDiagnostic,
+    pub growth_rate: f64,
+    pub observed_amplitude: f64,
+    pub structural_status: String,
+    pub assumptions: Vec<String>,
+}
+
+fn symmetric_eigen(mut matrix: Vec<Vec<f64>>) -> (Vec<f64>, Vec<Vec<f64>>) {
+    let size = matrix.len();
+    let mut vectors = vec![vec![0.0; size]; size];
+    for index in 0..size {
+        vectors[index][index] = 1.0;
+    }
+
+    for _ in 0..(100 * size * size).max(1) {
+        let mut p = 0usize;
+        let mut q = 0usize;
+        let mut largest = 0.0f64;
+        for row in 0..size {
+            for col in (row + 1)..size {
+                let candidate = matrix[row][col].abs();
+                if candidate > largest {
+                    largest = candidate;
+                    p = row;
+                    q = col;
+                }
+            }
+        }
+        let scale = (0..size)
+            .map(|index| matrix[index][index].abs())
+            .fold(1.0f64, f64::max);
+        if largest <= 1e-15 * scale {
+            break;
+        }
+
+        let off_diagonal = matrix[p][q];
+        let tau = (matrix[q][q] - matrix[p][p]) / (2.0 * off_diagonal);
+        let tangent = if tau == 0.0 {
+            1.0
+        } else {
+            tau.signum() / (tau.abs() + (1.0 + tau * tau).sqrt())
+        };
+        let cosine = 1.0 / (1.0 + tangent * tangent).sqrt();
+        let sine = tangent * cosine;
+
+        let pp = matrix[p][p];
+        let qq = matrix[q][q];
+        matrix[p][p] = pp - tangent * off_diagonal;
+        matrix[q][q] = qq + tangent * off_diagonal;
+        matrix[p][q] = 0.0;
+        matrix[q][p] = 0.0;
+
+        for index in 0..size {
+            if index == p || index == q {
+                continue;
+            }
+            let ip = matrix[index][p];
+            let iq = matrix[index][q];
+            matrix[index][p] = cosine * ip - sine * iq;
+            matrix[p][index] = matrix[index][p];
+            matrix[index][q] = sine * ip + cosine * iq;
+            matrix[q][index] = matrix[index][q];
+        }
+
+        for index in 0..size {
+            let vp = vectors[index][p];
+            let vq = vectors[index][q];
+            vectors[index][p] = cosine * vp - sine * vq;
+            vectors[index][q] = sine * vp + cosine * vq;
+        }
+    }
+
+    let mut pairs: Vec<(f64, Vec<f64>)> = (0..size)
+        .map(|index| {
+            (
+                matrix[index][index],
+                (0..size).map(|row| vectors[row][index]).collect(),
+            )
+        })
+        .collect();
+    pairs.sort_by(|left, right| right.0.partial_cmp(&left.0).unwrap());
+    let eigenvalues = pairs.iter().map(|item| item.0).collect();
+    let eigenvectors = pairs.into_iter().map(|item| item.1).collect();
+    (eigenvalues, eigenvectors)
+}
+
+/// Diagnose local information from an observation-by-parameter Jacobian.
+pub fn diagnose_jacobian(
+    jacobian: &[Vec<f64>],
+    weights: Option<&[f64]>,
+    parameter_names: Option<&[String]>,
+    parameter_scales: Option<&[f64]>,
+    relative_tolerance: f64,
+) -> Result<LocalInformationDiagnostic, String> {
+    if !relative_tolerance.is_finite()
+        || relative_tolerance <= 0.0
+        || relative_tolerance >= 1.0
+    {
+        return Err("relative_tolerance must be finite and in (0,1)".into());
+    }
+    if jacobian.is_empty() || jacobian[0].is_empty() {
+        return Err("jacobian must be a non-empty rectangular matrix".into());
+    }
+    let columns = jacobian[0].len();
+    if jacobian.iter().any(|row| row.len() != columns) {
+        return Err("jacobian rows must have equal length".into());
+    }
+    if jacobian.iter().flatten().any(|value| !value.is_finite()) {
+        return Err("jacobian values must be finite numbers".into());
+    }
+
+    let observation_weights = match weights {
+        None => vec![1.0; jacobian.len()],
+        Some(values) => {
+            if values.len() != jacobian.len()
+                || values.iter().any(|value| !value.is_finite() || *value <= 0.0)
+            {
+                return Err("weights must be finite positive values, one per row".into());
+            }
+            values.to_vec()
+        }
+    };
+    let scales = match parameter_scales {
+        None => vec![1.0; columns],
+        Some(values) => {
+            if values.len() != columns
+                || values.iter().any(|value| !value.is_finite() || *value <= 0.0)
+            {
+                return Err("parameter_scales must be finite positive values, one per column".into());
+            }
+            values.to_vec()
+        }
+    };
+    let names = match parameter_names {
+        None => (0..columns).map(|index| format!("parameter_{}", index + 1)).collect(),
+        Some(values) => {
+            if values.len() != columns
+                || values.iter().any(|name| name.is_empty())
+            {
+                return Err("parameter_names must contain one non-empty name per column".into());
+            }
+            let mut unique = std::collections::HashSet::new();
+            if values.iter().any(|name| !unique.insert(name.clone())) {
+                return Err("parameter_names must be unique".into());
+            }
+            values.to_vec()
+        }
+    };
+
+    let mut information = vec![vec![0.0; columns]; columns];
+    for (row, weight) in jacobian.iter().zip(observation_weights.iter()) {
+        let scaled: Vec<f64> = row.iter().zip(scales.iter()).map(|(value, scale)| value * scale).collect();
+        for left in 0..columns {
+            for right in left..columns {
+                information[left][right] += weight * scaled[left] * scaled[right];
+            }
+        }
+    }
+    for left in 0..columns {
+        for right in 0..left {
+            information[left][right] = information[right][left];
+        }
+    }
+    if information.iter().flatten().any(|value| !value.is_finite()) {
+        return Err("Fisher information overflow; rescale the Jacobian or weights".into());
+    }
+
+    let (mut eigenvalues, eigenvectors) = symmetric_eigen(information);
+    let largest = eigenvalues.first().copied().unwrap_or(0.0).max(0.0);
+    let negative_tolerance = relative_tolerance * largest.max(1.0);
+    if eigenvalues.iter().any(|value| *value < -negative_tolerance) {
+        return Err("computed information matrix is not positive semidefinite".into());
+    }
+    for value in eigenvalues.iter_mut() {
+        *value = value.max(0.0);
+    }
+
+    let rank = if largest == 0.0 {
+        0
+    } else {
+        eigenvalues.iter().filter(|value| **value > relative_tolerance * largest).count()
+    };
+    let condition = if rank < columns || largest == 0.0 {
+        f64::INFINITY
+    } else {
+        largest / eigenvalues[columns - 1]
+    };
+    let singular_values: Vec<f64> = eigenvalues.iter().map(|value| value.sqrt()).collect();
+    let weak_directions: Vec<Vec<f64>> = eigenvalues
+        .iter()
+        .zip(eigenvectors.iter())
+        .filter(|(value, _)| largest == 0.0 || **value <= relative_tolerance * largest)
+        .map(|(_, vector)| vector.clone())
+        .collect();
+
+    Ok(LocalInformationDiagnostic {
+        observations: jacobian.len(),
+        parameters: columns,
+        parameter_names: names,
+        parameter_scales: scales,
+        singular_values,
+        fim_condition_number: condition,
+        local_rank: rank,
+        local_rank_status: if rank == columns { "full_rank" } else { "rank_deficient" }.into(),
+        weak_directions,
+        relative_tolerance,
+        structural_status: "not_assessed".into(),
+        practical_status: "not_calibrated".into(),
+        estimability_status: "not_assessed".into(),
+        noise_model: "caller-supplied independent observation precisions (diagonal W)".into(),
+        assumptions: vec![
+            "Jacobian evaluated at documented typical parameters".into(),
+            "local linearization and supplied diagonal observation weights".into(),
+            "parameter scales define dimensionless local coordinates".into(),
+            "local FIM rank is not a global structural-identifiability proof".into(),
+        ],
+    })
+}
+
+/// Diagnose the early-phase SIR-with-underreporting reduced observation model.
+pub fn diagnose_sir_early_phase(
+    times: &[f64],
+    beta: f64,
+    gamma: f64,
+    rho: f64,
+    i0: f64,
+    sigma: f64,
+) -> Result<SIREarlyPhaseDiagnostic, String> {
+    for (name, value) in [
+        ("beta", beta), ("gamma", gamma), ("rho", rho), ("I0", i0), ("sigma", sigma),
+    ] {
+        if !value.is_finite() || value <= 0.0 {
+            return Err(format!("{name} must be a finite positive number"));
+        }
+    }
+    if times.len() < 2
+        || times.iter().any(|time| !time.is_finite() || *time < 0.0)
+    {
+        return Err("times must contain at least two finite non-negative values".into());
+    }
+    let mut distinct = times.to_vec();
+    distinct.sort_by(|left, right| left.partial_cmp(right).unwrap());
+    distinct.dedup();
+    if distinct.len() < 2 {
+        return Err("times must contain at least two distinct values".into());
+    }
+    let sigma_squared = sigma * sigma;
+    if sigma_squared == 0.0 || !sigma_squared.is_finite() {
+        return Err("sigma is outside the stable Fisher information range".into());
+    }
+    let precision = 1.0 / sigma_squared;
+    if !precision.is_finite() {
+        return Err("sigma is outside the stable Fisher information range".into());
+    }
+
+    let jacobian: Vec<Vec<f64>> = times
+        .iter()
+        .map(|time| vec![1.0 + beta * time, -gamma * time, 1.0, 1.0])
+        .collect();
+    let weights = vec![precision; times.len()];
+    let names = vec!["beta".into(), "gamma".into(), "rho".into(), "I0".into()];
+    let local_information = diagnose_jacobian(
+        &jacobian, Some(&weights), Some(&names), None, 1e-12,
+    )?;
+    let observed_amplitude = rho * beta * i0;
+    if !observed_amplitude.is_finite() {
+        return Err("rho*beta*I0 overflows the supported numeric range".into());
+    }
+
+    Ok(SIREarlyPhaseDiagnostic {
+        local_information,
+        growth_rate: beta - gamma,
+        observed_amplitude,
+        structural_status: "non_identifiable_under_early_phase_approximation".into(),
+        assumptions: vec![
+            "S(t)/N approximately 1 and I(t) much smaller than N".into(),
+            "observed cases C(t) approximately rho*beta*I0*exp((beta-gamma)*t)".into(),
+            "independent Gaussian errors on log observed cases with standard deviation sigma".into(),
+            "the conclusion applies to the early-phase reduced observation model, not every SIR regime".into(),
+        ],
+    })
+}
