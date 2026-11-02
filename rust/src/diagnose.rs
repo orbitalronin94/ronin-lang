@@ -65,6 +65,20 @@ mod tests {
         }
     }
     #[test]
+    fn recommendations_do_not_overclaim_global_structural_identifiability() {
+        let active_source = include_str!("../../tests/fixtures/conformance/degeneracy_active.ronin");
+        let inactive_source = include_str!("../../tests/fixtures/conformance/degeneracy_inactive.ronin");
+        let active = parser::parse(active_source).unwrap().remove(0);
+        let inactive = parser::parse(inactive_source).unwrap().remove(0);
+        let active_report = diagnose(&active, 0).unwrap();
+        let inactive_report = diagnose(&inactive, 0).unwrap();
+        assert!(active_report.recommendation.contains("weakly separated"));
+        assert!(inactive_report.recommendation.contains("global structural identifiability"));
+        assert_eq!(active_report.structural_status, "not_assessed");
+        assert_eq!(inactive_report.structural_status, "not_assessed");
+    }
+
+    #[test]
     fn unsupported_bootstrap_is_rejected_explicitly() {
         let source = include_str!("../../examples/maquinas.ronin");
         let system = parser::parse(source).unwrap().remove(0);
