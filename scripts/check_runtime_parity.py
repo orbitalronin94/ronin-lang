@@ -25,6 +25,7 @@ VALID = [
     ROOT / "tests" / "fixtures" / "conformance" / "ces_hill.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "full_order1.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "metadata_nested.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "degeneracy_unknown.ronin",
 ]
 INVALID = [
     ROOT / "tests" / "fixtures" / "conformance" / "invalid_frequency_sum.ronin",
