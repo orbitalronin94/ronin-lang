@@ -72,6 +72,22 @@ def test_parser_supports_strings_signed_values_and_memory_arrays():
     assert parse('system Default = { parts: 2, resource: 1, agents: [{phi:0.5,psi:0.5,frequency:0.5},{phi:0.5,psi:0.5,frequency:0.5}], params: { memory_weights: null } }')["Default"].params.memory_weights is None
 
 
+
+def test_parser_rejects_duplicate_K_and_k_aliases():
+    source = """
+    system DuplicateK = {
+      parts: 2, resource: 1,
+      agents: [
+        { phi: 1, psi: 1, frequency: 0.5 },
+        { phi: 1, psi: 1, frequency: 0.5 }
+      ],
+      params: { model: "hill", K: 1.0, k: 2.0 }
+    }
+    """
+    with pytest.raises(Exception, match=r"Duplicate params field: K/k"):
+        parse(source)
+
+
 def test_invalid_frequency_sum():
     source = MAQ.replace("frequency: 0.4", "frequency: 0.3")
     with pytest.raises(SemanticError):
