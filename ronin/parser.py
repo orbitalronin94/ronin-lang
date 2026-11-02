@@ -176,7 +176,15 @@ class Parser:
         self.take()
         if self.token.value == ",":
             self.take()
-        K = fields.get("K", math.inf)
+        allowed = {
+            "alpha", "gamma", "sigma", "coexistence_delta", "model", "lambda",
+            "K", "k", "alpha_h", "memory_order", "memory_weights",
+            "degeneracy_check", "omega_range_report",
+        }
+        unknown = sorted(set(fields) - allowed)
+        if unknown:
+            raise SyntaxError(f"Unknown params field: {unknown[0]}")
+        K = fields.get("K", fields.get("k", math.inf))
         if isinstance(K, str) and K.lower() in ("inf", "infinity", "∞"):
             K = math.inf
         K = self.number(K, "K")
@@ -227,6 +235,9 @@ class Parser:
             self.take()
             if name in systems:
                 raise SyntaxError(f"Duplicate system {name}")
+            unknown = sorted(set(fields) - {"parts", "resource", "agents", "params"})
+            if unknown:
+                raise SyntaxError(f"Unknown system {name} field: {unknown[0]}")
             try:
                 parts = fields["parts"]
                 if isinstance(parts, bool) or not float(parts).is_integer():
