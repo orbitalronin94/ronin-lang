@@ -13,8 +13,14 @@ def hill(omega, K, alpha_h):
         raise SemanticError("invalid Hill arguments")
     if omega == 0:
         return 0.0
-    x = (omega / K) ** alpha_h
-    return x / (1 + x)
+
+    # Evaluate the equivalent logistic form in log space. Directly computing
+    # (omega / K) ** alpha_h can overflow for valid, extreme parameter values.
+    log_ratio = alpha_h * (math.log(omega) - math.log(K))
+    if log_ratio >= 0:
+        return 1.0 / (1.0 + math.exp(-log_ratio))
+    exp_ratio = math.exp(log_ratio)
+    return exp_ratio / (1.0 + exp_ratio)
 
 
 def ces_combine(phi, psi, omega_eff, lam, w=(1 / 3, 1 / 3, 1 / 3)):
