@@ -232,6 +232,15 @@ mod tests {
     }
 
     #[test]
+    fn rejects_invalid_coexistence_delta_overrides() {
+        let system = maquinas();
+        for delta in [0.0, -0.01, 0.1001, f64::INFINITY, f64::NAN] {
+            let error = solve(&system, delta).unwrap_err();
+            assert!(error.contains("delta must be in (0,0.1]"));
+        }
+    }
+
+    #[test]
     fn rejects_invalid_memory_weight_length_and_sum() {
         let mut system = maquinas();
         system.params.memory_weights = Some(vec![0.5, 0.5]);
