@@ -19,6 +19,9 @@ class HillDesignDiagnostic:
     local_rank: int
     local_rank_status: str
     weak_direction: tuple
+    typical_parameters: tuple
+    relative_tolerance: float
+    saturation_ratio: float
     structural_status: str
     practical_status: str
     estimability_status: str
@@ -170,6 +173,9 @@ def diagnose_hill_design(
         local_rank=rank,
         local_rank_status="full_rank" if rank == 2 else "rank_deficient",
         weak_direction=weak_direction,
+        typical_parameters=(K, alpha_h),
+        relative_tolerance=float(relative_tolerance),
+        saturation_ratio=float(saturation_ratio),
         structural_status="not_assessed",
         practical_status="not_calibrated",
         estimability_status="not_assessed",
