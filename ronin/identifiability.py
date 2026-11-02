@@ -761,3 +761,97 @@ def sobol_first_order(f_a, f_b, f_ab):
             "finite-sample estimates are not clipped to [0,1]",
         ),
     )
+
+
+@dataclass(frozen=True)
+class HillDOptimalDesign:
+    """D-optimal candidate observations for a two-parameter Hill response."""
+
+    selected_indices: tuple
+    selected_omega: tuple
+    candidate_count: int
+    K: float
+    alpha_h: float
+    sigma: float
+    design: DOptimalDesign
+    warnings: tuple
+
+
+def d_optimal_hill_design(
+    omega_candidates,
+    n_samples,
+    K,
+    alpha_h,
+    sigma,
+    *,
+    relative_tolerance=1e-12,
+    ridge=1e-12,
+):
+    """Select Hill observation levels for local information on log(K), log(n).
+
+    The observation model is the Hill response with additive homoscedastic
+    Gaussian noise. Since sigma is constant across candidates, it multiplies
+    the entire FIM by a common factor and does not change the selected subset.
+    The returned D-optimal score is normalized and therefore dimensionless.
+    """
+    try:
+        omega_values = list(omega_candidates)
+    except TypeError as error:
+        raise ValueError("omega_candidates must be a non-empty numeric sequence") from error
+    if not omega_values:
+        raise ValueError("omega_candidates must be a non-empty numeric sequence")
+    for name, value in (("K", K), ("alpha_h", alpha_h), ("sigma", sigma)):
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(float(value))
+            or value <= 0.0
+        ):
+            raise ValueError(f"{name} must be finite and positive")
+    omega_values = [float(value) for value in omega_values]
+    if any(not math.isfinite(value) or value <= 0.0 for value in omega_values):
+        raise ValueError("all omega_candidates must be finite and positive")
+
+    K = float(K)
+    alpha_h = float(alpha_h)
+    sigma = float(sigma)
+    jacobian = []
+    for omega in omega_values:
+        log_ratio = math.log(omega) - math.log(K)
+        z = alpha_h * log_ratio
+        if not math.isfinite(z) or abs(z) > 745.0:
+            slope = 0.0
+            derivative_log_k = 0.0
+            derivative_log_alpha = 0.0
+        else:
+            tail = math.exp(-abs(z))
+            slope = tail / ((1.0 + tail) ** 2)
+            derivative_log_k = -alpha_h * slope
+            derivative_log_alpha = z * slope
+        row = [derivative_log_k, derivative_log_alpha]
+        if any(not math.isfinite(value) for value in row):
+            raise ValueError("Hill sensitivity exceeds the supported numeric range")
+        jacobian.append(row)
+
+    design = d_optimal_design(
+        jacobian,
+        n_samples,
+        parameter_names=("log_K", "log_alpha_h"),
+        relative_tolerance=relative_tolerance,
+        ridge=ridge,
+    )
+    warnings = ()
+    if design.local_information.local_rank < 2:
+        warnings = (
+            "selected Hill observations do not provide full local rank for log(K) and log(alpha_h)",
+        )
+    return HillDOptimalDesign(
+        selected_indices=design.selected_indices,
+        selected_omega=tuple(omega_values[index] for index in design.selected_indices),
+        candidate_count=len(omega_values),
+        K=K,
+        alpha_h=alpha_h,
+        sigma=sigma,
+        design=design,
+        warnings=warnings,
+    )
