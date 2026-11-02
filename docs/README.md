@@ -5,7 +5,7 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 ## Empezar
 
 - [Inicio práctico: primer flujo ejecutable](quickstart-practico.md) · [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
-- [Roadmap de v0.1 a v1.0](roadmap.md)
+- [Roadmap de v0.1 a v1.0](roadmap.md) · [Programa de implementación integral MDES](full-implementation-program.md)
 - [Perfil candidato v1.0](v1.0-profile.md) — alcance propuesto, capacidades excluidas y criterios de aceptación; pendiente de aprobación.
 - [Matriz de conformidad del perfil v1.0](v1.0-conformance-matrix.md) — evidencia y brechas separadas del mapa histórico MDES v0.5.
 - [ADR-0001 — Límite CES cuando lambda tiende a cero](decisions/ADR-0001-ces-zero-limit.md) — propuesta normativa pendiente de aprobación.
