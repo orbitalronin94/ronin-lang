@@ -4,9 +4,11 @@ __version__ = "1.1.0"
 
 from .diagnose import diagnose
 from .identifiability import (
+    DOptimalDesign,
     HillDesignDiagnostic,
     LocalInformationDiagnostic,
     SIREarlyPhaseDiagnostic,
+    d_optimal_design,
     diagnose_hill_design,
     diagnose_jacobian,
     diagnose_sir_early_phase,
@@ -27,6 +29,8 @@ __all__ = [
     "solve",
     "simulate",
     "diagnose",
+    "DOptimalDesign",
+    "d_optimal_design",
     "HillDesignDiagnostic",
     "diagnose_hill_design",
     "LocalInformationDiagnostic",
