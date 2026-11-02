@@ -122,6 +122,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Compare Python and Rust solver results
         run: python scripts/check_runtime_parity.py
+      - name: Stress Python and Rust solver parity with deterministic randomized systems
+        run: python scripts/check_randomized_runtime_parity.py
 
 
   cross-runtime-simulation-contracts:
