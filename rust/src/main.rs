@@ -230,7 +230,11 @@ pub fn execute(args: &[String]) -> Result<String, String> {
         let report = diagnose::diagnose(system, bootstrap.unwrap_or(0))?;
         return Ok(format!(
             "{{\"omega_range_orders\":{},\"degeneracy\":{},\"lambda_identifiable\":{},\"K_identifiable\":{},\"alpha_h_identifiable\":{},\"recommendation\":{},\"bootstrap_ci\":null,\"structural_status\":{},\"practical_status\":{},\"estimability_status\":{},\"diagnostic_method\":{},\"parameter_freedom_basis\":{}}}",
-            json_number(report.omega_range_orders),
+
+        assert!(output.contains("\\"structural_status\\":\\"not_assessed\\""));
+        assert!(output.contains("\\"practical_status\\":\\"not_calibrated\\""));
+        assert!(output.contains("\\"diagnostic_method\\":\\"omega_range_heuristic\\""));
+        assert!(output.contains("\\"parameter_freedom_basis\\":\\"legacy_value_heuristic\\""));            json_number(report.omega_range_orders),
             json_string(&report.degeneracy),
             report.lambda_identifiable,
             report.k_identifiable,
