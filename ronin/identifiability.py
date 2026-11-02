@@ -510,3 +510,159 @@ def diagnose_sir_early_phase(times, beta, gamma, rho, I0, sigma):
             "the conclusion applies to the early-phase reduced observation model, not every SIR regime",
         ),
     )
+
+
+@dataclass(frozen=True)
+class DOptimalDesign:
+    """Greedy D-optimal selection over candidate observation rows.
+
+    The determinant is evaluated on the normalized weighted FIM plus a
+    dimensionless ridge. It is a relative design score, not an identifiability
+    certificate and not a physical-unit determinant.
+    """
+
+    selected_indices: tuple
+    log_determinant: float
+    normalized_information_matrix: tuple
+    jacobian_scale: float
+    ridge: float
+    local_information: LocalInformationDiagnostic
+
+
+def _logdet_positive_definite(matrix):
+    """Return log(det(matrix)) using Cholesky without forming a determinant."""
+    size = len(matrix)
+    lower = [[0.0] * size for _ in range(size)]
+    for row in range(size):
+        for column in range(row + 1):
+            value = matrix[row][column] - math.fsum(
+                lower[row][index] * lower[column][index]
+                for index in range(column)
+            )
+            if row == column:
+                if not math.isfinite(value) or value <= 0.0:
+                    raise ValueError("regularized information matrix is not positive definite")
+                lower[row][column] = math.sqrt(value)
+            else:
+                lower[row][column] = value / lower[column][column]
+    return 2.0 * math.fsum(math.log(lower[index][index]) for index in range(size))
+
+
+def d_optimal_design(
+    jacobian,
+    n_samples,
+    *,
+    weights=None,
+    parameter_names=None,
+    parameter_scales=None,
+    relative_tolerance=1e-12,
+    ridge=1e-12,
+):
+    """Greedily select candidate observation rows by D-optimality.
+
+    Each Jacobian row is one candidate observation (for example, one sampling
+    time). Selection maximizes log det(FIM + ridge*I) in normalized coordinates.
+    The same parameterization, weights and ridge must be used when comparing
+    designs. A good local design cannot repair structural non-identifiability.
+    """
+    if isinstance(n_samples, bool) or not isinstance(n_samples, int):
+        raise ValueError("n_samples must be an integer")
+    if (
+        isinstance(ridge, bool)
+        or not isinstance(ridge, (int, float))
+        or not math.isfinite(ridge)
+        or ridge <= 0.0
+    ):
+        raise ValueError("ridge must be finite and positive")
+
+    rows = [list(row) for row in jacobian]
+    if not rows:
+        raise ValueError("jacobian must contain candidate observation rows")
+    if n_samples < 1 or n_samples > len(rows):
+        raise ValueError("n_samples must be between 1 and the number of candidates")
+
+    observation_weights = None if weights is None else list(weights)
+    scales = None if parameter_scales is None else list(parameter_scales)
+    names = None if parameter_names is None else tuple(parameter_names)
+    # Reuse the public diagnostic's validation contract for matrix shape,
+    # weights, names, scales and tolerance.
+    diagnose_jacobian(
+        rows,
+        weights=observation_weights,
+        parameter_names=names,
+        parameter_scales=scales,
+        relative_tolerance=relative_tolerance,
+    )
+    if observation_weights is None:
+        observation_weights = [1.0] * len(rows)
+    if scales is None:
+        scales = [1.0] * len(rows[0])
+
+    weighted_rows = []
+    jacobian_scale = 0.0
+    for row, weight in zip(rows, observation_weights):
+        weighted = [
+            float(value) * math.sqrt(float(weight)) * float(scale)
+            for value, scale in zip(row, scales)
+        ]
+        if any(not math.isfinite(value) for value in weighted):
+            raise ValueError("weighted/scaled Jacobian overflow; rescale inputs")
+        weighted_rows.append(weighted)
+        jacobian_scale = max(jacobian_scale, *(abs(value) for value in weighted))
+
+    columns = len(rows[0])
+    normalized_rows = [
+        [value / jacobian_scale for value in row] if jacobian_scale > 0.0
+        else [0.0] * columns
+        for row in weighted_rows
+    ]
+    information = [[0.0] * columns for _ in range(columns)]
+    selected = []
+
+    def score_with(candidate):
+        trial = [row[:] for row in information]
+        values = normalized_rows[candidate]
+        for left in range(columns):
+            for right in range(columns):
+                trial[left][right] += values[left] * values[right]
+        for index in range(columns):
+            trial[index][index] += float(ridge)
+        return _logdet_positive_definite(trial)
+
+    for _ in range(n_samples):
+        best_index = None
+        best_score = -math.inf
+        for candidate in range(len(rows)):
+            if candidate in selected:
+                continue
+            candidate_score = score_with(candidate)
+            if candidate_score > best_score:
+                best_index = candidate
+                best_score = candidate_score
+        selected.append(best_index)
+        values = normalized_rows[best_index]
+        for left in range(columns):
+            for right in range(columns):
+                information[left][right] += values[left] * values[right]
+
+    final_regularized = [row[:] for row in information]
+    for index in range(columns):
+        final_regularized[index][index] += float(ridge)
+    log_determinant = _logdet_positive_definite(final_regularized)
+    selected_rows = [rows[index] for index in selected]
+    selected_weights = [observation_weights[index] for index in selected]
+    local_information = diagnose_jacobian(
+        selected_rows,
+        weights=selected_weights,
+        parameter_names=names,
+        parameter_scales=scales,
+        relative_tolerance=relative_tolerance,
+    )
+    return DOptimalDesign(
+        selected_indices=tuple(selected),
+        log_determinant=log_determinant,
+        normalized_information_matrix=tuple(tuple(value for value in row) for row in information),
+        jacobian_scale=jacobian_scale,
+        ridge=float(ridge),
+        local_information=local_information,
+    )
