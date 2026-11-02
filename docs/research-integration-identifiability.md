@@ -318,3 +318,16 @@ Para resolverlo se debe especificar con precisión:
 - qué Jacobiano/FIM se calcula para la inferencia de parámetros.
 
 Decisión de ingeniería: la API actual no extrapola el resultado temprano al SIR completo y no adopta la afirmación de persistencia `rho-I0` como regla universal hasta que el paper reconcilie Proposición 4.2, S8 y el Jacobiano pertinente.
+
+
+### Estados explícitos en el informe RONIN
+
+El informe `diagnose` expone ahora por separado:
+
+- `structural_status = "not_assessed"`;
+- `practical_status = "not_calibrated"`;
+- `estimability_status = "not_assessed"`;
+- `diagnostic_method = "omega_range_heuristic"`;
+- `parameter_freedom_basis = "legacy_value_heuristic"`.
+
+Estos campos hacen visible el alcance real del informe y la heurística histórica de libertad paramétrica. No convierten el diagnóstico por rango Ω en una prueba FIM ni en un análisis global. La migración a modos explícitos `free/fixed/unknown` está propuesta en ADR-0002.
