@@ -21,8 +21,26 @@ Que exista una especificación completa no significa que todas sus capacidades e
 4. **Fixtures reproducibles:** los ejemplos y datasets de aceptación deben estar completos, versionados y trazables a su sección fuente.
 5. **Compatibilidad deliberada:** los cambios de sintaxis, IR y API deben tener pruebas de compatibilidad y notas de migración.
 6. **Hitos por criterios de salida:** no se promete una fecha ni se considera alcanzada una versión por el mero hecho de crear una etiqueta.
+7. **Utilidad incremental sin rebajar el destino:** cada etapa debe producir capacidades que alguien pueda usar; el objetivo final sigue siendo completar la conformidad con MDES v0.5, no sustituirla por un subconjunto permanente.
 
-## 3. Hitos de versión
+## 3. Línea paralela: utilidad y adopción
+
+La conformidad completa sigue siendo el destino técnico. No obstante, RONIN debe generar valor antes de terminar todos los capítulos de MDES. Por eso, junto al trabajo de especificación, se mantiene una línea de producto incremental:
+
+1. **Caso real reproducible:** partir de proyectos existentes del repositorio —empezando por `examples/maquinas.ronin`— y documentar el problema, los datos de entrada, el modelo elegido, los comandos y la interpretación de la salida.
+2. **Flujo de usuario completo:** instalación limpia → inspección del proyecto → validación → resolución/simulación → exportación → explicación de resultados. Cada paso debe poder repetirse desde la documentación.
+3. **Ejemplos orientados a tareas:** añadir ejemplos solo cuando haya una pregunta concreta que responder y datos/expectativas verificables; no convertir fixtures sintéticos en evidencia de aplicabilidad real.
+4. **Experiencia de uso:** priorizar mensajes de error accionables, defaults explícitos, documentación de inicio rápido y salidas fáciles de consumir desde Python, Rust, CSV y JSON.
+5. **Distribución:** preparar paquetes y artefactos reproducibles cuando el flujo de instalación y las plataformas soportadas estén probados.
+6. **Feedback:** recoger problemas de usuarios y convertirlos en issues, tests de regresión o mejoras de documentación, sin alterar silenciosamente la semántica normativa.
+
+### Puerta de utilidad de cada entrega
+
+Una capacidad se considera útil cuando existe al menos un ejemplo completo y ejecutable, una explicación del problema que aborda, entradas y resultados esperados, instrucciones de ejecución desde un entorno limpio y una descripción honesta de sus límites. La CI verde es necesaria para la calidad del cambio, pero no sustituye esa demostración de uso.
+
+Esta línea no permite etiquetar como implementadas funciones ausentes ni relajar la precisión matemática. Las áreas no soportadas deben fallar claramente o declararse explícitamente; nunca deben producir resultados ficticios.
+
+## 4. Hitos de versión
 
 ### v0.1 — Foundation / baseline (estado actual)
 
@@ -197,9 +215,9 @@ Requisitos de lanzamiento:
 - Limitaciones y extensiones no soportadas claramente publicadas.
 - Artefactos reproducibles y procedimiento de release documentado.
 
-**v1.0 no significa implementar cada idea futura de MDES.** Significa que el perfil estable anunciado está definido, probado, documentado y mantenido con compatibilidad deliberada.
+**La conformidad completa con MDES v0.5 sigue siendo el objetivo final del proyecto.** v1.0 no debe declarar conformidad con requisitos excluidos o pendientes: el alcance anunciado debe estar delimitado, y cualquier requisito de MDES aún no implementado debe permanecer visible como deuda o trabajo posterior. Las entregas intermedias pueden ser útiles y estables para sus capacidades declaradas sin presentarse como conformidad integral.
 
-## 4. Líneas de trabajo transversales
+## 5. Líneas de trabajo transversales
 
 | Línea | Resultado esperado para v1.0 |
 |---|---|
@@ -214,7 +232,7 @@ Requisitos de lanzamiento:
 | Herramientas | CLI estable y Office MVP probado si se incluye en el alcance |
 | Calidad | CI, fuzzing, benchmarks y política de releases |
 
-## 5. Gestión de requisitos y porcentaje de avance
+## 6. Gestión de requisitos y porcentaje de avance
 
 El porcentaje de avance no se calculará por número de commits, archivos o líneas de código. Se medirá sobre requisitos identificados:
 
@@ -226,7 +244,7 @@ El porcentaje de avance no se calculará por número de commits, archivos o lín
 
 Un requisito no puede contarse como conforme solo porque exista una función con un nombre parecido. La matriz de v0.2 será la fuente del porcentaje verificable.
 
-## 6. Política de cambios
+## 7. Política de cambios
 
 - Cada cambio funcional debe incluir pruebas y documentación.
 - Los cambios normativos deben citar la sección de MDES afectada y registrar la decisión.
@@ -234,6 +252,6 @@ Un requisito no puede contarse como conforme solo porque exista una función con
 - Una versión de software no modifica automáticamente MDES.
 - No se anunciará soporte para un backend, binding o extensión hasta que sus pruebas de conformidad estén disponibles.
 
-## 7. Estado actual
+## 8. Estado actual
 
 En el momento de publicar este roadmap, el repositorio se declara **RONIN Runtime v0.1**, basado en **MDES v0.5**. El runtime Python ofrece más capacidades que la implementación Rust en algunas áreas; Rust ya dispone de parser y CLI iniciales, pero no tiene paridad completa ni compilación IR equivalente. Los límites detallados están en [source-coverage.md](source-coverage.md).
