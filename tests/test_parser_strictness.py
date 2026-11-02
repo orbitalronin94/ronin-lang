@@ -87,3 +87,14 @@ def test_parser_accepts_lowercase_k_alias_like_rust():
         'params: { model: "hill", k: 0.5 } }'
     )
     assert parse(source)["S"].params.K == pytest.approx(0.5)
+
+
+def test_parser_rejects_boolean_memory_weights_and_string_numbers():
+    sources = [
+        'system S = { parts: 2, resource: 1, agents: [{phi: 0.5, psi: 0.5, frequency: 0.5}, {phi: 0.5, psi: 0.5, frequency: 0.5}], params: { memory_weights: [true] } }',
+        'system S = { parts: "2", resource: 1, agents: [{phi: 0.5, psi: 0.5, frequency: 0.5}, {phi: 0.5, psi: 0.5, frequency: 0.5}] }',
+        'system S = { parts: 2, resource: 1, agents: [{phi: 0.5, psi: 0.5, frequency: 0.5}, {phi: 0.5, psi: 0.5, frequency: 0.5}], params: { K: "inf" } }',
+    ]
+    for source in sources:
+        with pytest.raises(SyntaxError):
+            parse(source)
