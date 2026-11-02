@@ -185,13 +185,17 @@ class Parser:
         if unknown:
             raise SyntaxError(f"Unknown params field: {unknown[0]}")
         K = fields.get("K", fields.get("k", math.inf))
-        if isinstance(K, str) and K.lower() in ("inf", "infinity", "∞"):
-            K = math.inf
         K = self.number(K, "K")
         memory_order = fields.get("memory_order", 1)
         memory_order = self.number(memory_order, "memory_order")
         if not memory_order.is_integer():
             raise SyntaxError("memory_order must be an integer")
+        memory_weights = fields.get("memory_weights")
+        if memory_weights is not None and (
+            not isinstance(memory_weights, list)
+            or any(isinstance(x, bool) or not isinstance(x, (int, float)) for x in memory_weights)
+        ):
+            raise SyntaxError("memory_weights must be an array of numbers or null")
         try:
             return Params(
                 alpha=self.number(fields.get("alpha", 1.0), "alpha"),
@@ -203,7 +207,7 @@ class Parser:
                 K=K,
                 alpha_h=self.number(fields.get("alpha_h", 1.0), "alpha_h"),
                 memory_order=int(memory_order),
-                memory_weights=fields.get("memory_weights"),
+                memory_weights=memory_weights,
                 degeneracy_check=self.boolean(fields.get("degeneracy_check", False), "degeneracy_check"),
                 omega_range_report=self.boolean(fields.get("omega_range_report", False), "omega_range_report"),
             )
@@ -239,8 +243,8 @@ class Parser:
             if unknown:
                 raise SyntaxError(f"Unknown system {name} field: {unknown[0]}")
             try:
-                parts = fields["parts"]
-                if isinstance(parts, bool) or not float(parts).is_integer():
+                parts = self.number(fields["parts"], "parts")
+                if not parts.is_integer():
                     raise ValueError("parts must be an integer")
                 systems[name] = System(
                     name=name,
