@@ -74,14 +74,14 @@ def diagnose_hill_design(
         raise ValueError("saturation_ratio must be finite and positive")
 
     try:
-        values = list(omega)
+        raw_values = list(omega)
     except TypeError as error:
         raise ValueError("omega must be a non-empty iterable of positive numbers") from error
-    if not values:
+    if not raw_values:
         raise ValueError("omega must contain at least one observation")
 
     values = []
-    for value in omega:
+    for value in raw_values:
         if isinstance(value, bool) or not isinstance(value, (int, float)):
             raise ValueError("omega values must be finite positive numbers")
         value = float(value)
@@ -114,10 +114,14 @@ def diagnose_hill_design(
         fim_ka += derivative_log_k * derivative_log_alpha * inv_sigma2
         fim_aa += derivative_log_alpha * derivative_log_alpha * inv_sigma2
 
-        ratio = value / K
-        max_ratio = max(max_ratio, ratio)
-        if ratio >= saturation_ratio:
+        log_ratio_to_k = log_ratio
+        max_log_ratio = math.log(max_ratio) if max_ratio > 0 else -math.inf
+        max_log_ratio = max(max_log_ratio, log_ratio_to_k)
+        if log_ratio_to_k >= math.log(saturation_ratio):
             saturated += 1
+
+    if not all(math.isfinite(value) for value in (fim_kk, fim_ka, fim_aa)):
+        raise ValueError("Fisher information overflow; increase sigma or rescale the design")
 
     trace = fim_kk + fim_aa
     discriminant = math.hypot(fim_kk - fim_aa, 2.0 * fim_ka)
@@ -139,7 +143,8 @@ def diagnose_hill_design(
 
     minimum = min(values)
     maximum = max(values)
-    omega_range = math.log10(maximum / minimum) if len(values) > 1 else 0.0
+    omega_range = (math.log10(maximum) - math.log10(minimum)) if len(values) > 1 else 0.0
+    max_ratio = math.exp(max_log_ratio) if max_log_ratio < 709 else math.inf
     warnings = []
     if max_ratio < saturation_ratio:
         warnings.append(
