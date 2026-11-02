@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from ronin.diagnose import diagnose
-from ronin.errors import SemanticError
+from ronin.errors import SemanticError, SyntaxError as RoninSyntaxError
 from ronin.parser import parse
 from ronin.lexer import PATTERN, lex
 from ronin.semantics import ces_combine, hill, k_min
@@ -84,7 +84,7 @@ def test_parser_rejects_duplicate_K_and_k_aliases():
       params: { model: "hill", K: 1.0, k: 2.0 }
     }
     """
-    with pytest.raises(Exception, match=r"Duplicate params field: K/k"):
+    with pytest.raises(RoninSyntaxError, match=r"Duplicate params field: K/k"):
         parse(source)
 
 
