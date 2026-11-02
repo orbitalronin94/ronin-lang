@@ -53,6 +53,8 @@ def allocation(s, fs=None):
 
 
 def k_min(s, delta=0.05):
+    if not math.isfinite(delta) or not 0.0 < delta <= 0.1:
+        raise SemanticError("delta must be in (0,0.1]")
     q = [a.phi * a.psi for a in s.agents]
     if min(q) <= 0:
         return None
