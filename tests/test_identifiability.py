@@ -75,7 +75,7 @@ def test_hill_design_accepts_one_shot_iterables():
     assert report.omega_range_orders == pytest.approx(3.0)
 
 
-from ronin.identifiability import diagnose_jacobian, diagnose_sir_early_phase
+from ronin.identifiability import d_optimal_design, diagnose_jacobian, diagnose_sir_early_phase
 
 
 def test_generic_jacobian_diagnostic_detects_rank_and_weak_direction():
@@ -140,3 +140,42 @@ def test_generic_jacobian_is_stable_under_extreme_common_scales(factor):
     assert report.fim_condition_number == pytest.approx(16.0)
     assert report.singular_values[0] / factor == pytest.approx(4.0)
     assert report.singular_values[1] / factor == pytest.approx(1.0)
+
+
+def test_d_optimal_design_selects_complementary_observations():
+    report = d_optimal_design(
+        [[1.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, -1.0]],
+        n_samples=2,
+        parameter_names=("x", "y"),
+    )
+
+    assert report.selected_indices == (2, 3)
+    assert report.local_information.local_rank == 2
+    assert report.local_information.fim_condition_number == pytest.approx(1.0)
+    assert report.log_determinant == pytest.approx(math.log(4.0))
+    assert report.jacobian_scale == pytest.approx(1.0)
+
+
+def test_d_optimal_design_does_not_hide_rank_deficiency():
+    report = d_optimal_design(
+        [[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]],
+        n_samples=2,
+    )
+
+    assert report.local_information.local_rank == 1
+    assert report.local_information.fim_condition_number == math.inf
+    assert len(set(report.selected_indices)) == 2
+    assert math.isfinite(report.log_determinant)
+
+
+@pytest.mark.parametrize(
+    ("jacobian", "n_samples", "ridge"),
+    [
+        ([[1.0, 0.0]], 0, 1e-12),
+        ([[1.0, 0.0]], 2, 1e-12),
+        ([[1.0, 0.0]], 1, 0.0),
+    ],
+)
+def test_d_optimal_design_rejects_invalid_selection_contract(jacobian, n_samples, ridge):
+    with pytest.raises(ValueError):
+        d_optimal_design(jacobian, n_samples, ridge=ridge)
