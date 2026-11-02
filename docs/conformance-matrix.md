@@ -193,6 +193,7 @@ El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python co
 | OPEN-005 | R.16 vs anexo | R.16 referencia N.6, pero el anexo disponible termina en N.5 | Se registra como discrepancia editorial |
 | OPEN-006 | §2.2 / §3.2 | Catálogo extenso de tipos sin implementación de sistema de tipos | No declarar tipos de dominio completos |
 | OPEN-007 | N.1.4 | Contrato de deuda remite a contenido "sin cambios" no reproducido aquí | Requiere fuente normativa íntegra antes de implementar |
+| OPEN-008 | Papers Hill §4, Teorema 4.1 | El paper afirma rango 1 para la transformación (K, n_H) → (A, n_H), pero su Jacobiano tiene determinante no nulo para K,n_H > 0; además alterna entre “solo A” y “A y n_H” | No elevar su conclusión a semántica normativa. Mantener FIM/SVD local y status estructural unknown/not_assessed hasta corregir derivación y dominio. |
 
 ## 14. Criterios para cerrar v0.2
 
