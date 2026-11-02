@@ -22,7 +22,7 @@ pub fn diagnose(system: &System, bootstrap: usize) -> Result<DegeneracyReport, S
     let state = if positive < 2 { "unknown" } else if k_free && alpha_h_free && orders < 3.0 { "active" } else { "inactive" };
     let recommendation = match state {
         "unknown" => "Insufficient positive Omega observations to estimate the range or Hill identifiability.",
-        "inactive" => "Structural degeneracy inactive under the configured parameter constraints.",
+        "inactive" => "The Omega-range heuristic is inactive under the configured parameter constraints; this does not establish global structural identifiability.",
         _ if orders < 1.0 => "Omega spans less than one order of magnitude. K and alpha_h are weakly separated by this range heuristic; expand the Omega range or fix K externally.",
         _ => "Omega spans between one and three orders of magnitude. Expand the observed Omega range to at least three orders.",
     };
