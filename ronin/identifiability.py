@@ -90,12 +90,17 @@ def diagnose_hill_design(
         values.append(value)
 
     log_k = math.log(K)
-    inv_sigma2 = 1.0 / (sigma * sigma)
+    try:
+        inv_sigma2 = 1.0 / (sigma * sigma)
+    except ZeroDivisionError as error:
+        raise ValueError("sigma is too small for stable Fisher information") from error
+    if not math.isfinite(inv_sigma2):
+        raise ValueError("sigma is too small for stable Fisher information")
     fim_kk = 0.0
     fim_ka = 0.0
     fim_aa = 0.0
     saturated = 0
-    max_ratio = 0.0
+    max_log_ratio = -math.inf
 
     for value in values:
         log_ratio = math.log(value) - log_k
@@ -114,10 +119,8 @@ def diagnose_hill_design(
         fim_ka += derivative_log_k * derivative_log_alpha * inv_sigma2
         fim_aa += derivative_log_alpha * derivative_log_alpha * inv_sigma2
 
-        log_ratio_to_k = log_ratio
-        max_log_ratio = math.log(max_ratio) if max_ratio > 0 else -math.inf
-        max_log_ratio = max(max_log_ratio, log_ratio_to_k)
-        if log_ratio_to_k >= math.log(saturation_ratio):
+        max_log_ratio = max(max_log_ratio, log_ratio)
+        if log_ratio >= math.log(saturation_ratio):
             saturated += 1
 
     if not all(math.isfinite(value) for value in (fim_kk, fim_ka, fim_aa)):
