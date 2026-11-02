@@ -9,6 +9,7 @@ import tempfile
 from dataclasses import asdict
 from pathlib import Path
 
+from ronin.errors import SemanticError
 from ronin.parser import parse
 from ronin.solver import solve
 
@@ -58,7 +59,7 @@ def make_system(rng, index, model):
         "alpha_h": rng.choice((1.0, 0.25, 0.5, 1.5, 2.0, 5.0, 10.0)),
     }
     if model in ("hill", "ces_hill", "full"):
-        params["K"] = 10.0 ** rng.uniform(-300.0, 300.0)
+        params["K"] = 10.0 ** rng.uniform(-300.0, 0.0)
     if model == "full":
         params["memory_order"] = 1
 
@@ -147,6 +148,34 @@ def compare_source(source, label):
         path.unlink(missing_ok=True)
 
 
+def compare_expected_rejection(source, label, expected_message):
+    systems = parse(source)
+    for system in systems.values():
+        try:
+            solve(system)
+        except SemanticError as error:
+            if expected_message not in str(error):
+                raise AssertionError(f"{label}: unexpected Python rejection: {error}")
+        else:
+            raise AssertionError(f"{label}: Python unexpectedly accepted the degenerate system")
+
+    temporary = tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", suffix=".ronin", prefix=".random-rejection-",
+        dir=ROOT, delete=False,
+    )
+    path = Path(temporary.name)
+    try:
+        with temporary:
+            temporary.write(source)
+        result = rust_run(path)
+        if result.returncode == 0 or expected_message not in result.stderr:
+            raise AssertionError(
+                f"{label}: Rust did not reject the same degenerate system: {result.stderr}"
+            )
+    finally:
+        path.unlink(missing_ok=True)
+
+
 def main():
     rng = random.Random(SEED)
     cases = []
@@ -156,9 +185,26 @@ def main():
             index += 1
             cases.append(make_system(rng, index, model))
     compare_source("\n".join(cases), f"seed={SEED}, cases={len(cases)}")
+
+    # A valid but numerically degenerate Hill system must fail consistently
+    # instead of dividing by a zero total fitness in either runtime.
+    degenerate = """system HillUnderflow = {
+  parts: 2,
+  resource: 1,
+  agents: [
+    { phi: 1, psi: 1, frequency: 0.5 },
+    { phi: 1, psi: 1, frequency: 0.5 }
+  ],
+  params: { model: "hill", K: 1e300, alpha_h: 10, alpha: 1 }
+}
+"""
+    compare_expected_rejection(
+        degenerate, "Hill underflow rejection", "allocation undefined: zero total fitness"
+    )
     print(
         "Randomized Python/Rust solver parity OK: "
-        f"{len(cases)} deterministic systems, seed={SEED}, models={','.join(MODELS)}"
+        f"{len(cases)} deterministic systems, seed={SEED}, models={','.join(MODELS)}, "
+        "plus a matched degenerate-system rejection"
     )
 
 
