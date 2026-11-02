@@ -6,8 +6,10 @@ from .validator import validate, validate_coherence
 def diagnose(system, bootstrap=0):
     validate(system)
     validate_coherence(system.params)
-    if bootstrap < 0:
-        raise ValueError("bootstrap must be >= 0")
+    if isinstance(bootstrap, bool) or not isinstance(bootstrap, int) or bootstrap < 0:
+        raise ValueError("bootstrap must be a non-negative integer")
+    if bootstrap > 0:
+        raise ValueError("bootstrap is not implemented; use bootstrap=0")
 
     params = system.params
     omegas = [agent.frequency for agent in system.agents if agent.frequency > 0]
