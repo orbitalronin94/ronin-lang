@@ -127,9 +127,7 @@ Cuando un campo no pueda calcularse, será null/unknown, nunca una afirmación i
 
 El corpus incluye además el paper de epidemiología con la aproximación de fase temprana:
 
-[
-C(t) \approx A e^{rt}, qquad r=\beta-\gamma,quad A=\rho\beta I_0
-]
+En la aproximación reducida: `C(t) ≈ A * exp(r*t)`, con `r = beta - gamma` y `A = rho * beta * I0`.
 
 La API `diagnose_sir_early_phase` calcula el Jacobiano local de `log C(t)` respecto a las coordenadas logarítmicas de `beta, gamma, rho, I0`. En ese modelo reducido, el rango es como máximo 2 para cuatro parámetros: se reportan las combinaciones `growth_rate` y `observed_amplitude`, no estimaciones individuales ficticias. El estado se limita expresamente a la aproximación de fase temprana; no se extrapola a todo el SIR no lineal.
 
@@ -162,3 +160,17 @@ El motor genérico `diagnose_jacobian` acepta un Jacobiano evaluado en parámetr
 - [No-Identificabilidad Estructural y Práctica en Modelos PBPK](https://github.com/orbitalronin94/Papers) — FIM/SVD, condicionamiento y calibración dependiente del dominio.
 
 Estos documentos son fuentes de investigación del proyecto, no sustitutos de una revisión independiente de las derivaciones, datos y código reproducible.
+
+
+## 9. Integración crítica del resto del corpus Papers
+
+El repositorio Papers contiene documentos adicionales a los tres artículos de identificabilidad inicialmente revisados. Su estado de integración en RONIN es:
+
+- **No-identificabilidad epidemiológica con subreporte:** el perfil SIR de fase temprana se implementa en Python y Rust. La afirmación se limita a la aproximación reducida C(t) ≈ A * exp(r*t), con r = beta - gamma y A = rho * beta * I0; no se generaliza al SIR completo ni a fases con saturación.
+- **Protocolo de validación de 50 dominios:** no se toma el 100% sintético como validación externa. Las clases esperadas se construyen con el mismo criterio de rango Ω que se evalúa; eso mide consistencia del clasificador con su pre-registro, no generalización independiente. El propio documento reporta un falso positivo en saturación (ΔBIC = −18.04) y reconoce que el determinante estático no sustituye STRIKE-GOLDD completo para EDOs.
+- **Protocolo de testing 1310:** se adopta como dirección metodológica (refutador explícito, condición de fallo, integridad/versionado y segregación entre propuesta, ejecución y auditoría). No se incorporan como dependencias obligatorias Pydantic, LLMs, ML ni estándares regulatorios ajenos al runtime. La validación semántica automatizada de refutadores sigue siendo trabajo futuro.
+- **Epistemología Generativa:** la separación entre capa exploratoria y formal, la categorización A/B/C/D y la estructura E/O/F/P/R pueden gobernar la trazabilidad de hipótesis y pruebas. No convierten una proposición en demostrada por el mero hecho de estar pre-registrada.
+- **Tratado del Periplo y del Método:** se adoptan sus cuatro principios de trabajo —diagnosticar antes de ajustar, categorizar antes de afirmar, delimitar antes de generalizar y pre-registrar antes de testear— como criterios de ingeniería y revisión.
+- **Lingüística computacional / Motor Cascabel:** es un proyecto y dominio independiente. Sus 28 tesis operables no se incorporan como requisitos del lenguaje RONIN; su protocolo de falsabilidad puede servir como patrón de diseño de tests.
+
+La página README de Papers declara cuatro documentos, pero el árbol actual del repositorio contiene más archivos. La integración se basa en los documentos realmente presentes, no en el inventario resumido del README.
