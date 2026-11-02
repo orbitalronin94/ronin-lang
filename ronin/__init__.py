@@ -3,6 +3,7 @@
 __version__ = "1.1.0"
 
 from .diagnose import diagnose
+from .identifiability import HillDesignDiagnostic, diagnose_hill_design
 from .model import Agent, DegeneracyReport, Params, Simulation, Solution, System
 from .parser import parse
 from .simulator import simulate
@@ -19,5 +20,7 @@ __all__ = [
     "solve",
     "simulate",
     "diagnose",
+    "HillDesignDiagnostic",
+    "diagnose_hill_design",
     "__version__",
 ]
