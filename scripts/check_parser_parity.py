@@ -81,6 +81,30 @@ INVALID_SOURCES = {
         system Bad = { parts: 1, resource: 1,
           agents: [{phi: 1, psi: 1, frequency: 1}] 
     """,
+    "boolean_parts": """
+        system Bad = { parts: true, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}] }
+    """,
+    "boolean_resource": """
+        system Bad = { parts: 1, resource: true,
+          agents: [{phi: 1, psi: 1, frequency: 1}] }
+    """,
+    "boolean_agent_number": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: true, psi: 1, frequency: 1}] }
+    """,
+    "boolean_parameter_number": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {alpha: true} }
+    """,
+    "unknown_parameter": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {alhpa: 1} }
+    """,
+    "unknown_system_field": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], resorce: 1 }
+    """,
 }
 
 
@@ -125,11 +149,11 @@ def main():
             path = Path(directory) / f"{label}.ronin"
             path.write_text(source, encoding="utf-8")
             expected_names = {
-            "comments_and_extended_params": ["Coastal"],
-            "escaped_unicode_string": ["Escapes"],
-            "nested_object_and_arrays": ["Nested"],
-        }[label]
-        compare(path, True, label, expected_names)
+                "comments_and_extended_params": ["Coastal"],
+                "escaped_unicode_string": ["Escapes"],
+                "nested_object_and_arrays": ["Nested"],
+            }[label]
+            compare(path, True, label, expected_names)
         for label, source in INVALID_SOURCES.items():
             path = Path(directory) / f"{label}.ronin"
             path.write_text(source, encoding="utf-8")
