@@ -105,6 +105,14 @@ INVALID_SOURCES = {
         system Bad = { parts: 1, resource: 1,
           agents: [{phi: 1, psi: 1, frequency: 1}], resorce: 1 }
     """,
+    "negative_parts": """
+        system Bad = { parts: -1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}] }
+    """,
+    "negative_memory_order": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {memory_order: -1} }
+    """,
 }
 
 
