@@ -55,7 +55,13 @@ mod tests {
         ];
         for (source, expected) in cases {
             let system = parser::parse(source).unwrap().remove(0);
-            assert_eq!(diagnose(&system, 0).unwrap().degeneracy, expected);
+            let report = diagnose(&system, 0).unwrap();
+            assert_eq!(report.degeneracy, expected);
+            assert_eq!(report.structural_status, "not_assessed");
+            assert_eq!(report.practical_status, "not_calibrated");
+            assert_eq!(report.estimability_status, "not_assessed");
+            assert_eq!(report.diagnostic_method, "omega_range_heuristic");
+            assert_eq!(report.parameter_freedom_basis, "legacy_value_heuristic");
         }
     }
     #[test]
