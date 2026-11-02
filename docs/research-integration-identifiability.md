@@ -210,7 +210,7 @@ Aquí `sigma` es la desviación típica de errores gaussianos independientes sob
 
 ### Diseño experimental D-óptimo
 
-Se incorpora d_optimal_design como utilidad genérica sobre una matriz de sensibilidades observación×parámetro. Cada fila representa una observación candidata (por ejemplo, un tiempo de muestreo); el algoritmo greedy selecciona filas que maximizan sucesivamente log det(FIM + ridge·I).
+Se incorporan d_optimal_design como utilidad genérica sobre una matriz de sensibilidades observación×parámetro y d_optimal_hill_design como adaptador que deriva sensibilidades Hill respecto a log(K) y log(alpha_h) desde candidatos Omega. Cada fila representa una observación candidata (por ejemplo, un tiempo de muestreo); el algoritmo greedy selecciona filas que maximizan sucesivamente log det(FIM + ridge·I).
 
 Contrato numérico:
 - admite pesos de observación y escalas paramétricas;
