@@ -45,3 +45,18 @@ def test_parser_keeps_distinct_agent_metadata_fields():
         "role": "worker",
         "tools": ["net"],
     }
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        'system S = { parts: 2, resource: 1, agents: [{phi: true, psi: 0.5, frequency: 0.5}, {phi: 0.5, psi: 0.5, frequency: 0.5}] }',
+        'system S = { parts: 2, resource: true, agents: [{phi: 0.5, psi: 0.5, frequency: 0.5}, {phi: 0.5, psi: 0.5, frequency: 0.5}] }',
+        'system S = { parts: 2, resource: 1, agents: [{phi: 0.5, psi: 0.5, frequency: 0.5}, {phi: 0.5, psi: 0.5, frequency: 0.5}], params: { alpha: true } }',
+        'system S = { parts: 2, resource: 1, agents: [{phi: 0.5, psi: 0.5, frequency: 0.5}, {phi: 0.5, psi: 0.5, frequency: 0.5}], params: { degeneracy_check: "false" } }',
+        'system S = { parts: 2, resource: 1, agents: [{phi: 0.5, psi: 0.5, frequency: 0.5}, {phi: 0.5, psi: 0.5, frequency: 0.5}], params: { model: 1 } }',
+    ],
+)
+def test_parser_rejects_boolean_and_wrongly_typed_numeric_or_parameter_values(source):
+    with pytest.raises(SyntaxError):
+        parse(source)
