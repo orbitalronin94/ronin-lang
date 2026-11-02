@@ -93,6 +93,17 @@ La hoja de ruta completa, con fases y criterios de salida verificables, está en
 
 Los hitos son objetivos de ingeniería, no afirmaciones de funcionalidades ya entregadas ni fechas comprometidas.
 
+### Estado de avance comprobado
+
+**Situación: v0.1 sigue siendo la versión publicada; las líneas de trabajo v0.2 y v0.3 tienen entregas parciales verificadas.**
+
+- **v0.2 — baseline de conformidad establecido, hito aún en curso.** Existe una matriz con requisitos trazables, estados por backend, fixtures positivos/negativos y discrepancias abiertas. La CI ya separa suites Python y Rust.
+- **v0.3 — paridad parcial integrada.** Hay comprobaciones cruzadas de parser, solver, validación, diagnóstico, simulación, CLI, CSV y JSON IR para el subconjunto compartido. Esto no equivale todavía a declarar paridad completa.
+- **CI verificada:** el commit `d285b1500bf0532c4b8601e223a84587a3c13a14` completó **13 jobs con resultado satisfactorio**, incluidos pytest en Python 3.9–3.12 y las suites de conformidad Rust y de paridad Python/Rust ([ejecución de CI](https://github.com/orbitalronin94/ronin-lang/actions/runs/41520979780)).
+- **Siguiente umbral:** cerrar los criterios de `docs/conformance-matrix.md` §14, resolver o excluir explícitamente los bloqueos normativos y mantener CI verde sobre la revisión final. Hasta entonces no se etiqueta v0.2 como completada ni se publica un porcentaje global.
+
+Esta fotografía de progreso no cambia la versión del paquete: `pyproject.toml` continúa en `0.1.0`. Tampoco afirma conformidad integral con MDES v0.5.
+
 ## Límites conocidos de v0.1
 
 - `debt` se devuelve como `null` en ambos runtimes: no existe un estimador normativo ejecutable y no se presenta la ausencia de cálculo como deuda cero.
