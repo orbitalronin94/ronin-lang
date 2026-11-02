@@ -383,6 +383,74 @@ pub fn sobol_first_order(
     })
 }
 
+/// Select Hill observation levels for local information on log(K), log(alpha_h).
+///
+/// The observation model assumes additive homoscedastic Gaussian noise. Since
+/// sigma is common to all candidates, it does not affect the selected subset;
+/// the underlying D-optimal score is normalized and dimensionless.
+pub fn d_optimal_hill_design(
+    omega_candidates: &[f64],
+    n_samples: usize,
+    k: f64,
+    alpha_h: f64,
+    sigma: f64,
+    relative_tolerance: f64,
+    ridge: f64,
+) -> Result<HillDOptimalDesign, String> {
+    if omega_candidates.is_empty() {
+        return Err("omega_candidates must be a non-empty numeric sequence".into());
+    }
+    for (name, value) in [("K", k), ("alpha_h", alpha_h), ("sigma", sigma)] {
+        if !value.is_finite() || value <= 0.0 {
+            return Err(format!("{name} must be finite and positive"));
+        }
+    }
+    if omega_candidates.iter().any(|value| !value.is_finite() || *value <= 0.0) {
+        return Err("all omega_candidates must be finite and positive".into());
+    }
+
+    let mut jacobian = Vec::with_capacity(omega_candidates.len());
+    for omega in omega_candidates {
+        let log_ratio = omega.ln() - k.ln();
+        let z = alpha_h * log_ratio;
+        let (derivative_log_k, derivative_log_alpha) = if !z.is_finite() || z.abs() > 745.0 {
+            (0.0, 0.0)
+        } else {
+            let tail = (-z.abs()).exp();
+            let slope = tail / ((1.0 + tail) * (1.0 + tail));
+            (-alpha_h * slope, z * slope)
+        };
+        if !derivative_log_k.is_finite() || !derivative_log_alpha.is_finite() {
+            return Err("Hill sensitivity exceeds the supported numeric range".into());
+        }
+        jacobian.push(vec![derivative_log_k, derivative_log_alpha]);
+    }
+
+    let names = vec!["log_K".to_string(), "log_alpha_h".to_string()];
+    let design = d_optimal_design(
+        &jacobian, n_samples, None, Some(&names), None, relative_tolerance, ridge,
+    )?;
+    let selected_omega: Vec<f64> = design.selected_indices.iter()
+        .map(|index| omega_candidates[*index])
+        .collect();
+    let warnings = if design.local_information.local_rank < 2 {
+        vec!["selected Hill observations do not provide full local rank for log(K) and log(alpha_h)".into()]
+    } else {
+        Vec::new()
+    };
+
+    Ok(HillDOptimalDesign {
+        selected_indices: design.selected_indices.clone(),
+        selected_omega,
+        candidate_count: omega_candidates.len(),
+        k,
+        alpha_h,
+        sigma,
+        design,
+        warnings,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::{d_optimal_design, diagnose_hill_design, sobol_first_order};
@@ -494,6 +562,18 @@ pub struct SobolFirstOrderDiagnostic {
     pub output_variance_normalized: f64,
     pub estimator: String,
     pub assumptions: Vec<String>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct HillDOptimalDesign {
+    pub selected_indices: Vec<usize>,
+    pub selected_omega: Vec<f64>,
+    pub candidate_count: usize,
+    pub k: f64,
+    pub alpha_h: f64,
+    pub sigma: f64,
+    pub design: DOptimalDesign,
+    pub warnings: Vec<String>,
 }
 
 fn symmetric_eigen(mut matrix: Vec<Vec<f64>>) -> (Vec<f64>, Vec<Vec<f64>>) {
