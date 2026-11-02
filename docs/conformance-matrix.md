@@ -236,4 +236,5 @@ Estas filas amplían la trazabilidad de la implementación sin convertir los doc
 | DIAG-006 | Papers / tratado metodológico §15–16 | Diagnóstico local genérico desde Jacobiano, pesos y escalas de parámetros | P | P | `diagnose_jacobian`; SVD/FIM local, no prueba global. |
 | DIAG-007 | Paper epidemiológico §4–5 | Diagnóstico SIR temprano con subreporte y reporte de combinaciones identificables | P | P | `diagnose_sir_early_phase`; válido solo bajo la aproximación de fase temprana. |
 | DIAG-008 | Papers PBPK/Hill; integración FIM §2 | Estabilidad del diagnóstico FIM ante escalas comunes extremas del Jacobiano | I | I | Normalización previa a (J^T W J), diagonalización relativa y tests con escalas (10^{-200})/(10^{200}) en `tests/test_identifiability.py` y `rust/src/identifiability.rs`. |
+| DIAG-009 | Paper PBPK §5.4 / Apéndice A.3 | Selección greedy D-óptima sobre filas candidatas del Jacobiano | I | I | API d_optimal_design en Python/Rust; Cholesky sobre FIM normalizada + ridge adimensional; tests de selección complementaria y conservación de rango deficiente. No es certificado de identificabilidad. |
 
