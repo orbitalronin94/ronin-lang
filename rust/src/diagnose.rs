@@ -54,6 +54,14 @@ mod tests {
         }
     }
     #[test]
+    fn unsupported_bootstrap_is_rejected_explicitly() {
+        let source = include_str!("../../examples/maquinas.ronin");
+        let system = parser::parse(source).unwrap().remove(0);
+        let error = diagnose(&system, 50).unwrap_err();
+        assert!(error.contains("bootstrap is not implemented"));
+    }
+
+    #[test]
     fn diagnosis_does_not_require_positive_total_fitness() {
         let source = include_str!("../../tests/fixtures/conformance/valid_zero_fitness_check_only.ronin");
         let system = parser::parse(source).unwrap().remove(0);
