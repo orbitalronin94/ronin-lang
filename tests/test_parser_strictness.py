@@ -45,3 +45,27 @@ def test_parser_keeps_distinct_agent_metadata_fields():
         "role": "worker",
         "tools": ["net"],
     }
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        'system S = { parts: true, resource: 10, agents: [{phi: 0.5, psi: 0.5, frequency: 1.0}] }',
+        'system S = { parts: 2, resource: true, agents: [{phi: 0.5, psi: 0.5, frequency: 1.0}] }',
+        'system S = { parts: 2, resource: 10, agents: [{phi: true, psi: 0.5, frequency: 1.0}] }',
+        'system S = { parts: 2, resource: 10, agents: [{phi: 0.5, psi: 0.5, frequency: 1.0}], params: {alpha: true} }',
+        'system S = { parts: 2, resource: 10, agents: [{phi: 0.5, psi: 0.5, frequency: 1.0}], params: {memory_order: true} }',
+    ],
+)
+def test_parser_rejects_booleans_where_numbers_are_required(source):
+    with pytest.raises(SyntaxError):
+        parse(source)
+
+
+def test_parser_rejects_unknown_parameter_names():
+    source = (
+        'system S = { parts: 2, resource: 10, agents: '
+        '[{phi: 0.5, psi: 0.5, frequency: 1.0}], params: {alhpa: 1.0} }'
+    )
+    with pytest.raises(SyntaxError, match="Unknown params field: alhpa"):
+        parse(source)
