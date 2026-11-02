@@ -8,6 +8,7 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 - [Roadmap de v0.1 a v1.0](roadmap.md)
 - [Perfil candidato v1.0](v1.0-profile.md) — alcance propuesto, capacidades excluidas y criterios de aceptación; pendiente de aprobación.
 - [ADR-0001 — Límite CES cuando lambda tiende a cero](decisions/ADR-0001-ces-zero-limit.md) — propuesta normativa pendiente de aprobación.
+- [ADR-0002 — Parámetros libres y fijados](decisions/ADR-0002-parameter-modes.md) — propuesta de modos explícitos para el diagnóstico de identificabilidad.
 - [Especificación formal de MDES](spec.md) · [English companion](spec.en.md)
 - [Matriz de trazabilidad y conformidad MDES v0.5](conformance-matrix.md) — IDs, estado Python/Rust, pruebas y bloqueos.
 - [Fixtures compartidos de conformidad](../tests/fixtures/conformance/README.md) — entradas positivas, negativas y diagnósticas probadas en ambos runtimes.
