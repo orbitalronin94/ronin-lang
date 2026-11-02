@@ -117,6 +117,13 @@ def compare_source(source, label):
             raise AssertionError(f"{label}: system names differ")
         for name, py in expected.items():
             rs = actual[name]
+            if any(not math.isfinite(value) or value < 0.0 for value in py["fitness"]):
+                raise AssertionError(f"{label}/{name}: Python produced invalid fitness")
+            if any(not math.isfinite(value) or value < 0.0 for value in py["allocation"]):
+                raise AssertionError(f"{label}/{name}: Python produced invalid allocation")
+            resource = systems[name].resource
+            if not math.isclose(math.fsum(py["allocation"]), resource, rel_tol=2e-9, abs_tol=0.0):
+                raise AssertionError(f"{label}/{name}: allocation does not conserve resource")
             for field in ("fitness", "allocation"):
                 if len(py[field]) != len(rs[field]):
                     raise AssertionError(f"{label}/{name}: {field} length differs")
