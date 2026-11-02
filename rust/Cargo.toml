@@ -1,5 +1,6 @@
 [package]
 name = "ronin-core"
+default-run = "ronin-core"
 version = "0.1.0"
 edition = "2021"
 description = "Núcleo Rust en desarrollo de RONIN Runtime v0.1"
