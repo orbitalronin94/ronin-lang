@@ -178,8 +178,8 @@ class Parser:
         memory_order = fields.get("memory_order", 1)
         try:
             memory_order = self.number(memory_order, "memory_order")
-            if not memory_order.is_integer():
-                raise ValueError("memory_order must be an integer")
+            if not memory_order.is_integer() or memory_order < 0:
+                raise ValueError("memory_order must be a non-negative integer")
             return Params(
                 alpha=self.number(fields.get("alpha", 1.0), "alpha"),
                 gamma=self.number(fields.get("gamma", 0.4), "gamma"),
@@ -227,8 +227,8 @@ class Parser:
                 raise SyntaxError(f"Unknown system field: {unknown[0]}")
             try:
                 parts = self.number(fields["parts"], "parts")
-                if not parts.is_integer():
-                    raise ValueError("parts must be an integer")
+                if not parts.is_integer() or parts <= 0:
+                    raise ValueError("parts must be a positive integer")
                 systems[name] = System(
                     name=name,
                     parts=int(parts),
