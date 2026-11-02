@@ -289,3 +289,30 @@ Decisión de ingeniería:
 - Los umbrales se guardan como calibraciones de un perfil/dominio, no como constantes universales del lenguaje.
 - Los índices de sensibilidad global se reportan como influencia bajo las distribuciones declaradas, separados de identificabilidad.
 
+
+
+## 12. Auditoría de consistencia del paper SIR con subreporte
+
+La implementación RONIN se limita a la aproximación explícita de fase temprana, donde la observación se reduce a dos combinaciones:
+
+- `r = beta - gamma`;
+- `A = rho * beta * I0`.
+
+En ese modelo reducido, cuatro parámetros individuales no pueden recuperarse a partir de dos combinaciones; la conclusión está delimitada y la API reporta las combinaciones.
+
+El paper completo necesita reconciliar dos afirmaciones distintas:
+
+1. La Proposición 4.2 afirma que la degeneración `rho-I0` persiste incluso con ventanas largas.
+2. La Tabla 7.2 presenta el escenario S8 (300 días, rango amplio) con condición 45.21 y ningún parámetro problemático, es decir, una clasificación identificable.
+
+También se usa el rango del Jacobiano del sistema dinámico respecto a los estados en el equilibrio libre de enfermedad como confirmación de degeneración paramétrica. Ese Jacobiano de estado `df/dy` no es el Jacobiano de sensibilidades de la salida respecto a parámetros `dC/dtheta`; su rango, por sí solo, no demuestra identificabilidad o no-identificabilidad de parámetros.
+
+Para resolverlo se debe especificar con precisión:
+- qué parámetros iniciales se conocen y cuáles se estiman;
+- si `S0` se fija como `N-I0` o como dato independiente;
+- qué observaciones se usan (casos incidentes, prevalencia, serología, recuperados);
+- qué modelo de ruido y ventana temporal se asumen;
+- si la conclusión aplica al SIR completo o solo a la aproximación temprana;
+- qué Jacobiano/FIM se calcula para la inferencia de parámetros.
+
+Decisión de ingeniería: la API actual no extrapola el resultado temprano al SIR completo y no adopta la afirmación de persistencia `rho-I0` como regla universal hasta que el paper reconcilie Proposición 4.2, S8 y el Jacobiano pertinente.
