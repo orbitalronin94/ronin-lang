@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from ronin.diagnose import diagnose
-from ronin.errors import SemanticError
+from ronin.errors import SemanticError, SyntaxError as RoninSyntaxError
 from ronin.parser import parse
 from ronin.lexer import PATTERN, lex
 from ronin.semantics import ces_combine, hill, k_min
@@ -72,6 +72,22 @@ def test_parser_supports_strings_signed_values_and_memory_arrays():
     assert parse('system Default = { parts: 2, resource: 1, agents: [{phi:0.5,psi:0.5,frequency:0.5},{phi:0.5,psi:0.5,frequency:0.5}], params: { memory_weights: null } }')["Default"].params.memory_weights is None
 
 
+
+def test_parser_rejects_duplicate_K_and_k_aliases():
+    source = """
+    system DuplicateK = {
+      parts: 2, resource: 1,
+      agents: [
+        { phi: 1, psi: 1, frequency: 0.5 },
+        { phi: 1, psi: 1, frequency: 0.5 }
+      ],
+      params: { model: "hill", K: 1.0, k: 2.0 }
+    }
+    """
+    with pytest.raises(RoninSyntaxError, match=r"Duplicate params field: K/k"):
+        parse(source)
+
+
 def test_invalid_frequency_sum():
     source = MAQ.replace("frequency: 0.4", "frequency: 0.3")
     with pytest.raises(SemanticError):
@@ -133,6 +149,27 @@ def test_k_min_uses_configured_delta():
     system = parse(MAQ)["Maquinas"]
     assert k_min(system, delta=0.05) > 0
     assert k_min(system, delta=0.01) < k_min(system, delta=0.05)
+
+
+def test_solve_uses_configured_coexistence_delta_unless_overridden():
+    source = MAQ.replace(
+        "params: {", "params: { coexistence_delta: 0.01,"
+    )
+    system = parse(source)["Maquinas"]
+
+    configured = solve(system)
+    explicit_default = solve(system, delta=0.05)
+    explicit_configured = solve(system, delta=0.01)
+
+    assert configured.k_min == pytest.approx(explicit_configured.k_min)
+    assert explicit_default.k_min == pytest.approx(k_min(system, delta=0.05))
+    assert configured.k_min != pytest.approx(explicit_default.k_min)
+
+
+@pytest.mark.parametrize("delta", [0.0, -0.01, 0.1001, float("inf"), float("nan")])
+def test_solve_rejects_invalid_coexistence_delta_override(delta):
+    with pytest.raises(SemanticError, match=r"delta must be in \(0,0.1\]"):
+        solve(parse(MAQ)["Maquinas"], delta=delta)
 
 
 def test_degeneracy_active_for_narrow_omega_range():
@@ -214,6 +251,15 @@ def test_parser_accepts_all_infinite_K_spellings(literal):
     assert math.isinf(parsed.params.K)
 
 
+def test_diagnose_exposes_scope_and_legacy_parameter_freedom_basis():
+    report = diagnose(parse(MAQ)["Maquinas"])
+    assert report.structural_status == "not_assessed"
+    assert report.practical_status == "not_calibrated"
+    assert report.estimability_status == "not_assessed"
+    assert report.diagnostic_method == "omega_range_heuristic"
+    assert report.parameter_freedom_basis == "legacy_value_heuristic"
+
+
 def test_diagnose_does_not_claim_hill_parameters_when_saturation_is_disabled():
     report = diagnose(parse(MAQ)["Maquinas"])
     assert report.lambda_identifiable
@@ -264,3 +310,38 @@ def test_memory_weights_require_matching_order_and_unit_sum():
     )
     with pytest.raises(SemanticError, match="memory_weights must sum to 1"):
         validate_coherence(parse(sum_source)["Maquinas"].params)
+
+
+def test_solve_reports_unknown_degeneracy_with_fewer_than_two_positive_omegas():
+    source = '''system SparseOmega = {
+      parts: 2, resource: 100,
+      agents: [
+        { phi: 0.8, psi: 1.0, frequency: 1.0 },
+        { phi: 0.5, psi: 1.0, frequency: 0.0 }
+      ],
+      params: { model: "ces_hill", lambda: 0.5, K: 0.5, alpha_h: 1.5 }
+    }'''
+    system = parse(source)["SparseOmega"]
+    assert solve(system).degeneracy == "unknown"
+    assert diagnose(system).degeneracy == "unknown"
+
+
+@pytest.mark.parametrize("bootstrap", [-1, 1, 10, True, 0.5])
+def test_diagnose_rejects_unsupported_or_invalid_bootstrap(bootstrap):
+    with pytest.raises(ValueError):
+        diagnose(parse(MAQ)["Maquinas"], bootstrap=bootstrap)
+
+
+def test_diagnostic_recommendations_do_not_overclaim_structural_results():
+    active = parse((ROOT / "tests/fixtures/conformance/degeneracy_active.ronin").read_text())[
+        "DegeneracyActive"
+    ]
+    inactive = parse((ROOT / "tests/fixtures/conformance/degeneracy_inactive.ronin").read_text())[
+        "DegeneracyInactive"
+    ]
+    active_report = diagnose(active)
+    inactive_report = diagnose(inactive)
+    assert "weakly separated" in active_report.recommendation
+    assert "global structural identifiability" in inactive_report.recommendation
+    assert active_report.structural_status == "not_assessed"
+    assert inactive_report.structural_status == "not_assessed"

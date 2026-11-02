@@ -5,8 +5,14 @@
 pub mod ast;
 pub mod diagnose;
 pub mod ir;
+pub mod identifiability;
 pub mod parser;
 pub mod simulator;
 pub mod solver;
 
 pub use ast::{Agent, DegeneracyReport, Params, Simulation, Solution, System, Value};
+pub use identifiability::{
+    d_optimal_design, d_optimal_hill_design, diagnose_hill_design, diagnose_jacobian, diagnose_sir_early_phase,
+    DOptimalDesign, HillDOptimalDesign, HillDesignDiagnostic, LocalInformationDiagnostic, SIREarlyPhaseDiagnostic,
+    SobolFirstOrderDiagnostic, sobol_first_order,
+};

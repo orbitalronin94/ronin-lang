@@ -23,12 +23,12 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | ID | Referencia MDES | Requisito / comportamiento | Python | Rust | Evidencia actual / observaciones |
 |---|---|---|---|---|---|
 | CORE-001 | §1.1, §2.1 | Declarar sistemas con partes, recurso, agentes y parámetros | I | P | `ronin/parser.py`; `rust/src/parser.rs`; `tests/test_core.py`; tests de parser Rust |
-| CORE-002 | §1.2, N.1 | Resolver un sistema y calcular fitness/asignación en los modelos del perfil compartido | I | I | Python/Rust comparados por `scripts/check_runtime_parity.py` en 11 proyectos; fitness, allocation, coexistence, k_min y diagnóstico numérico con tolerancia 1e-9 |
+| CORE-002 | §1.2, N.1 | Resolver un sistema y calcular fitness/asignación en los modelos del perfil compartido | I | I | Python/Rust comparados por `scripts/check_runtime_parity.py` en 12 proyectos estáticos y `scripts/check_randomized_runtime_parity.py` en 80 sistemas deterministas generados (semilla 1310); fitness, allocation, coexistence, k_min y diagnóstico numérico con tolerancias explícitas |
 | CORE-003 | §1.3, §2.3 | Evaluar coexistencia y umbral `k_min` | P | P | `k_min` y campo coexistence existen; falta cerrar el contrato de coexistencia de la fuente |
 | CORE-004 | §1.4, N.1.4 | Estimar deuda del sistema | N | N | No existe estimador normativo; Python y Rust serializan `debt: null` para no presentar el placeholder como cero |
 | CORE-005 | §1.5 | Calcular geometría del sistema | N | N | No se encontró función ejecutable con contrato de geometría |
 | CORE-006 | §1.6 | Calcular fatiga de enrutamiento | N | N | No se encontró implementación ejecutable |
-| CORE-007 | §1.7, N.1.5 | Diagnosticar rango Ω y degeneración K–α | I | P | `ronin/diagnose.py`, `rust/src/diagnose.rs`; pruebas de umbral y parámetros no identificables |
+| CORE-007 | §1.7, N.1.5 | Diagnosticar rango Ω y degeneración K–α | I | I | `ronin/diagnose.py`, `rust/src/diagnose.rs`; fixtures activos/inactivos/desconocidos y paridad. El informe declara explícitamente que el método es heurístico y que los estados estructural/práctico/estimabilidad no están evaluados. La libertad paramétrica sigue siendo heurística histórica; ver ADR-0002. |
 | CORE-008 | §2.3, §3.5 | Rechazar combinaciones incoherentes entre modelo y parámetros | I | P | `ronin/validator.py`; `tests/test_core.py::test_model_coherence_is_enforced`; Rust valida a través de solver |
 | VAL-CLI-001 | R.7, R.12 | `check` valida sin ejecutar el solver y revisa todos los sistemas por defecto | I | I | `scripts/check_validation_parity.py`; casos válidos/no válidos, fitness cero y selección multi-sistema |
 | CLI-SELECT-001 | R.12 | `solve` selecciona el primer sistema por defecto; `run` procesa todos | I | I | `scripts/check_cli_selection_parity.py`; compara solve, run, `--system` y proyecto multi-sistema parcialmente inválido |
@@ -123,7 +123,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | PY-005 | R.7 | Validación semántica y coherencia de modelo | I | `ronin/validator.py`; tests de invariantes y combinaciones inválidas |
 | PY-006 | R.8–R.9 | Semántica CES-Saturada y solver | P | PUSFRE/CES/Hill/CES-Hill; `debt()` sigue placeholder y existen discrepancias normativas |
 | PY-007 | R.10 | Simulador con semilla reproducible | I | `ronin/simulator.py`; tests de normalización, semilla y sigma=0 |
-| SIM-002 | R.10 | Simulación reproducible y trayectoria común con semilla fija | I | I | `scripts/check_simulation_contracts.py`; compara historial completo Python/Rust en 12 proyectos con tolerancia 1e-12 y valida simplex, semilla y supervivencia |
+| SIM-002 | R.10 | Simulación reproducible y trayectoria común con semilla fija | I | I | `scripts/check_simulation_contracts.py`; compara historial completo Python/Rust en 12 proyectos estáticos y 15 sistemas generados (3 por modelo) con tolerancia 1e-12 y valida simplex, semilla y supervivencia |
 | SIM-003 | R.11 | Informes de diagnóstico equivalentes en el corpus compartido | I | I | `scripts/check_diagnostic_parity.py`; compara estado, identificabilidad, recomendación, rango Ω y `bootstrap_ci` |
 | PY-008 | R.11 | Diagnóstico K–α y bootstrap CI | P | Rango/degeneración implementados; bootstrap devuelve null |
 | PY-009 | R.12 | CLI de referencia | I | `ronin/cli.py`; list/check/solve/simulate/diagnose/run/compile/repl |
@@ -186,13 +186,17 @@ El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python co
 
 | ID | Fuente | Problema | Tratamiento en la línea base |
 |---|---|---|---|
-| OPEN-001 | Apéndice CES A.1.1 vs N.2 Test 3 / R.8 | El límite geométrico CES no es, en general, idéntico a PUSFRE | Se conserva el comportamiento geométrico actual; bloqueado para conformidad normativa |
+| OPEN-001 | Apéndice CES A.1.1 vs N.2 Test 3 / R.8 | El límite geométrico CES no es, en general, idéntico a PUSFRE | [ADR-0001](decisions/ADR-0001-ces-zero-limit.md) propone mantener CES geométrico y PUSFRE separado; pendiente de aprobación normativa |
 | OPEN-002 | N.2 Test 6 | Frecuencias 0.001, 0.01, 0.989 producen ~2.9952 órdenes, no 3.0 | El fixture de test usa datos que sí superan el umbral; la fuente queda señalada |
 | OPEN-003 | §8.3 / R.14 | NeuralScaling contiene phi/psi > 1 y dataset incompleto | No se fuerza el fixture contra el validador |
 | OPEN-004 | §8.9 / R.14 | FamaFrench no contiene los 720 registros prometidos | Dataset pendiente; no sintetizar observaciones |
 | OPEN-005 | R.16 vs anexo | R.16 referencia N.6, pero el anexo disponible termina en N.5 | Se registra como discrepancia editorial |
 | OPEN-006 | §2.2 / §3.2 | Catálogo extenso de tipos sin implementación de sistema de tipos | No declarar tipos de dominio completos |
 | OPEN-007 | N.1.4 | Contrato de deuda remite a contenido "sin cambios" no reproducido aquí | Requiere fuente normativa íntegra antes de implementar |
+| OPEN-008 | Papers Hill §4, Teorema 4.1; Perspective §3.3 y §5.1 | El paper afirma rango 1 para (K, n_H) → (A, n_H), pero el Jacobiano tiene determinante no nulo; la Perspective también usa (A, n_H) como invariante aunque eso determina K y contradice la fibra K^(-n_H)=A0. El texto alterna entre “solo A” y “A y n_H”. | No elevar la conclusión a semántica normativa. Mantener FIM/SVD local y status estructural not_assessed hasta corregir derivación, invariante y dominio. |
+| OPEN-009 | Papers PBPK §3.2, Propiedad 3.2 | La singularidad de una FIM local/finita no prueba por sí sola no-identificabilidad estructural global; además, los umbrales de condición dependen de escalado y parametrización | Tratar FIM como diagnóstico local/práctico. Exigir simetría/invariante o análisis estructural global para afirmaciones estructurales; calibrar umbrales por dominio. |
+| OPEN-010 | Paper SIR §4.2, §7.2 y §8 | La Proposición 4.2 afirma persistencia rho-I0 en ventanas largas, pero S8 (300 días) clasifica todos los parámetros como identificables; el Jacobiano de estado df/dy se usa como evidencia de identificabilidad paramétrica | Mantener RONIN limitado a la aproximación temprana (r, A). No extrapolar a SIR completo hasta reconciliar observables, condiciones iniciales y Jacobiano de sensibilidades dC/dtheta. |
+| OPEN-011 | `ronin/diagnose.py`, `rust/src/diagnose.rs` | La libertad de K y alpha_h se infiere por el valor numérico, no por declaración del usuario; alpha_h=1.0 no distingue default de valor fijado | No usar esos booleanos como afirmación inferencial fuerte. Definir modos explícitos antes de congelar el diagnóstico v1.0; ver [ADR-0002](decisions/ADR-0002-parameter-modes.md). |
 
 ## 14. Criterios para cerrar v0.2
 
@@ -215,4 +219,24 @@ Esta primera matriz es la línea base, no el cierre del hito. v0.2 podrá declar
 - v0.3: paridad Python/Rust y serialización IR equivalente.
 - v0.4: decisiones normativas para deuda, bootstrap, memoria y discrepancias matemáticas.
 - v0.5+: ampliación del perfil de lenguaje, interoperabilidad, herramientas y robustez.
+
+
+
+## 12. Integración de investigación v1.0 — identificabilidad
+
+Estas filas amplían la trazabilidad de la implementación sin convertir los documentos de investigación autopublicados en requisitos normativos de MDES.
+
+| ID | Fuente | Requisito de ingeniería | Python | Rust | Evidencia / límite |
+|---|---|---|---|---|---|
+| DIAG-001 | `docs/research-integration-identifiability.md` §2–3 | Diagnóstico local pre-ajuste de diseño Hill mediante FIM escalada en `log(K), log(alpha_h)` | P | P | `ronin/identifiability.py`, `rust/src/identifiability.rs`; tests y parity script. No prueba identificabilidad estructural global. |
+| DIAG-002 | Papers / marco epistemológico §3–4 | Sensibilidad del diagnóstico a una colección de valores típicos y escalados | N | N | Contrato documentado; análisis de sensibilidad multidimensional pendiente. |
+| DIAG-003 | Papers Hill/PBPK | Umbrales prácticos calibrados por dominio, ruido y diseño | N | N | No se aplican umbrales universales; `practical_status` queda como `not_calibrated`. |
+| DIAG-004 | Papers / protocolo pre-ajuste | Reparametrizaciones invariantes demostradas y análisis global estructural | N | N | La SVD local informa direcciones débiles; no deriva invariantes ni sustituye herramientas globales. |
+| DIAG-005 | Papers Hill | Ajuste, perfiles de verosimilitud, análisis de residuos y bootstrap posterior al diagnóstico | N | N | Fuera del alcance de la primera API de diseño; bootstrap no se presenta como disponible. |
+| DIAG-006 | Papers / tratado metodológico §15–16 | Diagnóstico local genérico desde Jacobiano, pesos y escalas de parámetros | P | P | `diagnose_jacobian`; SVD/FIM local, no prueba global. |
+| DIAG-007 | Paper epidemiológico §4–5 | Diagnóstico SIR temprano con subreporte y reporte de combinaciones identificables | P | P | `diagnose_sir_early_phase`; válido solo bajo la aproximación de fase temprana. |
+| DIAG-008 | Papers PBPK/Hill; integración FIM §2 | Estabilidad del diagnóstico FIM ante escalas comunes extremas del Jacobiano | I | I | Normalización previa a (J^T W J), diagonalización relativa y tests con escalas (10^{-200})/(10^{200}) en `tests/test_identifiability.py` y `rust/src/identifiability.rs`. |
+| DIAG-009 | Paper PBPK §5.4 / Apéndice A.3 | Selección greedy D-óptima sobre filas candidatas del Jacobiano | I | I | API d_optimal_design en Python/Rust; Cholesky sobre FIM normalizada + ridge adimensional; tests de selección complementaria y conservación de rango deficiente. No es certificado de identificabilidad. |
+| DIAG-010 | Paper PBPK §3.5 / Apéndice A.2 | Estimador genérico Sobol de primer orden sobre salidas A/B/A_B^i | I | I | API sobol_first_order en Python/Rust; normalización común de salida, tests de escala extrema y paridad cruzada. No genera muestras ni estima interacciones/IC. |
+| DIAG-011 | Paper Hill design + PBPK D-óptimo | Selección D-óptima de niveles Omega para estimar log(K) y log(alpha_h) | I | I | API d_optimal_hill_design; sensibilidades analíticas Hill, score normalizado, warning explícito si el subconjunto queda rank-deficient; paridad Python/Rust. Asume ruido aditivo homoscedástico. |
 

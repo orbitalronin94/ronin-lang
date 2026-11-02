@@ -25,6 +25,7 @@ VALID = [
     ROOT / "tests" / "fixtures" / "conformance" / "ces_hill.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "full_order1.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "metadata_nested.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "degeneracy_unknown.ronin",
 ]
 INVALID = [
     ROOT / "tests" / "fixtures" / "conformance" / "invalid_frequency_sum.ronin",
@@ -97,6 +98,23 @@ def main() -> int:
         compare(path)
     # Explicit override must replace the project's coexistence_delta in both CLIs.
     compare(ROOT / "tests" / "fixtures" / "conformance" / "pusfre.ronin", delta=0.07)
+
+    invalid_deltas = (0.0, -0.01, 0.1001, float("inf"), float("nan"))
+    for invalid_delta in invalid_deltas:
+        path = ROOT / "tests" / "fixtures" / "conformance" / "pusfre.ronin"
+        system = next(iter(parse(path.read_text(encoding="utf-8")).values()))
+        try:
+            solve(system, delta=invalid_delta)
+        except SemanticError as error:
+            if "delta must be in (0,0.1]" not in str(error):
+                raise AssertionError(f"unexpected Python delta error: {error}")
+        else:
+            raise AssertionError(f"Python accepted invalid delta {invalid_delta!r}")
+        result = rust_run(path, invalid_delta)
+        if result.returncode == 0 or "delta must be in (0,0.1]" not in result.stderr:
+            raise AssertionError(
+                f"Rust did not reject invalid delta {invalid_delta!r}: {result.stderr}"
+            )
 
     for path in INVALID:
         systems = parse(path.read_text(encoding="utf-8"))

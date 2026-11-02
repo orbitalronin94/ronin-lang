@@ -14,21 +14,21 @@ FIXTURES = [
     ROOT / "tests" / "fixtures" / "conformance" / "degeneracy_unknown.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "valid_zero_fitness_check_only.ronin",
 ]
-BOOTSTRAP = 50
+BOOTSTRAP = 0
 
 
-def run_python(path):
+def run_python(path, bootstrap=BOOTSTRAP):
     return subprocess.run(
         [sys.executable, "-m", "ronin.cli", "diagnose", str(path),
-         "--bootstrap", str(BOOTSTRAP)],
+         "--bootstrap", str(bootstrap)],
         cwd=ROOT, text=True, capture_output=True, check=False,
     )
 
 
-def run_rust(path):
+def run_rust(path, bootstrap=BOOTSTRAP):
     return subprocess.run(
         ["cargo", "run", "--quiet", "--manifest-path", str(ROOT / "rust" / "Cargo.toml"),
-         "--", "diagnose", str(path), "--bootstrap", str(BOOTSTRAP)],
+         "--", "diagnose", str(path), "--bootstrap", str(bootstrap)],
         cwd=ROOT, text=True, capture_output=True, check=False,
     )
 
@@ -44,7 +44,9 @@ def main():
         left = json.loads(py.stdout)
         right = json.loads(rs.stdout)
         for field in ("degeneracy", "lambda_identifiable", "K_identifiable",
-                      "alpha_h_identifiable", "recommendation", "bootstrap_ci"):
+                      "alpha_h_identifiable", "recommendation", "bootstrap_ci",
+                      "structural_status", "practical_status", "estimability_status",
+                      "diagnostic_method", "parameter_freedom_basis"):
             if left[field] != right[field]:
                 raise AssertionError(
                     f"{path.name}.{field}: Python={left[field]!r}, Rust={right[field]!r}"
@@ -56,6 +58,16 @@ def main():
                 f"Python={left['omega_range_orders']}, Rust={right['omega_range_orders']}"
             )
         print(f"diagnostic parity OK: {path.relative_to(ROOT)}")
+    # A positive bootstrap request must fail explicitly in both CLIs.
+    path = FIXTURES[0]
+    py = run_python(path, bootstrap=50)
+    rs = run_rust(path, bootstrap=50)
+    expected_error = "bootstrap is not implemented"
+    if py.returncode == 0 or expected_error not in py.stderr:
+        raise AssertionError(f"Python did not reject bootstrap request: {py.stderr}")
+    if rs.returncode == 0 or expected_error not in rs.stderr:
+        raise AssertionError(f"Rust did not reject bootstrap request: {rs.stderr}")
+    print("Unsupported bootstrap requests rejected consistently by both CLIs.")
     print("Bootstrap CI remains null in both runtimes; no estimator is claimed.")
 
 

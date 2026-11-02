@@ -65,6 +65,11 @@ class DegeneracyReport:
     alpha_h_identifiable: bool
     recommendation: str
     bootstrap_ci: Optional[dict] = None
+    structural_status: str = "not_assessed"
+    practical_status: str = "not_calibrated"
+    estimability_status: str = "not_assessed"
+    diagnostic_method: str = "omega_range_heuristic"
+    parameter_freedom_basis: str = "legacy_value_heuristic"
 
 
 @dataclass

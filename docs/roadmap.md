@@ -22,6 +22,12 @@ Que exista una especificación completa no significa que todas sus capacidades e
 5. **Compatibilidad deliberada:** los cambios de sintaxis, IR y API deben tener pruebas de compatibilidad y notas de migración.
 6. **Hitos por criterios de salida:** no se promete una fecha ni se considera alcanzada una versión por el mero hecho de crear una etiqueta.
 
+## 2.1 Alcance final del programa
+
+El roadmap de versiones no reduce el destino del proyecto a un perfil mínimo. El [programa de implementación integral](full-implementation-program.md) desglosa el documento maestro y los Papers en siete líneas de trabajo: núcleo matemático, lenguaje y tipos, motor de ejecución, investigación/identificabilidad, interoperabilidad, compilador/backends y herramientas/plataforma.
+
+El perfil candidato v1.0 es una estabilización intermedia. Después de ese hito sigue pendiente la implementación de las capacidades normativas y de plataforma que queden fuera del perfil. La meta final continúa siendo completar MDES v0.5; las extensiones marcadas como futuras o experimentales en la fuente se mantienen clasificadas por separado.
+
 ## 3. Hitos de versión
 
 ### v0.1 — Foundation / baseline (estado actual)

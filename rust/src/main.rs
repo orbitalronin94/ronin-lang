@@ -229,13 +229,18 @@ pub fn execute(args: &[String]) -> Result<String, String> {
         let system = chosen.first().ok_or_else(|| "project contains no systems".to_string())?;
         let report = diagnose::diagnose(system, bootstrap.unwrap_or(0))?;
         return Ok(format!(
-            "{{\"omega_range_orders\":{},\"degeneracy\":{},\"lambda_identifiable\":{},\"K_identifiable\":{},\"alpha_h_identifiable\":{},\"recommendation\":{},\"bootstrap_ci\":null}}",
+            "{{\"omega_range_orders\":{},\"degeneracy\":{},\"lambda_identifiable\":{},\"K_identifiable\":{},\"alpha_h_identifiable\":{},\"recommendation\":{},\"bootstrap_ci\":null,\"structural_status\":{},\"practical_status\":{},\"estimability_status\":{},\"diagnostic_method\":{},\"parameter_freedom_basis\":{}}}",
             json_number(report.omega_range_orders),
             json_string(&report.degeneracy),
             report.lambda_identifiable,
             report.k_identifiable,
             report.alpha_h_identifiable,
             json_string(&report.recommendation),
+            json_string(&report.structural_status),
+            json_string(&report.practical_status),
+            json_string(&report.estimability_status),
+            json_string(&report.diagnostic_method),
+            json_string(&report.parameter_freedom_basis),
         ));
     }
 
@@ -455,20 +460,24 @@ mod tests {
             .into_owned();
         let args = vec!["diagnose".into(), path];
         let output = execute(&args).unwrap();
-        assert!(output.contains("\"degeneracy\":\"active\""));
-        assert!(output.contains("\"bootstrap_ci\":null"));
-        assert!(output.contains("\"K_identifiable\":false"));
+        assert!(output.contains(r#""degeneracy":"active""#));
+        assert!(output.contains(r#""bootstrap_ci":null"#));
+        assert!(output.contains(r#""K_identifiable":false"#));
+        assert!(output.contains(r#""structural_status":"not_assessed""#));
+        assert!(output.contains(r#""practical_status":"not_calibrated""#));
+        assert!(output.contains(r#""diagnostic_method":"omega_range_heuristic""#));
+        assert!(output.contains(r#""parameter_freedom_basis":"legacy_value_heuristic""#));
     }
 
     #[test]
-    fn diagnose_accepts_bootstrap_flag_without_fabricating_interval() {
+    fn diagnose_rejects_unimplemented_bootstrap_request() {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../tests/fixtures/conformance/degeneracy_active.ronin")
             .to_string_lossy()
             .into_owned();
         let args = vec!["diagnose".into(), path, "--bootstrap".into(), "100".into()];
-        let output = execute(&args).unwrap();
-        assert!(output.contains("\"bootstrap_ci\":null"));
+        let error = execute(&args).unwrap_err();
+        assert!(error.contains("bootstrap is not implemented"));
     }
 
     #[test]

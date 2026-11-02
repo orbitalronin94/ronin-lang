@@ -9,8 +9,15 @@ pub fn hill(omega: f64, k: f64, alpha_h: f64) -> f64 {
         return f64::NAN;
     }
     if omega == 0.0 { return 0.0; }
-    let x = (omega / k).powf(alpha_h);
-    x / (1.0 + x)
+    // Evaluate the equivalent logistic form in log space to avoid
+    // overflow in (omega / k).powf(alpha_h) for valid extreme inputs.
+    let log_ratio = alpha_h * (omega.ln() - k.ln());
+    if log_ratio >= 0.0 {
+        1.0 / (1.0 + (-log_ratio).exp())
+    } else {
+        let exp_ratio = log_ratio.exp();
+        exp_ratio / (1.0 + exp_ratio)
+    }
 }
 
 pub fn ces_combine(phi: f64, psi: f64, omega_eff: f64, lambda: f64, weights: [f64; 3]) -> f64 {
@@ -93,7 +100,14 @@ pub fn solve(system: &System, delta: f64) -> Result<Solution, String> {
     let orders = if positive.len() > 1 { (positive.iter().cloned().fold(f64::NEG_INFINITY,f64::max) / positive.iter().cloned().fold(f64::INFINITY,f64::min)).log10() } else { 0.0 };
     let k_free = !p.k.is_infinite();
     let alpha_h_free = p.alpha_h != 1.0;
-    let degeneracy = if k_free && alpha_h_free && orders < 3.0 { "active" } else { "inactive" }.to_string();
+    let positive_omegas = system.agents.iter().filter(|agent| agent.frequency > 0.0).count();
+    let degeneracy = if positive_omegas < 2 {
+        "unknown"
+    } else if k_free && alpha_h_free && orders < 3.0 {
+        "active"
+    } else {
+        "inactive"
+    }.to_string();
     let q: Vec<f64> = system.agents.iter().map(|a|a.phi*a.psi).collect();
     let min_q = q.iter().cloned().fold(f64::INFINITY,f64::min);
     let k_min = if min_q <= 0.0 { None } else { Some(system.parts as f64 * q.iter().cloned().fold(0.0,f64::max) / min_q / ((system.parts as f64 / delta).ln())) };
@@ -128,6 +142,14 @@ mod tests {
         close(hill(0.5, f64::INFINITY, 1.5), 0.5, 1e-12);
         close(hill(0.5, 0.5, 1.0), 0.5, 1e-12);
         close(hill(0.0, 0.5, 1.0), 0.0, 1e-12);
+    }
+
+    #[test]
+    fn hill_is_stable_for_extreme_parameter_ratios() {
+        close(hill(1.0, 1e-300, 2.0), 1.0, 1e-15);
+        close(hill(1e-300, 1.0, 2.0), 0.0, 1e-15);
+        close(hill(0.5, 0.5, 1.0), 0.5, 1e-15);
+        close(hill(0.25, 0.5, 2.0), 0.2, 1e-15);
     }
 
     #[test]
@@ -212,6 +234,24 @@ mod tests {
         for source in fixtures {
             let systems = parser::parse(source).unwrap();
             assert!(solve(&systems[0], 0.05).is_err());
+        }
+    }
+
+
+    #[test]
+    fn solve_reports_unknown_degeneracy_with_insufficient_positive_omegas() {
+        let source = include_str!("../../tests/fixtures/conformance/degeneracy_unknown.ronin");
+        let system = parser::parse(source).unwrap().remove(0);
+        let result = solve(&system, 0.05).unwrap();
+        assert_eq!(result.degeneracy, "unknown");
+    }
+
+    #[test]
+    fn rejects_invalid_coexistence_delta_overrides() {
+        let system = maquinas();
+        for delta in [0.0, -0.01, 0.1001, f64::INFINITY, f64::NAN] {
+            let error = solve(&system, delta).unwrap_err();
+            assert!(error.contains("delta must be in (0,0.1]"));
         }
     }
 

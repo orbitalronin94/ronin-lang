@@ -76,4 +76,9 @@ pub struct DegeneracyReport {
     pub k_identifiable: bool,
     pub alpha_h_identifiable: bool,
     pub recommendation: String,
+    pub structural_status: String,
+    pub practical_status: String,
+    pub estimability_status: String,
+    pub diagnostic_method: String,
+    pub parameter_freedom_basis: String,
 }

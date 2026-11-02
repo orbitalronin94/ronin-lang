@@ -9,8 +9,11 @@ pub fn omega_range_orders(system: &System) -> f64 {
     (max / min).log10()
 }
 
-pub fn diagnose(system: &System, _bootstrap: usize) -> Result<DegeneracyReport, String> {
+pub fn diagnose(system: &System, bootstrap: usize) -> Result<DegeneracyReport, String> {
     validate_system(system)?;
+    if bootstrap > 0 {
+        return Err("bootstrap is not implemented; use bootstrap=0".into());
+    }
     let p = &system.params;
     let positive = system.agents.iter().filter(|a| a.frequency > 0.0).count();
     let orders = omega_range_orders(system);
@@ -19,8 +22,8 @@ pub fn diagnose(system: &System, _bootstrap: usize) -> Result<DegeneracyReport, 
     let state = if positive < 2 { "unknown" } else if k_free && alpha_h_free && orders < 3.0 { "active" } else { "inactive" };
     let recommendation = match state {
         "unknown" => "Insufficient positive Omega observations to estimate the range or Hill identifiability.",
-        "inactive" => "Structural degeneracy inactive under the configured parameter constraints.",
-        _ if orders < 1.0 => "Omega spans less than one order of magnitude. K and alpha_h are indistinguishable; expand the Omega range or fix K externally.",
+        "inactive" => "The Omega-range heuristic is inactive under the configured parameter constraints; this does not establish global structural identifiability.",
+        _ if orders < 1.0 => "Omega spans less than one order of magnitude. K and alpha_h are weakly separated by this range heuristic; expand the Omega range or fix K externally.",
         _ => "Omega spans between one and three orders of magnitude. Expand the observed Omega range to at least three orders.",
     };
     Ok(DegeneracyReport {
@@ -30,6 +33,11 @@ pub fn diagnose(system: &System, _bootstrap: usize) -> Result<DegeneracyReport, 
         k_identifiable: positive >= 2 && k_free && (!alpha_h_free || orders >= 3.0),
         alpha_h_identifiable: positive >= 2 && k_free && alpha_h_free && orders >= 3.0,
         recommendation: recommendation.to_string(),
+        structural_status: "not_assessed".into(),
+        practical_status: "not_calibrated".into(),
+        estimability_status: "not_assessed".into(),
+        diagnostic_method: "omega_range_heuristic".into(),
+        parameter_freedom_basis: "legacy_value_heuristic".into(),
     })
 }
 
@@ -47,9 +55,37 @@ mod tests {
         ];
         for (source, expected) in cases {
             let system = parser::parse(source).unwrap().remove(0);
-            assert_eq!(diagnose(&system, 0).unwrap().degeneracy, expected);
+            let report = diagnose(&system, 0).unwrap();
+            assert_eq!(report.degeneracy, expected);
+            assert_eq!(report.structural_status, "not_assessed");
+            assert_eq!(report.practical_status, "not_calibrated");
+            assert_eq!(report.estimability_status, "not_assessed");
+            assert_eq!(report.diagnostic_method, "omega_range_heuristic");
+            assert_eq!(report.parameter_freedom_basis, "legacy_value_heuristic");
         }
     }
+    #[test]
+    fn recommendations_do_not_overclaim_global_structural_identifiability() {
+        let active_source = include_str!("../../tests/fixtures/conformance/degeneracy_active.ronin");
+        let inactive_source = include_str!("../../tests/fixtures/conformance/degeneracy_inactive.ronin");
+        let active = parser::parse(active_source).unwrap().remove(0);
+        let inactive = parser::parse(inactive_source).unwrap().remove(0);
+        let active_report = diagnose(&active, 0).unwrap();
+        let inactive_report = diagnose(&inactive, 0).unwrap();
+        assert!(active_report.recommendation.contains("weakly separated"));
+        assert!(inactive_report.recommendation.contains("global structural identifiability"));
+        assert_eq!(active_report.structural_status, "not_assessed");
+        assert_eq!(inactive_report.structural_status, "not_assessed");
+    }
+
+    #[test]
+    fn unsupported_bootstrap_is_rejected_explicitly() {
+        let source = include_str!("../../examples/maquinas.ronin");
+        let system = parser::parse(source).unwrap().remove(0);
+        let error = diagnose(&system, 50).unwrap_err();
+        assert!(error.contains("bootstrap is not implemented"));
+    }
+
     #[test]
     fn diagnosis_does_not_require_positive_total_fitness() {
         let source = include_str!("../../tests/fixtures/conformance/valid_zero_fitness_check_only.ronin");

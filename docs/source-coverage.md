@@ -20,6 +20,10 @@ La [matriz de trazabilidad MDES v0.5](conformance-matrix.md) contiene IDs por re
 | R.13: pruebas | Pruebas de aceptación y regresión con pytest |
 | R.14: ejemplos | Maquinas, Pesca, CES y ejemplos de degeneración ejecutables |
 
+## Diagnóstico de identificabilidad: alcance real
+
+El comando/API `diagnose(system)` trabaja con frecuencias y parámetros del sistema. No recibe respuestas observadas, diseño experimental ni modelo de ruido; por tanto, el estado K–α actual es un indicador heurístico basado en restricciones y rango Ω, no una FIM empírica ni una certificación de identificabilidad práctica. La distinción y el contrato propuesto para incorporar observaciones están en [research-integration-identifiability.md](research-integration-identifiability.md).
+
 ## Límites de implementación explícitos
 
 1. **Estimador de deuda.** No se proporciona un estimador ejecutable en R.3–R.14. Python y Rust devuelven `debt: null` para indicar explícitamente que el valor no está calculado; no se interpreta como deuda cero.
@@ -46,6 +50,8 @@ La media de potencia CES converge a la media geométrica ponderada cuando λ tie
 
 La fuente proporciona la fórmula de `k_min` e indica que se advierta cuando el recurso disponible sea inferior a ese umbral, pero no define un estimador separado de deuda/coexistencia. El runtime expone `k_min` para que el consumidor pueda inspeccionar la comparación.
 
+El override de `solve(..., delta=...)` debe ser finito y pertenecer a (0, 0.1]. Si se omite, se usa el valor `coexistence_delta` configurado en el sistema.
+
 ## Otros objetivos descritos en el Markdown
 
 - **Rust (Parte VI / 6.1–6.14):** el repositorio implementa AST, lexer/parser para el subconjunto compartido, IR interno y serializador JSON IR v1; CLI `list`, `check`, `solve`, `run` (todos los sistemas, JSON/CSV), `compile`, `diagnose` y `simulate`. `solve` sin `--system` selecciona el primer sistema, como Python. La paridad verificada incluye parser, validación, solver, diagnósticos, contratos de simulación y CSV; las trayectorias con semilla fija coinciden entre runtimes con tolerancia 1e-12. Siguen pendientes bindings PyO3/WASM/C, memoria temporal de orden superior y cierre normativo de deuda/bootstrap. No se declara runtime completo ni conforme.
@@ -63,6 +69,10 @@ La fuente proporciona la fórmula de `k_min` e indica que se advierta cuando el 
 - **Identificabilidad:** el diagnóstico distingue entre la rama Hill desactivada (`K = inf`), un exponente Hill fijado y el caso en que K y alpha_h son libres. El rango Ω de al menos tres órdenes es requisito para informar ambos parámetros libres como identificables.
 - **Rust:** existe un crate con AST, lexer/parser, IR interno, solver, simulador, diagnóstico y CLI inicial. Las pruebas cubren el subconjunto implementado. No es todavía un backend plenamente conforme ni equivalente al runtime Python.
 - **RONIN Office:** `office/index.html` contiene un prototipo local sin dependencias para PUSFRE, CES y CES-Hill, con edición de agentes, asignación y diagnóstico. No implementa todos los paneles de la especificación.
+
+## Extensiones parser-only no ejecutables
+
+El ejemplo 101 declara un campo de sistema `invariants`. El parser lo acepta como parte de la cobertura sintáctica de ejemplos, pero el runtime no conserva ni evalúa esas expresiones. Por tanto, ese ejemplo es parser-only: no debe presentarse como una ejecución que compruebe invariantes. La implementación estable requiere AST/IR para constraints, semántica de evaluación y pruebas negativas/positivas antes de habilitarlo.
 
 ## Cobertura real de los 130 ejemplos del material fuente
 

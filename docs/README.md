@@ -4,8 +4,12 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 
 ## Empezar
 
-- [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
-- [Roadmap de v0.1 a v1.0](roadmap.md)
+- [Inicio práctico: primer flujo ejecutable](quickstart-practico.md) · [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
+- [Roadmap de v0.1 a v1.0](roadmap.md) · [Programa de implementación integral MDES](full-implementation-program.md)
+- [Perfil candidato v1.0](v1.0-profile.md) — alcance propuesto, capacidades excluidas y criterios de aceptación; pendiente de aprobación.
+- [Matriz de conformidad del perfil v1.0](v1.0-conformance-matrix.md) — evidencia y brechas separadas del mapa histórico MDES v0.5.
+- [ADR-0001 — Límite CES cuando lambda tiende a cero](decisions/ADR-0001-ces-zero-limit.md) — propuesta normativa pendiente de aprobación.
+- [ADR-0002 — Parámetros libres y fijados](decisions/ADR-0002-parameter-modes.md) — propuesta de modos explícitos para el diagnóstico de identificabilidad.
 - [Especificación formal de MDES](spec.md) · [English companion](spec.en.md)
 - [Matriz de trazabilidad y conformidad MDES v0.5](conformance-matrix.md) — IDs, estado Python/Rust, pruebas y bloqueos.
 - [Fixtures compartidos de conformidad](../tests/fixtures/conformance/README.md) — entradas positivas, negativas y diagnósticas probadas en ambos runtimes.
@@ -20,6 +24,9 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 - [Parte VII — Especificación de RONIN Office](office-spec.md) · [English summary](office-spec.en.md)
 - [Parte VIII — Visión de futuro](vision.md) · [English summary](vision.en.md)
 - [Anexo normativo](normative-annex.md) · [English summary](normative-annex.en.md)
+- [Inicio práctico de diagnósticos científicos](research-diagnostics-quickstart.md) · [Integración de investigación sobre identificabilidad](research-integration-identifiability.md) — propuesta v1.0 para distinguir identificabilidad estructural, local, práctica y estimabilidad.
+- [Auditoría del corpus Papers](research-corpus-audit.md) — revisión crítica de Hill, PBPK, SIR, el protocolo de 50 dominios y Testing 1310.
+- [Auditoría complementaria del Tratado y CASCABEL](research-treatise-cascabel-audit.md) — evaluación del anexo ejecutable, pre-registro, comparación sintética y límites de integración de CASCABEL.
 
 ## Notas editoriales y de conformidad
 
@@ -28,4 +35,4 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 3. Las especificaciones Rust y Office describen objetivos que no deben confundirse con la cobertura implementada. El estado actual se resume en [source-coverage.md](source-coverage.md).
 4. Los ejemplos con agentes, variables o datasets omitidos se identifican como plantillas parser-only cuando corresponde.
 
-El castellano es el idioma principal; los archivos `.en.md` son resúmenes de acompañamiento, no traducciones literales completas. El material fuente se conserva en sus documentos españoles.
+El castellano es el idioma principal; los archivos .en.md son resúmenes de acompañamiento, no traducciones literales completas. El material fuente se conserva en sus documentos españoles.
