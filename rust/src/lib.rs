@@ -5,8 +5,10 @@
 pub mod ast;
 pub mod diagnose;
 pub mod ir;
+pub mod identifiability;
 pub mod parser;
 pub mod simulator;
 pub mod solver;
 
 pub use ast::{Agent, DegeneracyReport, Params, Simulation, Solution, System, Value};
+pub use identifiability::{diagnose_hill_design, HillDesignDiagnostic};
