@@ -186,7 +186,7 @@ El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python co
 
 | ID | Fuente | Problema | Tratamiento en la línea base |
 |---|---|---|---|
-| OPEN-001 | Apéndice CES A.1.1 vs N.2 Test 3 / R.8 | El límite geométrico CES no es, en general, idéntico a PUSFRE | Se conserva el comportamiento geométrico actual; bloqueado para conformidad normativa |
+| OPEN-001 | Apéndice CES A.1.1 vs N.2 Test 3 / R.8 | El límite geométrico CES no es, en general, idéntico a PUSFRE | [ADR-0001](decisions/ADR-0001-ces-zero-limit.md) propone mantener CES geométrico y PUSFRE separado; pendiente de aprobación normativa |
 | OPEN-002 | N.2 Test 6 | Frecuencias 0.001, 0.01, 0.989 producen ~2.9952 órdenes, no 3.0 | El fixture de test usa datos que sí superan el umbral; la fuente queda señalada |
 | OPEN-003 | §8.3 / R.14 | NeuralScaling contiene phi/psi > 1 y dataset incompleto | No se fuerza el fixture contra el validador |
 | OPEN-004 | §8.9 / R.14 | FamaFrench no contiene los 720 registros prometidos | Dataset pendiente; no sintetizar observaciones |
