@@ -299,3 +299,9 @@ def test_solve_reports_unknown_degeneracy_with_fewer_than_two_positive_omegas():
     system = parse(source)["SparseOmega"]
     assert solve(system).degeneracy == "unknown"
     assert diagnose(system).degeneracy == "unknown"
+
+
+@pytest.mark.parametrize("bootstrap", [-1, 1, 10, True, 0.5])
+def test_diagnose_rejects_unsupported_or_invalid_bootstrap(bootstrap):
+    with pytest.raises(ValueError):
+        diagnose(parse(MAQ)["Maquinas"], bootstrap=bootstrap)
