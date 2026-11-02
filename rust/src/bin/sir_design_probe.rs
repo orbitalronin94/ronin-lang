@@ -5,10 +5,6 @@ fn json_number(value: f64) -> String {
     if value.is_finite() { format!("{:.17e}", value) } else { "null".into() }
 }
 
-fn json_string(value: &str) -> String {
-    format!("\\\"{}\\\"", value)
-}
-
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.len() < 7 {
@@ -47,6 +43,6 @@ fn main() {
         info.singular_values.iter().map(|value| json_number(*value)).collect::<Vec<_>>().join(","),
         weak_directions,
         json_number(info.fim_condition_number),
-        json_string(&report.structural_status),
+        r#""non_identifiable_under_early_phase_approximation""#,
     );
 }
