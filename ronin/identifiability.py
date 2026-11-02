@@ -13,7 +13,7 @@ class HillDesignDiagnostic:
     observations: int
     omega_range_orders: float
     saturation_fraction: float
-    max_omega_over_K: float
+    max_omega_over_k: float
     singular_values: tuple
     fim_condition_number: float
     local_rank: int
@@ -167,7 +167,7 @@ def diagnose_hill_design(
         observations=len(values),
         omega_range_orders=omega_range,
         saturation_fraction=saturated / len(values),
-        max_omega_over_K=max_ratio,
+        max_omega_over_k=max_ratio,
         singular_values=singular_values,
         fim_condition_number=condition,
         local_rank=rank,
