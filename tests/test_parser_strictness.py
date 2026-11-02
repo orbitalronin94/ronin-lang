@@ -79,3 +79,22 @@ def test_parser_rejects_unknown_system_fields():
     )
     with pytest.raises(SyntaxError, match="Unknown system field: resorce"):
         parse(source)
+
+
+
+@pytest.mark.parametrize(
+    "params",
+    [
+        "{degeneracy_check: 1}",
+        "{omega_range_report: \"false\"}",
+        "{memory_weights: \"not-an-array\"}",
+        "{memory_weights: [1, true]}",
+    ],
+)
+def test_parser_rejects_invalid_extended_parameter_types(params):
+    source = (
+        'system S = { parts: 2, resource: 10, agents: '
+        '[{phi: 0.5, psi: 0.5, frequency: 1.0}], params: ' + params + ' }'
+    )
+    with pytest.raises(SyntaxError):
+        parse(source)
