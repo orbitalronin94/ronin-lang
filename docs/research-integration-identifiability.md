@@ -133,6 +133,69 @@ La API `diagnose_sir_early_phase` calcula el Jacobiano local de `log C(t)` respe
 
 El motor genérico `diagnose_jacobian` acepta un Jacobiano evaluado en parámetros típicos, pesos de observación y escalas paramétricas. Calcula FIM/SVD local para otros dominios sin fingir que dispone de un modelo dinámico o de datos que el llamador no ha proporcionado.
 
+## Ejemplos de uso de las APIs locales
+
+Los ejemplos siguientes son diagnósticos de diseño; no realizan ajuste de parámetros ni demuestran identificabilidad global.
+
+### Diseño Hill
+
+```python
+from ronin import diagnose_hill_design
+
+report = diagnose_hill_design(
+    omega=[0.01, 0.1, 1.0, 10.0, 100.0],
+    K=1.0,
+    alpha_h=1.5,
+    sigma=0.05,
+)
+print(report.local_rank_status)
+print(report.fim_condition_number)
+print(report.warnings)
+```
+
+El ruido `sigma` se interpreta como desviación típica de errores gaussianos aditivos independientes sobre la respuesta Hill. Los valores `K` y `alpha_h` son parámetros típicos en los que se linealiza el diseño.
+
+### Jacobiano de un modelo propio
+
+```python
+from ronin import diagnose_jacobian
+
+report = diagnose_jacobian(
+    jacobian=[
+        [1.0, 2.0],
+        [2.0, 4.0],
+        [3.0, 6.0],
+    ],
+    weights=[1.0, 1.0, 1.0],
+    parameter_names=("K", "alpha_h"),
+    parameter_scales=(1.0, 1.0),
+)
+print(report.local_rank_status)  # rank_deficient
+print(report.weak_directions)
+```
+
+El llamador es responsable de proporcionar el Jacobiano en los valores típicos y con la parametrización documentada. `weights` contiene precisiones diagonales de observación; `parameter_scales` define las escalas de coordenadas paramétricas. El resultado es local.
+
+### SIR temprano con subreporte
+
+```python
+from ronin import diagnose_sir_early_phase
+
+report = diagnose_sir_early_phase(
+    times=range(31),
+    beta=0.4,
+    gamma=0.15,
+    rho=0.1,
+    I0=100.0,
+    sigma=0.1,
+)
+print(report.growth_rate)       # beta - gamma
+print(report.observed_amplitude)  # rho * beta * I0
+print(report.local_information.local_rank)  # como máximo 2
+```
+
+Aquí `sigma` es la desviación típica de errores gaussianos independientes sobre `log(C(t))). La conclusión se limita a la aproximación de fase temprana descrita en el paper; no debe aplicarse al SIR no lineal completo.
+
 ## 6. Protocolo operativo
 
 1. Validar modelo, observaciones, parámetros típicos y modelo de ruido.
