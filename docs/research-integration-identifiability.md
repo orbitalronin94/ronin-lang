@@ -208,6 +208,20 @@ Aquí `sigma` es la desviación típica de errores gaussianos independientes sob
 6. Solo después ejecutar el ajuste principal, perfiles de verosimilitud o bootstrap, según el modelo de error.
 7. Reportar por separado predicción, parámetros, priors/constraints e invariantes.
 
+### Diseño experimental D-óptimo
+
+Se incorpora d_optimal_design como utilidad genérica sobre una matriz de sensibilidades observación×parámetro. Cada fila representa una observación candidata (por ejemplo, un tiempo de muestreo); el algoritmo greedy selecciona filas que maximizan sucesivamente log det(FIM + ridge·I).
+
+Contrato numérico:
+- admite pesos de observación y escalas paramétricas;
+- normaliza el Jacobiano ponderado antes de formar la FIM;
+- usa Cholesky para calcular log-determinantes sin formar el determinante;
+- el ridge es adimensional y relativo a la matriz normalizada;
+- devuelve índices seleccionados, score, matriz normalizada y diagnóstico local del subconjunto.
+
+El score solo es comparable entre diseños que usan la misma parametrización, escalas, pesos y ridge. La regularización permite comparar candidatos numéricamente, pero no convierte una FIM singular en evidencia de identificabilidad: el informe local sigue exponiendo el rango deficiente. Esta implementación es una extensión de investigación, no una nueva regla semántica de MDES.
+
+
 ## 7. Reglas de implementación v1.0
 
 - Ningún umbral empírico se eleva a norma universal sin calibración y evidencia reproducible.
