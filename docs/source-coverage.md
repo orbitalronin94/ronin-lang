@@ -50,6 +50,8 @@ La media de potencia CES converge a la media geométrica ponderada cuando λ tie
 
 La fuente proporciona la fórmula de `k_min` e indica que se advierta cuando el recurso disponible sea inferior a ese umbral, pero no define un estimador separado de deuda/coexistencia. El runtime expone `k_min` para que el consumidor pueda inspeccionar la comparación.
 
+El override de `solve(..., delta=...)` debe ser finito y pertenecer a (0, 0.1]. Si se omite, se usa el valor `coexistence_delta` configurado en el sistema.
+
 ## Otros objetivos descritos en el Markdown
 
 - **Rust (Parte VI / 6.1–6.14):** el repositorio implementa AST, lexer/parser para el subconjunto compartido, IR interno y serializador JSON IR v1; CLI `list`, `check`, `solve`, `run` (todos los sistemas, JSON/CSV), `compile`, `diagnose` y `simulate`. `solve` sin `--system` selecciona el primer sistema, como Python. La paridad verificada incluye parser, validación, solver, diagnósticos, contratos de simulación y CSV; las trayectorias con semilla fija coinciden entre runtimes con tolerancia 1e-12. Siguen pendientes bindings PyO3/WASM/C, memoria temporal de orden superior y cierre normativo de deuda/bootstrap. No se declara runtime completo ni conforme.
