@@ -314,3 +314,18 @@ def test_solve_reports_unknown_degeneracy_with_fewer_than_two_positive_omegas():
 def test_diagnose_rejects_unsupported_or_invalid_bootstrap(bootstrap):
     with pytest.raises(ValueError):
         diagnose(parse(MAQ)["Maquinas"], bootstrap=bootstrap)
+
+
+def test_diagnostic_recommendations_do_not_overclaim_structural_results():
+    active = parse((ROOT / "tests/fixtures/conformance/degeneracy_active.ronin").read_text())[
+        "DegeneracyActive"
+    ]
+    inactive = parse((ROOT / "tests/fixtures/conformance/degeneracy_inactive.ronin").read_text())[
+        "DegeneracyInactive"
+    ]
+    active_report = diagnose(active)
+    inactive_report = diagnose(inactive)
+    assert "weakly separated" in active_report.recommendation
+    assert "global structural identifiability" in inactive_report.recommendation
+    assert active_report.structural_status == "not_assessed"
+    assert inactive_report.structural_status == "not_assessed"
