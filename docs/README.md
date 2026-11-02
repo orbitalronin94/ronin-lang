@@ -4,7 +4,7 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 
 ## Empezar
 
-- [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
+- [Inicio práctico: primer flujo ejecutable](quickstart-practico.md) · [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
 - [Roadmap de v0.1 a v1.0](roadmap.md)
 - [Perfil candidato v1.0](v1.0-profile.md) — alcance propuesto, capacidades excluidas y criterios de aceptación; pendiente de aprobación.
 - [Matriz de conformidad del perfil v1.0](v1.0-conformance-matrix.md) — evidencia y brechas separadas del mapa histórico MDES v0.5.
