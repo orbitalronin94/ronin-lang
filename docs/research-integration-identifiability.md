@@ -89,9 +89,9 @@ No es válido construir una FIM tratando el fitness predicho por el mismo conjun
 
 ## 5. API de diagnóstico de diseño Hill
 
-La primera API Python ya está implementada en `ronin.identifiability.diagnose_hill_design`. Recibe el diseño Ω, valores típicos K y αh, y σ bajo un modelo de error gaussiano aditivo homoscedástico. Calcula la FIM local en coordenadas `log(K), log(alpha_h)`, sus valores singulares, rango numérico, número de condición y dirección débil. También informa el rango Ω, la fracción de puntos por encima de un umbral configurable Ω/K y los supuestos usados.
+La API Python incluye el diagnóstico de diseño Hill en `ronin.identifiability.diagnose_hill_design`, el motor genérico `diagnose_jacobian` y el perfil epidemiológico `diagnose_sir_early_phase`. Recibe el diseño Ω, valores típicos K y αh, y σ bajo un modelo de error gaussiano aditivo homoscedástico. Calcula la FIM local en coordenadas `log(K), log(alpha_h)`, sus valores singulares, rango numérico, número de condición y dirección débil. También informa el rango Ω, la fracción de puntos por encima de un umbral configurable Ω/K y los supuestos usados.
 
-Esta primera entrega **no recibe respuestas observadas ni realiza ajuste**: es un diagnóstico pre-ajuste del diseño. No declara identificabilidad estructural, práctica ni estimabilidad; esos estados permanecen explícitamente como `not_assessed` o `not_calibrated`. El módulo Rust equivalente está implementado y el script `scripts/check_hill_design_parity.py` compara ambos resultados; la comprobación se ejecuta en CI. Todavía falta integrar el diagnóstico en la CLI/IR y validar umbrales prácticos por dominio.
+Esta primera entrega **no recibe respuestas observadas ni realiza ajuste**: es un diagnóstico pre-ajuste del diseño. No declara identificabilidad estructural, práctica ni estimabilidad; esos estados permanecen explícitamente como `not_assessed` o `not_calibrated`. Los módulos Rust equivalentes están implementados. Los scripts `scripts/check_hill_design_parity.py` y `scripts/check_sir_diagnostic_parity.py` comparan ambos runtimes en CI. Todavía falta integrar el diagnóstico en la CLI/IR y validar umbrales prácticos por dominio.
 
 La API ampliada para futuras respuestas observadas y diagnósticos post-ajuste debe aceptar explícitamente:
 
@@ -121,6 +121,19 @@ El resultado mínimo debe separar:
 - warnings y recommendation.
 
 Cuando un campo no pueda calcularse, será null/unknown, nunca una afirmación implícita de identificabilidad.
+
+
+### Perfil SIR con subreporte
+
+El corpus incluye además el paper de epidemiología con la aproximación de fase temprana:
+
+[
+C(t) \approx A e^{rt}, qquad r=\beta-\gamma,quad A=\rho\beta I_0
+]
+
+La API `diagnose_sir_early_phase` calcula el Jacobiano local de `log C(t)` respecto a las coordenadas logarítmicas de `beta, gamma, rho, I0`. En ese modelo reducido, el rango es como máximo 2 para cuatro parámetros: se reportan las combinaciones `growth_rate` y `observed_amplitude`, no estimaciones individuales ficticias. El estado se limita expresamente a la aproximación de fase temprana; no se extrapola a todo el SIR no lineal.
+
+El motor genérico `diagnose_jacobian` acepta un Jacobiano evaluado en parámetros típicos, pesos de observación y escalas paramétricas. Calcula FIM/SVD local para otros dominios sin fingir que dispone de un modelo dinámico o de datos que el llamador no ha proporcionado.
 
 ## 6. Protocolo operativo
 
