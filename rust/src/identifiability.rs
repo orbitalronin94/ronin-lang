@@ -721,6 +721,43 @@ mod generic_tests {
     use super::{diagnose_jacobian, diagnose_sir_early_phase};
 
     #[test]
+    fn d_optimal_design_selects_complementary_observations() {
+        let jacobian = vec![
+            vec![1.0, 0.0],
+            vec![0.0, 1.0],
+            vec![1.0, 1.0],
+            vec![1.0, -1.0],
+        ];
+        let names = vec!["x".into(), "y".into()];
+        let report = d_optimal_design(
+            &jacobian, 2, None, Some(&names), None, 1e-12, 1e-12,
+        ).unwrap();
+        assert_eq!(report.selected_indices, vec![2, 3]);
+        assert_eq!(report.local_information.local_rank, 2);
+        assert!((report.local_information.fim_condition_number - 1.0).abs() < 1e-10);
+        assert!((report.log_determinant - 4.0f64.ln()).abs() < 1e-10);
+    }
+
+    #[test]
+    fn d_optimal_design_preserves_rank_deficiency() {
+        let jacobian = vec![vec![1.0, 2.0], vec![2.0, 4.0], vec![3.0, 6.0]];
+        let report = d_optimal_design(&jacobian, 2, None, None, None, 1e-12, 1e-12).unwrap();
+        assert_eq!(report.local_information.local_rank, 1);
+        assert!(report.local_information.fim_condition_number.is_infinite());
+        assert_eq!(report.selected_indices.len(), 2);
+        assert_ne!(report.selected_indices[0], report.selected_indices[1]);
+        assert!(report.log_determinant.is_finite());
+    }
+
+    #[test]
+    fn d_optimal_design_rejects_invalid_selection_contract() {
+        let jacobian = vec![vec![1.0, 0.0]];
+        assert!(d_optimal_design(&jacobian, 0, None, None, None, 1e-12, 1e-12).is_err());
+        assert!(d_optimal_design(&jacobian, 2, None, None, None, 1e-12, 1e-12).is_err());
+        assert!(d_optimal_design(&jacobian, 1, None, None, None, 1e-12, 0.0).is_err());
+    }
+
+    #[test]
     fn generic_jacobian_detects_rank_deficiency() {
         let jacobian = vec![vec![1.0, 2.0], vec![2.0, 4.0], vec![3.0, 6.0]];
         let report = diagnose_jacobian(&jacobian, None, None, None, 1e-12).unwrap();
