@@ -152,6 +152,7 @@ El motor genérico `diagnose_jacobian` acepta un Jacobiano evaluado en parámetr
 - Python y Rust comparten fixtures de datos, resultados esperados, tolerancias y estados.
 - Si no hay datos observacionales suficientes, se informa unknown y se explica qué falta.
 - Bootstrap, ajuste y perfiles de verosimilitud son etapas posteriores, no sustitutos de la clasificación estructural.
+- La CLI/API rechaza `bootstrap > 0` hasta que exista un estimador implementado; `bootstrap=0` solo solicita el diagnóstico disponible. El campo `bootstrap_ci` permanece `null` y no se ignora silenciosamente una petición de bootstrap.
 
 ## 8. Fuentes del corpus
 
