@@ -135,6 +135,21 @@ def test_k_min_uses_configured_delta():
     assert k_min(system, delta=0.01) < k_min(system, delta=0.05)
 
 
+def test_solve_uses_configured_coexistence_delta_unless_overridden():
+    source = MAQ.replace(
+        "params: {", "params: { coexistence_delta: 0.01,"
+    )
+    system = parse(source)["Maquinas"]
+
+    configured = solve(system)
+    explicit_default = solve(system, delta=0.05)
+    explicit_configured = solve(system, delta=0.01)
+
+    assert configured.k_min == pytest.approx(explicit_configured.k_min)
+    assert explicit_default.k_min == pytest.approx(k_min(system, delta=0.05))
+    assert configured.k_min != pytest.approx(explicit_default.k_min)
+
+
 def test_degeneracy_active_for_narrow_omega_range():
     source = '''
     system Narrow = {
