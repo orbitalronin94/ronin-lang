@@ -9,8 +9,15 @@ pub fn hill(omega: f64, k: f64, alpha_h: f64) -> f64 {
         return f64::NAN;
     }
     if omega == 0.0 { return 0.0; }
-    let x = (omega / k).powf(alpha_h);
-    x / (1.0 + x)
+    // Evaluate the equivalent logistic form in log space to avoid
+    // overflow in (omega / k).powf(alpha_h) for valid extreme inputs.
+    let log_ratio = alpha_h * (omega.ln() - k.ln());
+    if log_ratio >= 0.0 {
+        1.0 / (1.0 + (-log_ratio).exp())
+    } else {
+        let exp_ratio = log_ratio.exp();
+        exp_ratio / (1.0 + exp_ratio)
+    }
 }
 
 pub fn ces_combine(phi: f64, psi: f64, omega_eff: f64, lambda: f64, weights: [f64; 3]) -> f64 {
@@ -128,6 +135,14 @@ mod tests {
         close(hill(0.5, f64::INFINITY, 1.5), 0.5, 1e-12);
         close(hill(0.5, 0.5, 1.0), 0.5, 1e-12);
         close(hill(0.0, 0.5, 1.0), 0.0, 1e-12);
+    }
+
+    #[test]
+    fn hill_is_stable_for_extreme_parameter_ratios() {
+        close(hill(1.0, 1e-300, 2.0), 1.0, 1e-15);
+        close(hill(1e-300, 1.0, 2.0), 0.0, 1e-15);
+        close(hill(0.5, 0.5, 1.0), 0.5, 1e-15);
+        close(hill(0.25, 0.5, 2.0), 0.2, 1e-15);
     }
 
     #[test]
