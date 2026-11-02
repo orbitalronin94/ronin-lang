@@ -143,6 +143,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Compare shared simulation invariants
         run: python scripts/check_simulation_contracts.py
+      - name: Stress seeded simulation parity on generated systems
+        run: python scripts/check_randomized_simulation_parity.py
 
 
   cross-runtime-diagnostics:
