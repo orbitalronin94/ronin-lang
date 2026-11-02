@@ -739,6 +739,30 @@ mod generic_tests {
     }
 
     #[test]
+    fn d_optimal_design_is_stable_under_common_jacobian_scale() {
+        let base_jacobian = vec![
+            vec![1.0, 0.0],
+            vec![0.0, 1.0],
+            vec![1.0, 1.0],
+            vec![1.0, -1.0],
+        ];
+        let base = d_optimal_design(&base_jacobian, 2, None, None, None, 1e-12, 1e-12).unwrap();
+        for factor in [1e-200, 1e200] {
+            let scaled_jacobian: Vec<Vec<f64>> = base_jacobian.iter()
+                .map(|row| row.iter().map(|value| value * factor).collect())
+                .collect();
+            let scaled = d_optimal_design(&scaled_jacobian, 2, None, None, None, 1e-12, 1e-12).unwrap();
+            assert_eq!(scaled.selected_indices, base.selected_indices);
+            assert!((scaled.log_determinant - base.log_determinant).abs() < 1e-10);
+            assert!((scaled.jacobian_scale / factor - base.jacobian_scale).abs() < 1e-10);
+            for (left, right) in scaled.normalized_information_matrix.iter()
+                .flatten().zip(base.normalized_information_matrix.iter().flatten()) {
+                assert!((left - right).abs() < 1e-12);
+            }
+        }
+    }
+
+    #[test]
     fn d_optimal_design_preserves_rank_deficiency() {
         let jacobian = vec![vec![1.0, 2.0], vec![2.0, 4.0], vec![3.0, 6.0]];
         let report = d_optimal_design(&jacobian, 2, None, None, None, 1e-12, 1e-12).unwrap();
