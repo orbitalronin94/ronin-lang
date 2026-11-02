@@ -287,10 +287,12 @@ fn symmetric_eigen(mut matrix: Vec<Vec<f64>>) -> (Vec<f64>, Vec<Vec<f64>>) {
                 }
             }
         }
-        let scale = (0..size)
-            .map(|index| matrix[index][index].abs())
-            .fold(1.0f64, f64::max);
-        if largest <= 1e-15 * scale {
+        let scale = matrix
+            .iter()
+            .flatten()
+            .map(|value| value.abs())
+            .fold(0.0f64, f64::max);
+        if scale == 0.0 || largest <= 1e-15 * scale {
             break;
         }
 
@@ -408,12 +410,32 @@ pub fn diagnose_jacobian(
         }
     };
 
-    let mut information = vec![vec![0.0; columns]; columns];
+    // Normalize the weighted, scaled Jacobian before forming J'WJ.
+    // This avoids squaring very small/large entries before the eigensolve.
+    let mut weighted_rows = Vec::with_capacity(jacobian.len());
+    let mut jacobian_scale = 0.0f64;
     for (row, weight) in jacobian.iter().zip(observation_weights.iter()) {
-        let scaled: Vec<f64> = row.iter().zip(scales.iter()).map(|(value, scale)| value * scale).collect();
-        for left in 0..columns {
-            for right in left..columns {
-                information[left][right] += weight * scaled[left] * scaled[right];
+        let root_weight = weight.sqrt();
+        let weighted: Vec<f64> = row
+            .iter()
+            .zip(scales.iter())
+            .map(|(value, scale)| value * root_weight * scale)
+            .collect();
+        if weighted.iter().any(|value| !value.is_finite()) {
+            return Err("weighted/scaled Jacobian overflow; rescale inputs".into());
+        }
+        jacobian_scale = weighted.iter().fold(jacobian_scale, |largest, value| largest.max(value.abs()));
+        weighted_rows.push(weighted);
+    }
+
+    let mut information = vec![vec![0.0; columns]; columns];
+    if jacobian_scale > 0.0 {
+        for row in &weighted_rows {
+            let normalized: Vec<f64> = row.iter().map(|value| value / jacobian_scale).collect();
+            for left in 0..columns {
+                for right in left..columns {
+                    information[left][right] += normalized[left] * normalized[right];
+                }
             }
         }
     }
@@ -423,12 +445,12 @@ pub fn diagnose_jacobian(
         }
     }
     if information.iter().flatten().any(|value| !value.is_finite()) {
-        return Err("Fisher information overflow; rescale the Jacobian or weights".into());
+        return Err("Fisher information overflow after normalization".into());
     }
 
     let (mut eigenvalues, eigenvectors) = symmetric_eigen(information);
     let largest = eigenvalues.first().copied().unwrap_or(0.0).max(0.0);
-    let negative_tolerance = relative_tolerance * largest.max(1.0);
+    let negative_tolerance = relative_tolerance * largest;
     if eigenvalues.iter().any(|value| *value < -negative_tolerance) {
         return Err("computed information matrix is not positive semidefinite".into());
     }
@@ -446,7 +468,13 @@ pub fn diagnose_jacobian(
     } else {
         largest / eigenvalues[columns - 1]
     };
-    let singular_values: Vec<f64> = eigenvalues.iter().map(|value| value.sqrt()).collect();
+    let singular_values: Vec<f64> = eigenvalues
+        .iter()
+        .map(|value| value.sqrt() * jacobian_scale)
+        .collect();
+    if singular_values.iter().any(|value| !value.is_finite()) {
+        return Err("singular values exceed the supported numeric range".into());
+    }
     let weak_directions: Vec<Vec<f64>> = eigenvalues
         .iter()
         .zip(eigenvectors.iter())
