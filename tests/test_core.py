@@ -235,6 +235,15 @@ def test_parser_accepts_all_infinite_K_spellings(literal):
     assert math.isinf(parsed.params.K)
 
 
+def test_diagnose_exposes_scope_and_legacy_parameter_freedom_basis():
+    report = diagnose(parse(MAQ)["Maquinas"])
+    assert report.structural_status == "not_assessed"
+    assert report.practical_status == "not_calibrated"
+    assert report.estimability_status == "not_assessed"
+    assert report.diagnostic_method == "omega_range_heuristic"
+    assert report.parameter_freedom_basis == "legacy_value_heuristic"
+
+
 def test_diagnose_does_not_claim_hill_parameters_when_saturation_is_disabled():
     report = diagnose(parse(MAQ)["Maquinas"])
     assert report.lambda_identifiable
