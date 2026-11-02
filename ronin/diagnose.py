@@ -51,4 +51,9 @@ def diagnose(system, bootstrap=0):
         recommendation=recommendation,
         # Bootstrap parameter fitting is specified but not implemented.
         bootstrap_ci=None,
+        structural_status="not_assessed",
+        practical_status="not_calibrated",
+        estimability_status="not_assessed",
+        diagnostic_method="omega_range_heuristic",
+        parameter_freedom_basis="legacy_value_heuristic",
     )
