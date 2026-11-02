@@ -5,6 +5,10 @@ fn json_number(value: f64) -> String {
     if value.is_finite() { format!("{:.17e}", value) } else { "null".into() }
 }
 
+fn json_string(value: &str) -> String {
+    format!("\\\"{}\\\"", value)
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.len() < 7 {
@@ -32,12 +36,17 @@ fn main() {
             std::process::exit(1);
         });
     let info = report.local_information;
+    let weak_directions = info.weak_directions.iter().map(|vector| {
+        format!("[{}]", vector.iter().map(|value| json_number(*value)).collect::<Vec<_>>().join(","))
+    }).collect::<Vec<_>>().join(",");
     println!(
-        "{{\"growth_rate\":{},\"observed_amplitude\":{},\"local_rank\":{},\"singular_values\":[{}],\"fim_condition_number\":{}}}",
+        "{{\"growth_rate\":{},\"observed_amplitude\":{},\"local_rank\":{},\"singular_values\":[{}],\"weak_directions\":[{}],\"fim_condition_number\":{},\"structural_status\":{}}}",
         json_number(report.growth_rate),
         json_number(report.observed_amplitude),
         info.local_rank,
         info.singular_values.iter().map(|value| json_number(*value)).collect::<Vec<_>>().join(","),
+        weak_directions,
         json_number(info.fim_condition_number),
+        json_string(&report.structural_status),
     );
 }
