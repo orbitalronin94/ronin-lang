@@ -69,3 +69,13 @@ def test_parser_rejects_unknown_parameter_names():
     )
     with pytest.raises(SyntaxError, match="Unknown params field: alhpa"):
         parse(source)
+
+
+
+def test_parser_rejects_unknown_system_fields():
+    source = (
+        'system S = { parts: 2, resource: 10, agents: '
+        '[{phi: 0.5, psi: 0.5, frequency: 1.0}], resorce: 12 }'
+    )
+    with pytest.raises(SyntaxError, match="Unknown system field: resorce"):
+        parse(source)
