@@ -104,3 +104,10 @@ Antes de adoptarlo como puerta de release habría que definir un perfil proporci
 5. No marcar como implementada una capacidad solo porque el paper incluya código.
 
 Esta auditoría debe actualizarse cuando se aporten correcciones o nuevas versiones del corpus Papers.
+
+
+## 10. Tratado del Método y CASCABEL
+
+La revisión complementaria [research-treatise-cascabel-audit.md](research-treatise-cascabel-audit.md) amplía el alcance del corpus: identifica circularidad en el pre-registro sintético, ausencia de validación externa, fuga de información en la validación cruzada del anexo de comparación de modelos, métricas AIC/BIC no aplicables al modelo mínimo y una formulación del invariante Hill que no reduce la degeneración a A. También delimita CASCABEL como proyecto separado, no como capacidad del lenguaje RONIN.
+
+Estas conclusiones se incorporan como brechas de investigación, no como cambios semánticos ni como aprobación de ADRs.
