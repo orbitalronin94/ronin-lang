@@ -3,7 +3,7 @@ from .semantics import fitness, allocation, k_min, debt, omega_range_orders, deg
 from .validator import validate, validate_coherence
 
 
-def solve(system, delta=0.05):
+def solve(system, delta=None):
     validate(system)
     validate_coherence(system.params)
     fs = fitness(system)
