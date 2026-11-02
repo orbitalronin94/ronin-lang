@@ -65,6 +65,7 @@ Integraciones ya iniciadas:
 
 - Hill: diseño pre-ajuste, FIM local y direcciones débiles.
 - PBPK: selección D-óptima greedy sobre filas de sensibilidades, con score regularizado normalizado y diagnóstico de rango del subconjunto.
+- PBPK: estimador genérico Sobol de primer orden sobre salidas A/B/A_B^i; no genera muestras ni calcula interacciones de segundo orden.
 - PBPK: diagnóstico local/práctico condicionado por escalado y ruido.
 - SIR con subreporte: combinaciones identificables solo bajo la aproximación de fase temprana.
 - Protocolo de 50 dominios y Testing 1310: base para diseñar pruebas, no garantía automática de validez externa.
