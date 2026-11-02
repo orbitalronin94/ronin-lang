@@ -24,16 +24,22 @@ def diagnose(system, bootstrap=0):
     if state == "unknown":
         recommendation = "Insufficient positive Omega observations to estimate the range or Hill identifiability."
     elif state == "inactive":
-        recommendation = "Structural degeneracy inactive under the configured parameter constraints."
+        recommendation = (
+            "The Omega-range heuristic is inactive under the configured parameter "
+            "constraints; this does not establish global structural identifiability."
+        )
     elif orders < 1.0:
         recommendation = (
             "Omega spans less than one order of magnitude. K and alpha_h are "
-            "indistinguishable; expand the Omega range or fix K externally."
+            "weakly separated by this range heuristic; expand the Omega range or "
+            "fix K externally."
+
         )
     else:
         recommendation = (
             "Omega spans between one and three orders of magnitude. Expand "
-            "the observed Omega range to at least three orders."
+            "the observed Omega range to at least three orders or evaluate a local FIM."
+
         )
 
     # K=inf disables the Hill component; its parameters are not estimable.
