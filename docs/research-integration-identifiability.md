@@ -133,6 +133,8 @@ La API `diagnose_sir_early_phase` calcula el Jacobiano local de `log C(t)` respe
 
 El motor genérico `diagnose_jacobian` acepta un Jacobiano evaluado en parámetros típicos, pesos de observación y escalas paramétricas. Calcula FIM/SVD local para otros dominios sin fingir que dispone de un modelo dinámico o de datos que el llamador no ha proporcionado.
 
+La construcción numérica de la FIM normaliza primero el Jacobiano ponderado y escalado antes de formar (J^T W J). Esto evita que el simple cambio de unidades común provoque overflow/underflow al elevar entradas al cuadrado. Las pruebas cubren escalas comunes (10^{-200}) y (10^{200}), verificando que rango y condición se conservan y que los valores singulares recuperan la escala física. La diagonalización Jacobi usa además un criterio de parada relativo a la magnitud de la matriz, no un umbral absoluto ligado a la unidad.
+
 ## Ejemplos de uso de las APIs locales
 
 Los ejemplos siguientes son diagnósticos de diseño; no realizan ajuste de parámetros ni demuestran identificabilidad global.
