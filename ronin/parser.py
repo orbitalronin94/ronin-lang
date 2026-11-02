@@ -40,6 +40,12 @@ class Parser:
             raise SyntaxError(f"Duplicate {scope} field: {key}")
         fields[key] = value
 
+    @staticmethod
+    def number(value, field):
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError(f"{field} must be numeric")
+        return float(value)
+
     def value(self):
         token = self.token
         if token.kind == "NUMBER":
@@ -125,9 +131,9 @@ class Parser:
         try:
             required = {key: fields.pop(key) for key in ("phi", "psi", "frequency")}
             return Agent(
-                phi=float(required["phi"]),
-                psi=float(required["psi"]),
-                frequency=float(required["frequency"]),
+                phi=self.number(required["phi"], "phi"),
+                psi=self.number(required["psi"], "psi"),
+                frequency=self.number(required["frequency"], "frequency"),
                 metadata=fields,
             )
         except KeyError as error:
@@ -158,22 +164,31 @@ class Parser:
         self.take()
         if self.token.value == ",":
             self.take()
+        allowed = {
+            "alpha", "gamma", "sigma", "coexistence_delta", "model", "lambda",
+            "K", "alpha_h", "memory_order", "memory_weights",
+            "degeneracy_check", "omega_range_report",
+        }
+        unknown = sorted(set(fields) - allowed)
+        if unknown:
+            raise SyntaxError(f"Unknown params field: {unknown[0]}")
         K = fields.get("K", math.inf)
         if isinstance(K, str) and K.lower() in ("inf", "infinity", "∞"):
             K = math.inf
         memory_order = fields.get("memory_order", 1)
-        if isinstance(memory_order, bool) or not float(memory_order).is_integer():
-            raise SyntaxError("memory_order must be an integer")
         try:
+            memory_order = self.number(memory_order, "memory_order")
+            if not memory_order.is_integer():
+                raise ValueError("memory_order must be an integer")
             return Params(
-                alpha=float(fields.get("alpha", 1.0)),
-                gamma=float(fields.get("gamma", 0.4)),
-                sigma=float(fields.get("sigma", 0.0)),
-                coexistence_delta=float(fields.get("coexistence_delta", 0.05)),
-                model=str(fields.get("model", "pusfre")),
-                lambda_=float(fields.get("lambda", 0.0)),
-                K=float(K),
-                alpha_h=float(fields.get("alpha_h", 1.0)),
+                alpha=self.number(fields.get("alpha", 1.0), "alpha"),
+                gamma=self.number(fields.get("gamma", 0.4), "gamma"),
+                sigma=self.number(fields.get("sigma", 0.0), "sigma"),
+                coexistence_delta=self.number(fields.get("coexistence_delta", 0.05), "coexistence_delta"),
+                model=self.string(fields.get("model", "pusfre"), "model"),
+                lambda_=self.number(fields.get("lambda", 0.0), "lambda"),
+                K=self.number(K, "K"),
+                alpha_h=self.number(fields.get("alpha_h", 1.0), "alpha_h"),
                 memory_order=int(memory_order),
                 memory_weights=fields.get("memory_weights"),
                 degeneracy_check=bool(fields.get("degeneracy_check", False)),
@@ -208,13 +223,13 @@ class Parser:
             if name in systems:
                 raise SyntaxError(f"Duplicate system {name}")
             try:
-                parts = fields["parts"]
-                if isinstance(parts, bool) or not float(parts).is_integer():
+                parts = self.number(fields["parts"], "parts")
+                if not parts.is_integer():
                     raise ValueError("parts must be an integer")
                 systems[name] = System(
                     name=name,
                     parts=int(parts),
-                    resource=float(fields["resource"]),
+                    resource=self.number(fields["resource"], "resource"),
                     agents=fields["agents"],
                     params=fields.get("params", Params()),
                 )
