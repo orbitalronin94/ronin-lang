@@ -179,3 +179,18 @@ def test_d_optimal_design_does_not_hide_rank_deficiency():
 def test_d_optimal_design_rejects_invalid_selection_contract(jacobian, n_samples, ridge):
     with pytest.raises(ValueError):
         d_optimal_design(jacobian, n_samples, ridge=ridge)
+
+
+@pytest.mark.parametrize("factor", [1e-200, 1e200])
+def test_d_optimal_design_is_stable_under_common_jacobian_scale(factor):
+    jacobian = [[1.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, -1.0]]
+    base = d_optimal_design(jacobian, n_samples=2)
+    scaled = d_optimal_design(
+        [[factor * value for value in row] for row in jacobian],
+        n_samples=2,
+    )
+
+    assert scaled.selected_indices == base.selected_indices
+    assert scaled.log_determinant == pytest.approx(base.log_determinant)
+    assert scaled.normalized_information_matrix == pytest.approx(base.normalized_information_matrix)
+    assert scaled.jacobian_scale / factor == pytest.approx(base.jacobian_scale)
