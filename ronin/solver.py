@@ -11,7 +11,11 @@ def solve(system, delta=None):
     orders = omega_range_orders([a.frequency for a in system.agents])
     kfree = system.params.K != float("inf")
     afree = system.params.alpha_h != 1.0
-    deg = degeneracy_state(orders, kfree, afree)
+    positive_omegas = sum(agent.frequency > 0.0 for agent in system.agents)
+    deg = (
+        "unknown" if positive_omegas < 2
+        else degeneracy_state(orders, kfree, afree)
+    )
     warnings = []
     if deg == "active":
         warnings.append(f"K-alpha_h degeneracy active (Omega range={orders:.2f} orders)")
