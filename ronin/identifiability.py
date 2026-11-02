@@ -234,8 +234,8 @@ def _symmetric_eigen(matrix):
                 candidate = abs(values[row][col])
                 if candidate > largest:
                     largest, p, q = candidate, row, col
-        scale = max(1.0, max(abs(values[index][index]) for index in range(size)))
-        if largest <= 1e-15 * scale:
+        scale = max(abs(value) for row_values in values for value in row_values)
+        if scale == 0.0 or largest <= 1e-15 * scale:
             break
 
         off_diagonal = values[p][q]
@@ -363,23 +363,41 @@ def diagnose_jacobian(
         if len(set(names)) != len(names):
             raise ValueError("parameter_names must be unique")
 
-    information = [[0.0] * columns for _ in range(columns)]
+    # Form the weighted, scaled Jacobian first and normalize it before
+    # constructing J'WJ. This preserves rank/conditioning for very small or
+    # large common Jacobian scales that would otherwise underflow/overflow
+    # when squaring entries directly.
+    weighted_rows = []
+    jacobian_scale = 0.0
     for row, weight in zip(numeric_rows, observation_weights):
-        scaled = [value * scale for value, scale in zip(row, scales)]
-        for left in range(columns):
-            for right in range(left, columns):
-                information[left][right] += weight * scaled[left] * scaled[right]
+        root_weight = math.sqrt(weight)
+        weighted = [
+            value * root_weight * scale
+            for value, scale in zip(row, scales)
+        ]
+        if any(not math.isfinite(value) for value in weighted):
+            raise ValueError("weighted/scaled Jacobian overflow; rescale inputs")
+        weighted_rows.append(weighted)
+        jacobian_scale = max(jacobian_scale, *(abs(value) for value in weighted))
+
+    information = [[0.0] * columns for _ in range(columns)]
+    if jacobian_scale > 0.0:
+        for row in weighted_rows:
+            normalized = [value / jacobian_scale for value in row]
+            for left in range(columns):
+                for right in range(left, columns):
+                    information[left][right] += normalized[left] * normalized[right]
 
     for left in range(columns):
         for right in range(left):
             information[left][right] = information[right][left]
 
     if any(not math.isfinite(value) for row in information for value in row):
-        raise ValueError("Fisher information overflow; rescale the Jacobian or weights")
+        raise ValueError("Fisher information overflow after normalization")
 
     eigenvalues, eigenvectors = _symmetric_eigen(information)
     largest = max(0.0, eigenvalues[0])
-    negative_tolerance = relative_tolerance * max(1.0, largest)
+    negative_tolerance = relative_tolerance * largest
     if any(value < -negative_tolerance for value in eigenvalues):
         raise ValueError("computed information matrix is not positive semidefinite")
     eigenvalues = [max(0.0, value) for value in eigenvalues]
@@ -391,7 +409,9 @@ def diagnose_jacobian(
         rank = sum(value > relative_tolerance * largest for value in eigenvalues)
         condition = math.inf if rank < columns else largest / eigenvalues[-1]
 
-    singular_values = tuple(math.sqrt(value) for value in eigenvalues)
+    singular_values = tuple(math.sqrt(value) * jacobian_scale for value in eigenvalues)
+    if any(not math.isfinite(value) for value in singular_values):
+        raise ValueError("singular values exceed the supported numeric range")
     weak_directions = tuple(
         eigenvectors[index]
         for index, value in enumerate(eigenvalues)
