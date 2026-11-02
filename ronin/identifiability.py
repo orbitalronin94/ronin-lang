@@ -475,10 +475,13 @@ def diagnose_sir_early_phase(times, beta, gamma, rho, I0, sigma):
         parameter_names=("beta", "gamma", "rho", "I0"),
         relative_tolerance=1e-12,
     )
+    observed_amplitude = rho * beta * I0
+    if not math.isfinite(observed_amplitude):
+        raise ValueError("rho*beta*I0 overflows the supported numeric range")
     return SIREarlyPhaseDiagnostic(
         local_information=local,
         growth_rate=beta - gamma,
-        observed_amplitude=rho * beta * I0,
+        observed_amplitude=observed_amplitude,
         structural_status="non_identifiable_under_early_phase_approximation",
         assumptions=(
             "S(t)/N approximately 1 and I(t) much smaller than N",
