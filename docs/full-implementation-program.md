@@ -64,6 +64,7 @@ Cada etapa necesita gramática, AST estable, pruebas de aceptación/rechazo, err
 Integraciones ya iniciadas:
 
 - Hill: diseño pre-ajuste, FIM local y direcciones débiles.
+- Hill + PBPK: selección D-óptima de niveles Omega directamente desde sensibilidades analíticas Hill.
 - PBPK: selección D-óptima greedy sobre filas de sensibilidades, con score regularizado normalizado y diagnóstico de rango del subconjunto.
 - PBPK: estimador genérico Sobol de primer orden sobre salidas A/B/A_B^i; no genera muestras ni calcula interacciones de segundo orden.
 - PBPK: diagnóstico local/práctico condicionado por escalado y ruido.
