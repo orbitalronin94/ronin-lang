@@ -806,6 +806,54 @@ mod generic_tests {
     use super::{diagnose_jacobian, diagnose_sir_early_phase};
 
     #[test]
+    fn sobol_first_order_matches_saltelli_estimator() {
+        let f_a = [0.2, 1.3, -0.4, 2.1, 0.9];
+        let f_b = [1.2, -0.2, 0.7, 1.9, -1.0];
+        let f_ab = vec![
+            vec![0.5, 1.0, 0.3, 2.5, 0.4],
+            vec![1.4, -0.1, 0.8, 1.2, -0.6],
+        ];
+        let report = sobol_first_order(&f_a, &f_b, &f_ab).unwrap();
+        assert_eq!(report.sample_count, 5);
+        assert_eq!(report.parameter_count, 2);
+        assert!((report.first_order_indices[0] - 0.4716878600152157).abs() < 1e-12);
+        assert!((report.first_order_indices[1] - 0.5108140419519617).abs() < 1e-12);
+    }
+
+    #[test]
+    fn sobol_first_order_is_stable_under_common_output_scale() {
+        let f_a = [0.2, 1.3, -0.4, 2.1, 0.9];
+        let f_b = [1.2, -0.2, 0.7, 1.9, -1.0];
+        let f_ab = vec![
+            vec![0.5, 1.0, 0.3, 2.5, 0.4],
+            vec![1.4, -0.1, 0.8, 1.2, -0.6],
+        ];
+        let base = sobol_first_order(&f_a, &f_b, &f_ab).unwrap();
+        for factor in [1e-200, 1e200] {
+            let scaled_a: Vec<f64> = f_a.iter().map(|value| value * factor).collect();
+            let scaled_b: Vec<f64> = f_b.iter().map(|value| value * factor).collect();
+            let scaled_ab: Vec<Vec<f64>> = f_ab.iter().map(|row| {
+                row.iter().map(|value| value * factor).collect()
+            }).collect();
+            let scaled = sobol_first_order(&scaled_a, &scaled_b, &scaled_ab).unwrap();
+            for (left, right) in scaled.first_order_indices.iter().zip(base.first_order_indices.iter()) {
+                assert!((left - right).abs() < 1e-12);
+            }
+            assert!((scaled.output_scale / factor - base.output_scale).abs() < 1e-12);
+        }
+    }
+
+    #[test]
+    fn sobol_first_order_rejects_invalid_or_unresolved_outputs() {
+        assert!(sobol_first_order(&[1.0], &[1.0], &[vec![1.0]]).is_err());
+        assert!(sobol_first_order(&[1.0, 2.0], &[1.0], &[vec![1.0, 2.0]]).is_err());
+        assert!(sobol_first_order(&[1.0, 2.0], &[2.0, 3.0], &[]).is_err());
+        assert!(sobol_first_order(&[1.0, 2.0], &[2.0, 3.0], &[vec![1.0]]).is_err());
+        assert!(sobol_first_order(&[1.0, f64::INFINITY], &[2.0, 3.0], &[vec![1.0, 2.0]]).is_err());
+        assert!(sobol_first_order(&[1.0, 1.0], &[1.0, 1.0], &[vec![1.0, 1.0]]).is_err());
+    }
+
+    #[test]
     fn d_optimal_design_selects_complementary_observations() {
         let jacobian = vec![
             vec![1.0, 0.0],
