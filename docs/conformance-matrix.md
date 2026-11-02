@@ -229,4 +229,6 @@ Estas filas amplían la trazabilidad de la implementación sin convertir los doc
 | DIAG-003 | Papers Hill/PBPK | Umbrales prácticos calibrados por dominio, ruido y diseño | N | N | No se aplican umbrales universales; `practical_status` queda como `not_calibrated`. |
 | DIAG-004 | Papers / protocolo pre-ajuste | Reparametrizaciones invariantes demostradas y análisis global estructural | N | N | La SVD local informa direcciones débiles; no deriva invariantes ni sustituye herramientas globales. |
 | DIAG-005 | Papers Hill | Ajuste, perfiles de verosimilitud, análisis de residuos y bootstrap posterior al diagnóstico | N | N | Fuera del alcance de la primera API de diseño; bootstrap no se presenta como disponible. |
+| DIAG-006 | Papers / tratado metodológico §15–16 | Diagnóstico local genérico desde Jacobiano, pesos y escalas de parámetros | P | P | `diagnose_jacobian`; SVD/FIM local, no prueba global. |
+| DIAG-007 | Paper epidemiológico §4–5 | Diagnóstico SIR temprano con subreporte y reporte de combinaciones identificables | P | P | `diagnose_sir_early_phase`; válido solo bajo la aproximación de fase temprana. |
 
