@@ -33,6 +33,11 @@ pub fn diagnose(system: &System, bootstrap: usize) -> Result<DegeneracyReport, S
         k_identifiable: positive >= 2 && k_free && (!alpha_h_free || orders >= 3.0),
         alpha_h_identifiable: positive >= 2 && k_free && alpha_h_free && orders >= 3.0,
         recommendation: recommendation.to_string(),
+        structural_status: "not_assessed".into(),
+        practical_status: "not_calibrated".into(),
+        estimability_status: "not_assessed".into(),
+        diagnostic_method: "omega_range_heuristic".into(),
+        parameter_freedom_basis: "legacy_value_heuristic".into(),
     })
 }
 
