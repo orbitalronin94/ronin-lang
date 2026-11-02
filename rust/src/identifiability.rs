@@ -541,3 +541,47 @@ pub fn diagnose_sir_early_phase(
         ],
     })
 }
+
+
+#[cfg(test)]
+mod generic_tests {
+    use super::{diagnose_jacobian, diagnose_sir_early_phase};
+
+    #[test]
+    fn generic_jacobian_detects_rank_deficiency() {
+        let jacobian = vec![vec![1.0, 2.0], vec![2.0, 4.0], vec![3.0, 6.0]];
+        let report = diagnose_jacobian(&jacobian, None, None, None, 1e-12).unwrap();
+        assert_eq!(report.local_rank, 1);
+        assert_eq!(report.weak_directions.len(), 1);
+    }
+
+    #[test]
+    fn generic_jacobian_applies_weights_and_parameter_scales() {
+        let jacobian = vec![vec![1.0, 0.0], vec![0.0, 1.0]];
+        let weights = [4.0, 1.0];
+        let scales = [2.0, 1.0];
+        let report = diagnose_jacobian(
+            &jacobian, Some(&weights), None, Some(&scales), 1e-12,
+        ).unwrap();
+        assert_eq!(report.local_rank, 2);
+        assert!((report.singular_values[0] - 4.0).abs() < 1e-12);
+        assert!((report.singular_values[1] - 1.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn sir_early_phase_identifies_combinations_not_four_parameters() {
+        let times: Vec<f64> = (0..=30).map(|value| value as f64).collect();
+        let report = diagnose_sir_early_phase(&times, 0.4, 0.15, 0.1, 100.0, 0.1).unwrap();
+        assert_eq!(report.local_information.local_rank, 2);
+        assert_eq!(report.local_information.parameters, 4);
+        assert_eq!(report.structural_status, "non_identifiable_under_early_phase_approximation");
+        assert!((report.growth_rate - 0.25).abs() < 1e-12);
+        assert!((report.observed_amplitude - 4.0).abs() < 1e-12);
+        assert_eq!(report.local_information.weak_directions.len(), 2);
+    }
+
+    #[test]
+    fn sir_early_phase_rejects_duplicate_times() {
+        assert!(diagnose_sir_early_phase(&[1.0, 1.0], 0.4, 0.15, 0.1, 100.0, 0.1).is_err());
+    }
+}
