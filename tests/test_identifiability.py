@@ -62,3 +62,14 @@ def test_hill_design_one_observation_has_rank_at_most_one():
 def test_hill_design_rejects_invalid_inputs(kwargs):
     with pytest.raises(ValueError):
         diagnose_hill_design(**kwargs)
+
+
+def test_hill_design_accepts_one_shot_iterables():
+    report = diagnose_hill_design(
+        (value for value in [0.01, 0.1, 1.0, 10.0]),
+        K=1.0,
+        alpha_h=1.5,
+        sigma=0.05,
+    )
+    assert report.observations == 4
+    assert report.omega_range_orders == pytest.approx(3.0)
