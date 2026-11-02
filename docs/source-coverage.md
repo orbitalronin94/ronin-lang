@@ -20,6 +20,10 @@ La [matriz de trazabilidad MDES v0.5](conformance-matrix.md) contiene IDs por re
 | R.13: pruebas | Pruebas de aceptación y regresión con pytest |
 | R.14: ejemplos | Maquinas, Pesca, CES y ejemplos de degeneración ejecutables |
 
+## Diagnóstico de identificabilidad: alcance real
+
+El comando/API `diagnose(system)` trabaja con frecuencias y parámetros del sistema. No recibe respuestas observadas, diseño experimental ni modelo de ruido; por tanto, el estado K–α actual es un indicador heurístico basado en restricciones y rango Ω, no una FIM empírica ni una certificación de identificabilidad práctica. La distinción y el contrato propuesto para incorporar observaciones están en [research-integration-identifiability.md](research-integration-identifiability.md).
+
 ## Límites de implementación explícitos
 
 1. **Estimador de deuda.** No se proporciona un estimador ejecutable en R.3–R.14. Python y Rust devuelven `debt: null` para indicar explícitamente que el valor no está calculado; no se interpreta como deuda cero.
