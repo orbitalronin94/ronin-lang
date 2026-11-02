@@ -150,6 +150,12 @@ def test_solve_uses_configured_coexistence_delta_unless_overridden():
     assert configured.k_min != pytest.approx(explicit_default.k_min)
 
 
+@pytest.mark.parametrize("delta", [0.0, -0.01, 0.1001, float("inf"), float("nan")])
+def test_solve_rejects_invalid_coexistence_delta_override(delta):
+    with pytest.raises(SemanticError, match=r"delta must be in \(0,0.1\]"):
+        solve(parse(MAQ)["Maquinas"], delta=delta)
+
+
 def test_degeneracy_active_for_narrow_omega_range():
     source = '''
     system Narrow = {
