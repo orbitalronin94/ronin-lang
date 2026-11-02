@@ -309,6 +309,80 @@ pub fn d_optimal_design(
     })
 }
 
+/// Compute first-order Saltelli indices from precomputed A, B and A_B^i outputs.
+///
+/// This computes first-order effects only. It does not generate parameter
+/// samples and does not estimate second-order interactions.
+pub fn sobol_first_order(
+    f_a: &[f64],
+    f_b: &[f64],
+    f_ab: &[Vec<f64>],
+) -> Result<SobolFirstOrderDiagnostic, String> {
+    if f_a.len() < 2 || f_b.len() != f_a.len() {
+        return Err("f_a and f_b must have the same length of at least two".into());
+    }
+    if f_ab.is_empty() {
+        return Err("f_ab must contain at least one parameter row".into());
+    }
+    if f_a.iter().chain(f_b.iter()).any(|value| !value.is_finite())
+        || f_ab.iter().flatten().any(|value| !value.is_finite())
+    {
+        return Err("Sobol outputs must contain only finite numbers".into());
+    }
+    if f_ab.iter().any(|row| row.len() != f_a.len()) {
+        return Err("each f_ab row must match the sample count".into());
+    }
+
+    let output_scale = f_a.iter()
+        .chain(f_b.iter())
+        .chain(f_ab.iter().flatten())
+        .fold(0.0f64, |largest, value| largest.max(value.abs()));
+    if output_scale == 0.0 {
+        return Err("Sobol output variance is zero".into());
+    }
+
+    let normalized_a: Vec<f64> = f_a.iter().map(|value| value / output_scale).collect();
+    let normalized_b: Vec<f64> = f_b.iter().map(|value| value / output_scale).collect();
+    let normalized_ab: Vec<Vec<f64>> = f_ab.iter().map(|row| {
+        row.iter().map(|value| value / output_scale).collect()
+    }).collect();
+    let sample_count = f_a.len();
+    let pooled_mean = normalized_a.iter().chain(normalized_b.iter()).sum::<f64>()
+        / (2 * sample_count) as f64;
+    let variance = normalized_a.iter().chain(normalized_b.iter())
+        .map(|value| (value - pooled_mean) * (value - pooled_mean))
+        .sum::<f64>() / (2 * sample_count) as f64;
+    if !variance.is_finite() || variance <= 0.0 {
+        return Err("Sobol output variance is zero or numerically unresolved".into());
+    }
+
+    let first_order_indices: Vec<f64> = normalized_ab.iter().map(|hybrid| {
+        normalized_a.iter()
+            .zip(normalized_b.iter())
+            .zip(hybrid.iter())
+            .map(|((a, b), ab)| b * (ab - a))
+            .sum::<f64>() / (sample_count as f64 * variance)
+    }).collect();
+    if first_order_indices.iter().any(|value| !value.is_finite()) {
+        return Err("Sobol estimator exceeded the supported numeric range".into());
+    }
+
+    Ok(SobolFirstOrderDiagnostic {
+        sample_count,
+        parameter_count: normalized_ab.len(),
+        first_order_indices,
+        output_scale,
+        output_variance_normalized: variance,
+        estimator: "Saltelli first-order estimator with pooled A/B population variance".into(),
+        assumptions: vec![
+            "A and B are independent samples from the declared parameter distributions".into(),
+            "each f_ab row is evaluated on the matching A_B^i hybrid sample matrix".into(),
+            "indices are first-order estimates and do not include interaction effects".into(),
+            "finite-sample estimates are not clipped to [0,1]".into(),
+        ],
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::diagnose_hill_design;
@@ -409,6 +483,17 @@ pub struct DOptimalDesign {
     pub jacobian_scale: f64,
     pub ridge: f64,
     pub local_information: LocalInformationDiagnostic,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SobolFirstOrderDiagnostic {
+    pub sample_count: usize,
+    pub parameter_count: usize,
+    pub first_order_indices: Vec<f64>,
+    pub output_scale: f64,
+    pub output_variance_normalized: f64,
+    pub estimator: String,
+    pub assumptions: Vec<String>,
 }
 
 fn symmetric_eigen(mut matrix: Vec<Vec<f64>>) -> (Vec<f64>, Vec<Vec<f64>>) {
