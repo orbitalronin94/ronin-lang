@@ -666,3 +666,98 @@ def d_optimal_design(
         ridge=float(ridge),
         local_information=local_information,
     )
+
+
+@dataclass(frozen=True)
+class SobolFirstOrderDiagnostic:
+    """First-order Sobol estimates from paired A/B model evaluations."""
+
+    sample_count: int
+    parameter_count: int
+    first_order_indices: tuple
+    output_scale: float
+    output_variance_normalized: float
+    estimator: str
+    assumptions: tuple
+
+
+def sobol_first_order(f_a, f_b, f_ab):
+    """Compute Saltelli first-order indices from precomputed model outputs.
+
+    f_a and f_b are outputs for two independent sample matrices A and B.
+    Each row of f_ab contains outputs for the corresponding A_B^i hybrid.
+    This function estimates first-order effects only; it does not generate
+    parameter samples or estimate second-order interactions.
+    """
+    def finite_vector(values, name):
+        try:
+            result = list(values)
+        except TypeError as error:
+            raise ValueError(f"{name} must be a finite numeric vector") from error
+        if any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(float(value))
+            for value in result
+        ):
+            raise ValueError(f"{name} must contain only finite numbers")
+        return [float(value) for value in result]
+
+    values_a = finite_vector(f_a, "f_a")
+    values_b = finite_vector(f_b, "f_b")
+    if len(values_a) < 2 or len(values_b) != len(values_a):
+        raise ValueError("f_a and f_b must have the same length of at least two")
+    try:
+        hybrid_outputs = [finite_vector(row, "f_ab row") for row in f_ab]
+    except TypeError as error:
+        raise ValueError("f_ab must be a non-empty parameter-by-sample matrix") from error
+    if not hybrid_outputs:
+        raise ValueError("f_ab must contain at least one parameter row")
+    if any(len(row) != len(values_a) for row in hybrid_outputs):
+        raise ValueError("each f_ab row must match the sample count")
+
+    output_scale = max(
+        *(abs(value) for value in values_a),
+        *(abs(value) for value in values_b),
+        *(abs(value) for row in hybrid_outputs for value in row),
+    )
+    if output_scale == 0.0:
+        raise ValueError("Sobol output variance is zero")
+
+    normalized_a = [value / output_scale for value in values_a]
+    normalized_b = [value / output_scale for value in values_b]
+    normalized_ab = [
+        [value / output_scale for value in row]
+        for row in hybrid_outputs
+    ]
+    pooled = normalized_a + normalized_b
+    pooled_mean = math.fsum(pooled) / len(pooled)
+    variance = math.fsum((value - pooled_mean) ** 2 for value in pooled) / len(pooled)
+    if not math.isfinite(variance) or variance <= 0.0:
+        raise ValueError("Sobol output variance is zero or numerically unresolved")
+
+    sample_count = len(values_a)
+    indices = tuple(
+        math.fsum(
+            b_value * (hybrid_value - a_value)
+            for a_value, b_value, hybrid_value in zip(normalized_a, normalized_b, hybrid)
+        ) / (sample_count * variance)
+        for hybrid in normalized_ab
+    )
+    if any(not math.isfinite(value) for value in indices):
+        raise ValueError("Sobol estimator exceeded the supported numeric range")
+
+    return SobolFirstOrderDiagnostic(
+        sample_count=sample_count,
+        parameter_count=len(normalized_ab),
+        first_order_indices=indices,
+        output_scale=output_scale,
+        output_variance_normalized=variance,
+        estimator="Saltelli first-order estimator with pooled A/B population variance",
+        assumptions=(
+            "A and B are independent samples from the declared parameter distributions",
+            "each f_ab row is evaluated on the matching A_B^i hybrid sample matrix",
+            "indices are first-order estimates and do not include interaction effects",
+            "finite-sample estimates are not clipped to [0,1]",
+        ),
+    )
