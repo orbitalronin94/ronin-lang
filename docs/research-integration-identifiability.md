@@ -267,3 +267,25 @@ Decisión de ingeniería actual:
 - La revisión debe incluir derivación corregida, dominio de validez, diseño mínimo de observaciones y tests que puedan refutar la clasificación.
 
 Este bloqueo ejemplifica la regla del Tratado: categorizar y delimitar antes de afirmar.
+
+
+## 11. Auditoría metodológica crítica del paper PBPK
+
+El paper PBPK define correctamente la identificabilidad estructural mediante inyectividad del mapa parámetros → salida, pero después afirma como Propiedad 3.2 que una FIM singular implica no-identificabilidad estructural. Esa implicación no se sigue de la definición anterior.
+
+Una FIM singular calculada sobre un conjunto finito de tiempos, una parametrización y un punto nominal demuestra que el diseño/sensibilidad local no aporta rango completo en esas condiciones. Puede ser evidencia de no-identificabilidad local o práctica, pero no prueba por sí sola que el mapa completo de salidas sea globalmente no inyectivo. La conclusión estructural requiere una simetría/invariante analítica, un argumento de observabilidad/identificabilidad para el sistema dinámico o una herramienta global apropiada. En sentido inverso, rango local completo tampoco garantiza inyectividad global.
+
+También deben quedar explícitas dos dependencias:
+
+- El número de condición de la FIM depende de la escala y parametrización de los parámetros. Los umbrales 1e3 y 1e6 no son universales sin definir coordenadas adimensionales, escalado, modelo de ruido, diseño y tolerancia numérica.
+- Los índices de Sobol miden influencia sobre la varianza de una salida bajo distribuciones/rangos elegidos. Un índice bajo no demuestra identificabilidad ni justifica automáticamente fijar un parámetro; parámetros correlacionados pueden ser influyentes y aun así estar confundidos.
+
+La degeneración específica Vt–Kp del modelo PBPK mínimo sí puede formularse mediante la reparametrización del estado tisular: al definir `z = Ct/Kp`, la dinámica de `z` depende de `Vt*Kp`. Si la única salida observada es Cp y no hay otras ecuaciones/observaciones que separen ambos parámetros, la simetría del producto ofrece un argumento estructural concreto. Esa demostración específica no valida la regla general “FIM singular ⇒ estructuralmente no identificable”.
+
+Decisión de ingeniería:
+
+- La FIM/SVD genérica de RONIN informa rango y condicionamiento **locales**, nunca un veredicto estructural global por sí sola.
+- Las afirmaciones estructurales requieren una invariante/simetría demostrada y un dominio de validez explícito.
+- Los umbrales se guardan como calibraciones de un perfil/dominio, no como constantes universales del lenguaje.
+- Los índices de sensibilidad global se reportan como influencia bajo las distribuciones declaradas, separados de identificabilidad.
+
