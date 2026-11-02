@@ -24,6 +24,7 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 - [Parte VIII — Visión de futuro](vision.md) · [English summary](vision.en.md)
 - [Anexo normativo](normative-annex.md) · [English summary](normative-annex.en.md)
 - [Integración de investigación sobre identificabilidad](research-integration-identifiability.md) — propuesta v1.0 para distinguir identificabilidad estructural, local, práctica y estimabilidad.
+- [Auditoría del corpus Papers](research-corpus-audit.md) — revisión crítica de Hill, PBPK, SIR, el protocolo de 50 dominios y Testing 1310; separa resultados transferibles de heurísticas y afirmaciones pendientes.
 
 ## Notas editoriales y de conformidad
 
