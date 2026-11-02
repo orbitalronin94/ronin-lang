@@ -108,6 +108,28 @@ print(report.warnings)
 
 El diagnóstico usa coordenadas log(K), log(alpha_h) y ruido gaussiano aditivo homoscedástico sobre la respuesta Hill. No debe extrapolarse a otro modelo de error sin recalcular las sensibilidades.
 
+### Selección D-óptima directa para una curva Hill
+
+Si tus observaciones candidatas están expresadas como valores de Omega para una respuesta Hill, puedes pedir a RONIN que derive las sensibilidades respecto a log(K) y log(alpha_h) y seleccione el subconjunto:
+
+```python
+from ronin import d_optimal_hill_design
+
+design = d_optimal_hill_design(
+    omega_candidates=[0.001, 0.01, 0.1, 1.0, 10.0, 100.0],
+    n_samples=3,
+    K=1.0,
+    alpha_h=1.5,
+    sigma=0.05,
+)
+
+print(design.selected_omega)
+print(design.design.local_information.local_rank)
+print(design.warnings)
+```
+
+La derivada usa coordenadas log(K) y log(alpha_h). Se asume ruido gaussiano aditivo homoscedástico; como sigma es común a todos los candidatos, no cambia qué subconjunto maximiza el criterio normalizado. Para ruido heteroscedástico usa la API genérica d_optimal_design con pesos por observación.
+
 ## 5. SIR temprano con subreporte
 
 La API SIR reduce el modelo a la aproximación de fase temprana y reporta combinaciones identificables, no estimaciones individuales que los datos no sostienen.
