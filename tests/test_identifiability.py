@@ -24,7 +24,7 @@ def test_hill_design_flags_sub_saturated_design_without_overclaiming():
         [0.001, 0.002, 0.004, 0.008], K=1.0, alpha_h=1.5, sigma=0.05
     )
 
-    assert report.max_omega_over_K < 0.1
+    assert report.max_omega_over_k < 0.1
     assert report.saturation_fraction == 0.0
     assert any("below the configured saturation ratio" in item for item in report.warnings)
     assert report.structural_status == "not_assessed"
