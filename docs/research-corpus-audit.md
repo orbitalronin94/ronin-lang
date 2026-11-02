@@ -88,8 +88,8 @@ Antes de adoptarlo como puerta de release habría que definir un perfil proporci
 
 | Área | Uso admisible en v1.0 | Estado |
 |---|---|---|
-| Hill sub-saturado | Diagnóstico local condicionado y combinación A con advertencias | Parcial; derivación/rango pendiente de reconciliación |
-| PBPK/FIM | Rango local, SVD y condicionamiento bajo supuestos declarados | Parcial; calibración externa no incorporada |
+| Hill sub-saturado | Diagnóstico local condicionado, FIM estable y selección D-óptima de niveles Omega con advertencias | Parcial; derivación/rango pendiente de reconciliación; no es certificado estructural |
+| PBPK/FIM | FIM/SVD genérica, diseño D-óptimo greedy y Sobol de primer orden sobre salidas suministradas | Parcial; modelo ODE PBPK, generación de muestras, segundo orden y calibración externa no incorporados |
 | SIR temprano | Combinaciones r y A del modelo reducido | Parcial; no generalizar al SIR completo |
 | 50 dominios | Corpus de pruebas de investigación, no semántica normativa | No integrado como conformidad |
 | Epistemología | Principio de diagnóstico pre-ajuste con límites explícitos | Adoptado como orientación |
