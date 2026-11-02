@@ -242,9 +242,6 @@ class Parser:
             self.take()
             if name in systems:
                 raise SyntaxError(f"Duplicate system {name}")
-            unknown = sorted(set(fields) - {"parts", "resource", "agents", "params"})
-            if unknown:
-                raise SyntaxError(f"Unknown system {name} field: {unknown[0]}")
             try:
                 parts = self.number(fields["parts"], "parts")
                 if not parts.is_integer():
