@@ -244,23 +244,20 @@ La página README de Papers declara cuatro documentos, pero el árbol actual del
 
 La integración del paper Hill se limita deliberadamente a diagnóstico local de diseño y no adopta su afirmación de no-identificabilidad estructural como regla automática. Hay una inconsistencia algebraica que debe corregirse antes de elevar el Teorema 4.1 a contrato del runtime.
 
-El paper define (A = K^{-n_H}) y después afirma que la transformación ((K,n_H) \mapsto (A,n_H)) tiene Jacobiano de rango 1. Para (K>0) y (n_H>0), el Jacobiano correcto es:
+El paper define `A = K^(-n_H)` y después afirma que la transformación `(K, n_H) -> (A, n_H)` tiene Jacobiano de rango 1. Para `K > 0` y `n_H > 0`, el Jacobiano correcto es:
 
-[
-J =
-\begin{pmatrix}
--n_H K^{-n_H-1} & -A\ln K \\
-0 & 1
-\end{pmatrix},
-\qquad
-\det(J) = -n_H K^{-n_H-1} \ne 0.
-]
+```text
+J = [[-n_H * K^(-n_H-1), -A * ln(K)],
+     [0,                    1       ]]
 
-Por tanto, la transformación tiene rango 2 y es invertible; de hecho, (K = A^{-1/n_H}). Si los datos identifican de forma independiente (A) y (n_H), también determinan (K). No se puede concluir simultáneamente que ambos (A,n_H) son identificables y que el par (K,n_H) no lo es a partir de esa transformación.
+det(J) = -n_H * K^(-n_H-1) != 0
+```
+
+Por tanto, la transformación tiene rango 2 y es invertible; de hecho, `K = A^(-1/n_H)`. Si los datos identifican de forma independiente `A` y `n_H`, también determinan `K`. No se puede concluir simultáneamente que ambos `A, n_H` son identificables y que el par `K, n_H` no lo es a partir de esa transformación.
 
 Además, el texto alterna entre “solo A es identificable” y “reportar A y n_H”, que son afirmaciones diferentes. Deben reconciliarse.
 
-Esto no niega la **no-identificabilidad práctica** en diseños sub-saturados: cuando la respuesta es pequeña, el ruido, el rango de Ω, el número de puntos y la replicación pueden hacer que la FIM esté mal condicionada y que la incertidumbre de (K) sea enorme. Tampoco niega que, en un límite asintótico estricto, desaparezcan términos de orden superior. Pero el umbral operativo (Omega/K < 0.1) no demuestra por sí solo una pérdida de rango estructural para cualquier diseño con múltiples valores Ω.
+Esto no niega la **no-identificabilidad práctica** en diseños sub-saturados: cuando la respuesta es pequeña, el ruido, el rango de Ω, el número de puntos y la replicación pueden hacer que la FIM esté mal condicionada y que la incertidumbre de `K` sea enorme. Tampoco niega que, en un límite asintótico estricto, desaparezcan términos de orden superior. Pero el umbral operativo `Omega/K < 0.1` no demuestra por sí solo una pérdida de rango estructural para cualquier diseño con múltiples valores Ω.
 
 Decisión de ingeniería actual:
 
