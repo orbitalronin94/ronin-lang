@@ -113,6 +113,22 @@ INVALID_SOURCES = {
         system Bad = { parts: 1, resource: 1,
           agents: [{phi: 1, psi: 1, frequency: 1}], params: {memory_order: -1} }
     """,
+    "numeric_degeneracy_flag": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {degeneracy_check: 1} }
+    """,
+    "string_omega_flag": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {omega_range_report: "false"} }
+    """,
+    "non_array_memory_weights": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {memory_weights: "bad"} }
+    """,
+    "boolean_memory_weight": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {memory_weights: [1, true]} }
+    """,
 }
 
 
