@@ -44,7 +44,9 @@ def main():
         left = json.loads(py.stdout)
         right = json.loads(rs.stdout)
         for field in ("degeneracy", "lambda_identifiable", "K_identifiable",
-                      "alpha_h_identifiable", "recommendation", "bootstrap_ci"):
+                      "alpha_h_identifiable", "recommendation", "bootstrap_ci",
+                      "structural_status", "practical_status", "estimability_status",
+                      "diagnostic_method", "parameter_freedom_basis"):
             if left[field] != right[field]:
                 raise AssertionError(
                     f"{path.name}.{field}: Python={left[field]!r}, Rust={right[field]!r}"
