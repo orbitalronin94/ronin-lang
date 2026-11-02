@@ -144,6 +144,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Compare Python and Rust diagnostic reports
         run: python scripts/check_diagnostic_parity.py
+      - name: Compare Python and Rust Hill design FIM diagnostics
+        run: python scripts/check_hill_design_parity.py
 
 
   cross-runtime-csv:
