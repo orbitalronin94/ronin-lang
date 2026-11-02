@@ -12,6 +12,6 @@ pub mod solver;
 
 pub use ast::{Agent, DegeneracyReport, Params, Simulation, Solution, System, Value};
 pub use identifiability::{
-    diagnose_hill_design, diagnose_jacobian, diagnose_sir_early_phase,
-    HillDesignDiagnostic, LocalInformationDiagnostic, SIREarlyPhaseDiagnostic,
+    d_optimal_design, diagnose_hill_design, diagnose_jacobian, diagnose_sir_early_phase,
+    DOptimalDesign, HillDesignDiagnostic, LocalInformationDiagnostic, SIREarlyPhaseDiagnostic,
 };
