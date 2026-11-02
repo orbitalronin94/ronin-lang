@@ -1,5 +1,7 @@
 # PARTE I — TUTORIAL PARA MORTALES
 
+> **Nota sobre la implementación actual (Runtime v0.1):** este tutorial mezcla ejemplos conceptuales de la experiencia de lenguaje prevista con bloques de proyecto que sí puede leer el runtime. Expresiones como `result = solve Maquinas` y `print(...)` ilustran la intención, pero no forman parte del subconjunto ejecutable actual del parser. Para ejecutar hoy los ejemplos, usa la CLI (`ronin check`, `ronin solve`, `ronin run`, etc.). El [inicio práctico](quickstart-practico.md) documenta el flujo real paso a paso. Consulta también [cobertura y límites](source-coverage.md) antes de depender de funciones avanzadas.
+
 ## CAPÍTULO 1: QUÉ ES UN SISTEMA
 
 ### 1.1 Un sistema es cualquier cosa que tiene:
