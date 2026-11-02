@@ -285,3 +285,17 @@ def test_memory_weights_require_matching_order_and_unit_sum():
     )
     with pytest.raises(SemanticError, match="memory_weights must sum to 1"):
         validate_coherence(parse(sum_source)["Maquinas"].params)
+
+
+def test_solve_reports_unknown_degeneracy_with_fewer_than_two_positive_omegas():
+    source = '''system SparseOmega = {
+      parts: 2, resource: 100,
+      agents: [
+        { phi: 0.8, psi: 1.0, frequency: 1.0 },
+        { phi: 0.5, psi: 1.0, frequency: 0.0 }
+      ],
+      params: { model: "ces_hill", lambda: 0.5, K: 0.5, alpha_h: 1.5 }
+    }'''
+    system = parse(source)["SparseOmega"]
+    assert solve(system).degeneracy == "unknown"
+    assert diagnose(system).degeneracy == "unknown"
