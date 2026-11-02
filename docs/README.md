@@ -25,7 +25,8 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 - [Parte VIII — Visión de futuro](vision.md) · [English summary](vision.en.md)
 - [Anexo normativo](normative-annex.md) · [English summary](normative-annex.en.md)
 - [Integración de investigación sobre identificabilidad](research-integration-identifiability.md) — propuesta v1.0 para distinguir identificabilidad estructural, local, práctica y estimabilidad.
-- [Auditoría del corpus Papers](research-corpus-audit.md) — revisión crítica de Hill, PBPK, SIR, el protocolo de 50 dominios y Testing 1310; separa resultados transferibles de heurísticas y afirmaciones pendientes.
+- [Auditoría del corpus Papers](research-corpus-audit.md) — revisión crítica de Hill, PBPK, SIR, el protocolo de 50 dominios y Testing 1310.
+- [Auditoría complementaria del Tratado y CASCABEL](research-treatise-cascabel-audit.md) — evaluación del anexo ejecutable, pre-registro, comparación sintética y límites de integración de CASCABEL.
 
 ## Notas editoriales y de conformidad
 
@@ -34,4 +35,4 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 3. Las especificaciones Rust y Office describen objetivos que no deben confundirse con la cobertura implementada. El estado actual se resume en [source-coverage.md](source-coverage.md).
 4. Los ejemplos con agentes, variables o datasets omitidos se identifican como plantillas parser-only cuando corresponde.
 
-El castellano es el idioma principal; los archivos `.en.md` son resúmenes de acompañamiento, no traducciones literales completas. El material fuente se conserva en sus documentos españoles.
+El castellano es el idioma principal; los archivos .en.md son resúmenes de acompañamiento, no traducciones literales completas. El material fuente se conserva en sus documentos españoles.
