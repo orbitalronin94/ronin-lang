@@ -9,8 +9,11 @@ pub fn omega_range_orders(system: &System) -> f64 {
     (max / min).log10()
 }
 
-pub fn diagnose(system: &System, _bootstrap: usize) -> Result<DegeneracyReport, String> {
+pub fn diagnose(system: &System, bootstrap: usize) -> Result<DegeneracyReport, String> {
     validate_system(system)?;
+    if bootstrap > 0 {
+        return Err("bootstrap is not implemented; use bootstrap=0".into());
+    }
     let p = &system.params;
     let positive = system.agents.iter().filter(|a| a.frequency > 0.0).count();
     let orders = omega_range_orders(system);
