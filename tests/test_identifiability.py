@@ -127,3 +127,16 @@ def test_sir_early_phase_requires_distinct_times_and_positive_parameters():
 def test_generic_jacobian_rejects_invalid_matrices(jacobian):
     with pytest.raises(ValueError):
         diagnose_jacobian(jacobian)
+
+@pytest.mark.parametrize("factor", [1e-200, 1e200])
+def test_generic_jacobian_is_stable_under_extreme_common_scales(factor):
+    report = diagnose_jacobian(
+        [[factor, 0.0], [0.0, factor]],
+        weights=[4.0, 1.0],
+        parameter_scales=[2.0, 1.0],
+    )
+
+    assert report.local_rank == 2
+    assert report.fim_condition_number == pytest.approx(16.0)
+    assert report.singular_values[0] / factor == pytest.approx(4.0)
+    assert report.singular_values[1] / factor == pytest.approx(1.0)
