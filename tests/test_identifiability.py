@@ -75,7 +75,7 @@ def test_hill_design_accepts_one_shot_iterables():
     assert report.omega_range_orders == pytest.approx(3.0)
 
 
-from ronin.identifiability import d_optimal_design, diagnose_jacobian, diagnose_sir_early_phase, sobol_first_order
+from ronin.identifiability import d_optimal_design, d_optimal_hill_design, diagnose_jacobian, diagnose_sir_early_phase, sobol_first_order
 
 
 def test_generic_jacobian_diagnostic_detects_rank_and_weak_direction():
@@ -247,3 +247,56 @@ def test_sobol_first_order_is_stable_under_common_output_scale(factor):
 def test_sobol_first_order_rejects_invalid_or_unresolved_outputs(f_a, f_b, f_ab):
     with pytest.raises(ValueError):
         sobol_first_order(f_a, f_b, f_ab)
+
+
+def test_d_optimal_hill_design_selects_informative_omega_levels():
+    omega = [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+    report = d_optimal_hill_design(
+        omega,
+        n_samples=3,
+        K=1.0,
+        alpha_h=1.5,
+        sigma=0.05,
+    )
+
+    assert len(report.selected_indices) == 3
+    assert report.selected_omega == tuple(omega[index] for index in report.selected_indices)
+    assert report.design.local_information.local_rank == 2
+    assert not report.warnings
+
+
+def test_d_optimal_hill_design_is_invariant_to_common_omega_and_k_scale():
+    omega = [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+    base = d_optimal_hill_design(omega, 3, 1.0, 1.5, 0.05)
+    scaled = d_optimal_hill_design(
+        [value * 1e200 for value in omega],
+        3,
+        1e200,
+        1.5,
+        0.05,
+    )
+
+    assert scaled.selected_indices == base.selected_indices
+    assert scaled.design.log_determinant == pytest.approx(base.design.log_determinant)
+
+
+def test_d_optimal_hill_design_reports_rank_deficiency_at_single_omega_level():
+    report = d_optimal_hill_design([1.0, 1.0, 1.0], 2, 1.0, 1.5, 0.05)
+
+    assert report.design.local_information.local_rank == 1
+    assert report.warnings
+
+
+@pytest.mark.parametrize(
+    ("omega", "K", "alpha_h", "sigma"),
+    [
+        ([], 1.0, 1.5, 0.05),
+        ([0.0, 1.0], 1.0, 1.5, 0.05),
+        ([1.0, 2.0], 0.0, 1.5, 0.05),
+        ([1.0, 2.0], 1.0, 0.0, 0.05),
+        ([1.0, 2.0], 1.0, 1.5, 0.0),
+    ],
+)
+def test_d_optimal_hill_design_rejects_invalid_contract(omega, K, alpha_h, sigma):
+    with pytest.raises(ValueError):
+        d_optimal_hill_design(omega, 1, K, alpha_h, sigma)
