@@ -172,6 +172,8 @@ jobs:
         run: python scripts/check_sir_diagnostic_parity.py
       - name: Compare Python and Rust D-optimal observation designs
         run: python scripts/check_d_optimal_parity.py
+      - name: Compare Python and Rust first-order Sobol diagnostics
+        run: python scripts/check_sobol_parity.py
 
 
   cross-runtime-csv:
