@@ -75,7 +75,7 @@ def test_hill_design_accepts_one_shot_iterables():
     assert report.omega_range_orders == pytest.approx(3.0)
 
 
-from ronin.identifiability import d_optimal_design, diagnose_jacobian, diagnose_sir_early_phase
+from ronin.identifiability import d_optimal_design, diagnose_jacobian, diagnose_sir_early_phase, sobol_first_order
 
 
 def test_generic_jacobian_diagnostic_detects_rank_and_weak_direction():
@@ -195,3 +195,55 @@ def test_d_optimal_design_is_stable_under_common_jacobian_scale(factor):
     for scaled_row, base_row in zip(scaled.normalized_information_matrix, base.normalized_information_matrix):
         assert scaled_row == pytest.approx(base_row)
     assert scaled.jacobian_scale / factor == pytest.approx(base.jacobian_scale)
+
+
+def test_sobol_first_order_matches_saltelli_estimator():
+    report = sobol_first_order(
+        [0.2, 1.3, -0.4, 2.1, 0.9],
+        [1.2, -0.2, 0.7, 1.9, -1.0],
+        [
+            [0.5, 1.0, 0.3, 2.5, 0.4],
+            [1.4, -0.1, 0.8, 1.2, -0.6],
+        ],
+    )
+
+    assert report.sample_count == 5
+    assert report.parameter_count == 2
+    assert report.first_order_indices == pytest.approx((0.4716878600152157, 0.5108140419519617))
+    assert report.estimator.startswith("Saltelli first-order")
+    assert all("do not include interaction" in item for item in report.assumptions if "first-order" in item)
+
+
+@pytest.mark.parametrize("factor", [1e-200, 1e200])
+def test_sobol_first_order_is_stable_under_common_output_scale(factor):
+    f_a = [0.2, 1.3, -0.4, 2.1, 0.9]
+    f_b = [1.2, -0.2, 0.7, 1.9, -1.0]
+    f_ab = [
+        [0.5, 1.0, 0.3, 2.5, 0.4],
+        [1.4, -0.1, 0.8, 1.2, -0.6],
+    ]
+    base = sobol_first_order(f_a, f_b, f_ab)
+    scaled = sobol_first_order(
+        [factor * value for value in f_a],
+        [factor * value for value in f_b],
+        [[factor * value for value in row] for row in f_ab],
+    )
+
+    assert scaled.first_order_indices == pytest.approx(base.first_order_indices)
+    assert scaled.output_scale / factor == pytest.approx(base.output_scale)
+
+
+@pytest.mark.parametrize(
+    ("f_a", "f_b", "f_ab"),
+    [
+        ([1.0], [1.0], [[1.0]]),
+        ([1.0, 2.0], [1.0], [[1.0, 2.0]]),
+        ([1.0, 2.0], [2.0, 3.0], []),
+        ([1.0, 2.0], [2.0, 3.0], [[1.0]]),
+        ([1.0, math.inf], [2.0, 3.0], [[1.0, 2.0]]),
+        ([1.0, 1.0], [1.0, 1.0], [[1.0, 1.0]]),
+    ],
+)
+def test_sobol_first_order_rejects_invalid_or_unresolved_outputs(f_a, f_b, f_ab):
+    with pytest.raises(ValueError):
+        sobol_first_order(f_a, f_b, f_ab)
