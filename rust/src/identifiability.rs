@@ -453,7 +453,7 @@ pub fn d_optimal_hill_design(
 
 #[cfg(test)]
 mod tests {
-    use super::{d_optimal_design, diagnose_hill_design, sobol_first_order};
+    use super::{d_optimal_design, d_optimal_hill_design, diagnose_hill_design, sobol_first_order};
 
     #[test]
     fn broad_hill_design_has_full_local_rank() {
@@ -931,6 +931,42 @@ mod generic_tests {
         assert!(sobol_first_order(&[1.0, 2.0], &[2.0, 3.0], &[vec![1.0]]).is_err());
         assert!(sobol_first_order(&[1.0, f64::INFINITY], &[2.0, 3.0], &[vec![1.0, 2.0]]).is_err());
         assert!(sobol_first_order(&[1.0, 1.0], &[1.0, 1.0], &[vec![1.0, 1.0]]).is_err());
+    }
+
+    #[test]
+    fn d_optimal_hill_design_selects_informative_omega_levels() {
+        let omega = [0.001, 0.01, 0.1, 1.0, 10.0, 100.0];
+        let report = d_optimal_hill_design(&omega, 3, 1.0, 1.5, 0.05, 1e-12, 1e-12).unwrap();
+        assert_eq!(report.selected_indices.len(), 3);
+        assert_eq!(report.selected_omega.len(), 3);
+        assert_eq!(report.design.local_information.local_rank, 2);
+        assert!(report.warnings.is_empty());
+    }
+
+    #[test]
+    fn d_optimal_hill_design_is_invariant_to_common_omega_and_k_scale() {
+        let omega = [0.001, 0.01, 0.1, 1.0, 10.0, 100.0];
+        let base = d_optimal_hill_design(&omega, 3, 1.0, 1.5, 0.05, 1e-12, 1e-12).unwrap();
+        let scaled_omega: Vec<f64> = omega.iter().map(|value| value * 1e200).collect();
+        let scaled = d_optimal_hill_design(&scaled_omega, 3, 1e200, 1.5, 0.05, 1e-12, 1e-12).unwrap();
+        assert_eq!(scaled.selected_indices, base.selected_indices);
+        assert!((scaled.design.log_determinant - base.design.log_determinant).abs() < 1e-10);
+    }
+
+    #[test]
+    fn d_optimal_hill_design_reports_rank_deficiency_at_single_omega_level() {
+        let report = d_optimal_hill_design(&[1.0, 1.0, 1.0], 2, 1.0, 1.5, 0.05, 1e-12, 1e-12).unwrap();
+        assert_eq!(report.design.local_information.local_rank, 1);
+        assert!(!report.warnings.is_empty());
+    }
+
+    #[test]
+    fn d_optimal_hill_design_rejects_invalid_contract() {
+        assert!(d_optimal_hill_design(&[], 1, 1.0, 1.5, 0.05, 1e-12, 1e-12).is_err());
+        assert!(d_optimal_hill_design(&[0.0, 1.0], 1, 1.0, 1.5, 0.05, 1e-12, 1e-12).is_err());
+        assert!(d_optimal_hill_design(&[1.0, 2.0], 1, 0.0, 1.5, 0.05, 1e-12, 1e-12).is_err());
+        assert!(d_optimal_hill_design(&[1.0, 2.0], 1, 1.0, 0.0, 0.05, 1e-12, 1e-12).is_err());
+        assert!(d_optimal_hill_design(&[1.0, 2.0], 1, 1.0, 1.5, 0.0, 1e-12, 1e-12).is_err());
     }
 
     #[test]
