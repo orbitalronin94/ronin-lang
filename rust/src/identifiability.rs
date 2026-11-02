@@ -597,6 +597,22 @@ mod generic_tests {
     }
 
     #[test]
+    fn generic_jacobian_is_stable_under_extreme_common_scales() {
+        for factor in [1e-200, 1e200] {
+            let jacobian = vec![vec![factor, 0.0], vec![0.0, factor]];
+            let weights = [4.0, 1.0];
+            let scales = [2.0, 1.0];
+            let report = diagnose_jacobian(
+                &jacobian, Some(&weights), None, Some(&scales), 1e-12,
+            ).unwrap();
+            assert_eq!(report.local_rank, 2);
+            assert!((report.fim_condition_number - 16.0).abs() < 1e-10);
+            assert!((report.singular_values[0] / factor - 4.0).abs() < 1e-10);
+            assert!((report.singular_values[1] / factor - 1.0).abs() < 1e-10);
+        }
+    }
+
+    #[test]
     fn sir_early_phase_identifies_combinations_not_four_parameters() {
         let times: Vec<f64> = (0..=30).map(|value| value as f64).collect();
         let report = diagnose_sir_early_phase(&times, 0.4, 0.15, 0.1, 100.0, 0.1).unwrap();
