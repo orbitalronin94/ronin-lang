@@ -87,9 +87,13 @@ El informe actual basado en el rango de frecuencias es un diagnóstico estructur
 
 No es válido construir una FIM tratando el fitness predicho por el mismo conjunto de parámetros como si fueran observaciones independientes: eso sería circular.
 
-## 5. API de diagnóstico de datos propuesta
+## 5. API de diagnóstico de diseño Hill
 
-La futura API de datos debe aceptar explícitamente:
+La primera API Python ya está implementada en `ronin.identifiability.diagnose_hill_design`. Recibe el diseño Ω, valores típicos K y αh, y σ bajo un modelo de error gaussiano aditivo homoscedástico. Calcula la FIM local en coordenadas `log(K), log(alpha_h)`, sus valores singulares, rango numérico, número de condición y dirección débil. También informa el rango Ω, la fracción de puntos por encima de un umbral configurable Ω/K y los supuestos usados.
+
+Esta primera entrega **no recibe respuestas observadas ni realiza ajuste**: es un diagnóstico pre-ajuste del diseño. No declara identificabilidad estructural, práctica ni estimabilidad; esos estados permanecen explícitamente como `not_assessed` o `not_calibrated`. Todavía falta implementar el mismo contrato en Rust, añadir integración CLI/IR y validar umbrales prácticos por dominio.
+
+La API ampliada para futuras respuestas observadas y diagnósticos post-ajuste debe aceptar explícitamente:
 
 - observaciones predictoras Ω;
 - respuestas observadas y;
