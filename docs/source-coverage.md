@@ -70,6 +70,10 @@ El override de `solve(..., delta=...)` debe ser finito y pertenecer a (0, 0.1]. 
 - **Rust:** existe un crate con AST, lexer/parser, IR interno, solver, simulador, diagnóstico y CLI inicial. Las pruebas cubren el subconjunto implementado. No es todavía un backend plenamente conforme ni equivalente al runtime Python.
 - **RONIN Office:** `office/index.html` contiene un prototipo local sin dependencias para PUSFRE, CES y CES-Hill, con edición de agentes, asignación y diagnóstico. No implementa todos los paneles de la especificación.
 
+## Extensiones parser-only no ejecutables
+
+El ejemplo 101 declara un campo de sistema `invariants`. El parser lo acepta como parte de la cobertura sintáctica de ejemplos, pero el runtime no conserva ni evalúa esas expresiones. Por tanto, ese ejemplo es parser-only: no debe presentarse como una ejecución que compruebe invariantes. La implementación estable requiere AST/IR para constraints, semántica de evaluación y pruebas negativas/positivas antes de habilitarlo.
+
 ## Cobertura real de los 130 ejemplos del material fuente
 
 El Markdown adjunto afirma que los ejemplos 1–100 se mantienen de una versión anterior, pero solo incluye una nota editorial: sus 100 cuerpos no están presentes. Por tanto, no es posible reconstruirlos fielmente desde el archivo proporcionado.
