@@ -310,11 +310,18 @@ impl Parser {
             memory_weights: None, degeneracy_check: false, omega_range_report: false,
         };
         let mut seen = std::collections::HashSet::new();
+        let mut seen_k_alias = false;
         while self.current().value != "}" {
             if self.current().value.is_empty() { return Err("Unterminated params block".into()); }
             let key = self.identifier()?;
             self.expect(":")?;
             if !seen.insert(key.clone()) { return Err(format!("Duplicate params field: {}", key)); }
+            if key == "K" || key == "k" {
+                if seen_k_alias {
+                    return Err("Duplicate params field: K/k".into());
+                }
+                seen_k_alias = true;
+            }
             let value = self.value()?;
             let number = |v: Value| match v { Value::Number(n) => Ok(n), _ => Err(format!("Parameter {} must be numeric", key)) };
             match key.as_str() {
@@ -534,6 +541,19 @@ mod tests {
         assert!(parse(duplicate).unwrap_err().contains("Duplicate system S field: parts"));
         let unknown = "system S = { parts: 2, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}], params: { typo: 1 } }";
         assert!(parse(unknown).unwrap_err().contains("Unknown params field: typo"));
+    }
+
+    #[test]
+    fn rejects_duplicate_k_parameter_aliases() {
+        let source = r#"system Bad = {
+          parts: 2, resource: 1,
+          agents: [
+            { phi: 1, psi: 1, frequency: 0.5 },
+            { phi: 1, psi: 1, frequency: 0.5 }
+          ],
+          params: { model: "hill", K: 1.0, k: 2.0 }
+        }"#;
+        assert!(parse(source).unwrap_err().contains("Duplicate params field: K/k"));
     }
 
     #[test]
