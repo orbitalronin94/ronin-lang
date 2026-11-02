@@ -460,14 +460,14 @@ mod tests {
             .into_owned();
         let args = vec!["diagnose".into(), path];
         let output = execute(&args).unwrap();
-        assert!(output.contains("\"degeneracy\":\"active\""));
-        assert!(output.contains("\"bootstrap_ci\":null"));
-        assert!(output.contains("\"K_identifiable\":false"));
-
-        assert!(output.contains("\\"structural_status\\":\\"not_assessed\\""));
-        assert!(output.contains("\\"practical_status\\":\\"not_calibrated\\""));
-        assert!(output.contains("\\"diagnostic_method\\":\\"omega_range_heuristic\\""));
-        assert!(output.contains("\\"parameter_freedom_basis\\":\\"legacy_value_heuristic\\""));    }
+        assert!(output.contains("\\"degeneracy\\":\\"active\\""));
+        assert!(output.contains("\\"bootstrap_ci\\":null"));
+        assert!(output.contains("\\"K_identifiable\\":false"));
+        assert!(output.contains(r#""structural_status":"not_assessed""#));
+        assert!(output.contains(r#""practical_status":"not_calibrated""#));
+        assert!(output.contains(r#""diagnostic_method":"omega_range_heuristic""#));
+        assert!(output.contains(r#""parameter_freedom_basis":"legacy_value_heuristic""#));
+    }
 
     #[test]
     fn diagnose_rejects_unimplemented_bootstrap_request() {
