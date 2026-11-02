@@ -808,6 +808,8 @@ def d_optimal_hill_design(
             or value <= 0.0
         ):
             raise ValueError(f"{name} must be finite and positive")
+    if any(isinstance(value, bool) for value in omega_values):
+        raise ValueError("all omega_candidates must be finite and positive")
     omega_values = [float(value) for value in omega_values]
     if any(not math.isfinite(value) or value <= 0.0 for value in omega_values):
         raise ValueError("all omega_candidates must be finite and positive")
@@ -817,7 +819,8 @@ def d_optimal_hill_design(
     sigma = float(sigma)
     jacobian = []
     for omega in omega_values:
-        log_ratio = math.log(omega) - math.log(K)
+        ratio = omega / K
+        log_ratio = math.log(ratio) if math.isfinite(ratio) and ratio > 0.0 else math.log(omega) - math.log(K)
         z = alpha_h * log_ratio
         if not math.isfinite(z) or abs(z) > 745.0:
             slope = 0.0
