@@ -385,7 +385,7 @@ pub fn sobol_first_order(
 
 #[cfg(test)]
 mod tests {
-    use super::diagnose_hill_design;
+    use super::{d_optimal_design, diagnose_hill_design, sobol_first_order};
 
     #[test]
     fn broad_hill_design_has_full_local_rank() {
