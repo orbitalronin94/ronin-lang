@@ -17,11 +17,10 @@ CASES_PER_MODEL = 3
 STEPS = 24
 
 
-def rust_simulate(path, name, seed):
+def rust_simulate(binary, path, name, seed):
     args = [
-        "cargo", "run", "--quiet", "--manifest-path",
-        str(ROOT / "rust" / "Cargo.toml"), "--", "simulate", str(path),
-        "--system", name, "--steps", str(STEPS), "--seed", str(seed),
+        str(binary), "simulate", str(path), "--system", name,
+        "--steps", str(STEPS), "--seed", str(seed),
     ]
     return subprocess.run(args, cwd=ROOT, text=True, capture_output=True, check=False)
 
@@ -42,6 +41,19 @@ def main():
             names.append(f"Random{index:03d}")
             source_parts.append(make_system(rng, index, model))
 
+    build = subprocess.run(
+        [
+            "cargo", "build", "--quiet", "--manifest-path",
+            str(ROOT / "rust" / "Cargo.toml"), "--bin", "ronin-core",
+        ],
+        cwd=ROOT, text=True, capture_output=True, check=False,
+    )
+    if build.returncode:
+        raise RuntimeError(f"could not build Rust CLI: {build.stderr}")
+    binary = ROOT / "rust" / "target" / "debug" / "ronin-core"
+    if not binary.is_file():
+        raise RuntimeError(f"Rust CLI binary was not produced at {binary}")
+
     temporary = tempfile.NamedTemporaryFile(
         mode="w", encoding="utf-8", suffix=".ronin", prefix=".random-sim-",
         dir=ROOT, delete=False,
@@ -55,7 +67,7 @@ def main():
             seed = SEED + index
             system = systems[name]
             py = simulate(system, steps=STEPS, seed=seed)
-            result = rust_simulate(path, name, seed)
+            result = rust_simulate(binary, path, name, seed)
             if result.returncode:
                 raise AssertionError(f"{name}: Rust rejected generated simulation: {result.stderr}")
             rs = json.loads(result.stdout)
