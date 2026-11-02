@@ -138,6 +138,14 @@ mod tests {
     }
 
     #[test]
+    fn hill_is_stable_for_extreme_parameter_ratios() {
+        close(hill(1.0, 1e-300, 2.0), 1.0, 1e-15);
+        close(hill(1e-300, 1.0, 2.0), 0.0, 1e-15);
+        close(hill(0.5, 0.5, 1.0), 0.5, 1e-15);
+        close(hill(0.25, 0.5, 2.0), 0.2, 1e-15);
+    }
+
+    #[test]
     fn ces_at_lambda_one_is_the_weighted_arithmetic_mean() {
         close(
             ces_combine(0.8, 1.0, 0.6, 1.0, [1.0 / 3.0; 3]),
