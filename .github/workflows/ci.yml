@@ -32,7 +32,7 @@ jobs:
       - name: Python / parser and metadata conformance
         run: pytest -q tests/test_parser_strictness.py tests/test_examples.py tests/test_agent_metadata.py
       - name: Python / numerical runtime and shared fixtures
-        run: pytest -q tests/test_core.py tests/test_conformance_fixtures.py tests/test_identifiability.py
+        run: pytest -q tests/test_core.py tests/test_conformance_fixtures.py tests/test_identifiability.py tests/test_hill_numerics.py
       - name: Python / CLI, IR and REPL contracts
         run: pytest -q tests/test_cli_multisystem.py tests/test_cli_run.py tests/test_run_csv.py tests/test_compile_ir.py tests/test_repl.py
       - name: Check executable examples
@@ -50,6 +50,20 @@ jobs:
         run: |
           ronin diagnose examples/degeneracy_inactive.ronin > diagnose.json
           python -c "import json; d=json.load(open('diagnose.json')); assert d['degeneracy']=='inactive'; assert d['omega_range_orders']>=3.0"
+
+      - name: Smoke test documented practical quickstart
+        run: |
+          ronin list examples/maquinas.ronin
+          ronin check examples/maquinas.ronin
+          ronin solve examples/maquinas.ronin > quickstart-solve.json
+          ronin run examples/maquinas.ronin > quickstart-run.json
+          ronin run examples/maquinas.ronin --format csv > quickstart.csv
+          ronin compile examples/maquinas.ronin -o quickstart.ir.json
+          ronin simulate examples/maquinas.ronin --steps 100 --seed 42 > quickstart-simulate.json
+          ronin diagnose examples/maquinas.ronin > quickstart-diagnose.json
+          ronin check examples/pesca.ronin
+          ronin solve examples/pesca.ronin > quickstart-pesca.json
+          python -c "import csv, json; from pathlib import Path; json.loads(Path('quickstart-solve.json').read_text()); json.loads(Path('quickstart-run.json').read_text()); json.loads(Path('quickstart-simulate.json').read_text()); json.loads(Path('quickstart-diagnose.json').read_text()); json.loads(Path('quickstart-pesca.json').read_text()); json.loads(Path('quickstart.ir.json').read_text()); rows=list(csv.reader(Path('quickstart.csv').open())); assert rows[0] == ['system','agent_index','model','fitness','allocation']; assert len(rows) == 3"
 
   rust-runtime:
     name: Rust runtime / conformance suites
