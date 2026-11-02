@@ -23,7 +23,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | ID | Referencia MDES | Requisito / comportamiento | Python | Rust | Evidencia actual / observaciones |
 |---|---|---|---|---|---|
 | CORE-001 | §1.1, §2.1 | Declarar sistemas con partes, recurso, agentes y parámetros | I | P | `ronin/parser.py`; `rust/src/parser.rs`; `tests/test_core.py`; tests de parser Rust |
-| CORE-002 | §1.2, N.1 | Resolver un sistema y calcular fitness/asignación en los modelos del perfil compartido | I | I | Python/Rust comparados por `scripts/check_runtime_parity.py` en 12 proyectos; fitness, allocation, coexistence, k_min y diagnóstico numérico con tolerancia 1e-9 |
+| CORE-002 | §1.2, N.1 | Resolver un sistema y calcular fitness/asignación en los modelos del perfil compartido | I | I | Python/Rust comparados por `scripts/check_runtime_parity.py` en 12 proyectos estáticos y `scripts/check_randomized_runtime_parity.py` en 80 sistemas deterministas generados (semilla 1310); fitness, allocation, coexistence, k_min y diagnóstico numérico con tolerancias explícitas |
 | CORE-003 | §1.3, §2.3 | Evaluar coexistencia y umbral `k_min` | P | P | `k_min` y campo coexistence existen; falta cerrar el contrato de coexistencia de la fuente |
 | CORE-004 | §1.4, N.1.4 | Estimar deuda del sistema | N | N | No existe estimador normativo; Python y Rust serializan `debt: null` para no presentar el placeholder como cero |
 | CORE-005 | §1.5 | Calcular geometría del sistema | N | N | No se encontró función ejecutable con contrato de geometría |
