@@ -216,3 +216,17 @@ Esta primera matriz es la línea base, no el cierre del hito. v0.2 podrá declar
 - v0.4: decisiones normativas para deuda, bootstrap, memoria y discrepancias matemáticas.
 - v0.5+: ampliación del perfil de lenguaje, interoperabilidad, herramientas y robustez.
 
+
+
+## 12. Integración de investigación v1.0 — identificabilidad
+
+Estas filas amplían la trazabilidad de la implementación sin convertir los documentos de investigación autopublicados en requisitos normativos de MDES.
+
+| ID | Fuente | Requisito de ingeniería | Python | Rust | Evidencia / límite |
+|---|---|---|---|---|---|
+| DIAG-001 | `docs/research-integration-identifiability.md` §2–3 | Diagnóstico local pre-ajuste de diseño Hill mediante FIM escalada en `log(K), log(alpha_h)` | P | P | `ronin/identifiability.py`, `rust/src/identifiability.rs`; tests y parity script. No prueba identificabilidad estructural global. |
+| DIAG-002 | Papers / marco epistemológico §3–4 | Sensibilidad del diagnóstico a una colección de valores típicos y escalados | N | N | Contrato documentado; análisis de sensibilidad multidimensional pendiente. |
+| DIAG-003 | Papers Hill/PBPK | Umbrales prácticos calibrados por dominio, ruido y diseño | N | N | No se aplican umbrales universales; `practical_status` queda como `not_calibrated`. |
+| DIAG-004 | Papers / protocolo pre-ajuste | Reparametrizaciones invariantes demostradas y análisis global estructural | N | N | La SVD local informa direcciones débiles; no deriva invariantes ni sustituye herramientas globales. |
+| DIAG-005 | Papers Hill | Ajuste, perfiles de verosimilitud, análisis de residuos y bootstrap posterior al diagnóstico | N | N | Fuera del alcance de la primera API de diseño; bootstrap no se presenta como disponible. |
+
