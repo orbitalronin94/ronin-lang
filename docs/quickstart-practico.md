@@ -99,6 +99,22 @@ ronin diagnose examples/maquinas.ronin
 
 El diagnóstico informa, entre otras cosas, del rango de frecuencias y del estado de degeneración de los parámetros Hill. Para este fixture, las frecuencias 0.6 y 0.4 cubren un rango estrecho; no hay base para afirmar que los parámetros de saturación se puedan identificar a partir de esos datos.
 
+## 8. Segundo escenario: cinco flotas
+
+El repositorio incluye `examples/pesca.ronin`, un escenario de cinco agentes con un recurso total de 10.000 unidades. Los parámetros son datos de ejemplo del fixture; no son una serie observacional ni una estimación empírica de flotas reales.
+
+Ejecuta:
+
+```bash
+ronin list examples/pesca.ronin
+ronin check examples/pesca.ronin
+ronin solve examples/pesca.ronin
+ronin run examples/pesca.ronin --format csv > pesca.csv
+ronin diagnose examples/pesca.ronin
+```
+
+Este segundo caso sirve para practicar la misma cadena de trabajo con más partes y comparar cómo cambia la asignación al cambiar capacidad, consistencia, frecuencia y el parámetro de competencia. Conserva los dos archivos originales y modifica copias si quieres experimentar; así podrás reproducir el caso base.
+
 ## Qué demuestra y qué no demuestra este ejemplo
 
 **Sí demuestra:** que el runtime actual puede leer un proyecto RONIN, validarlo, resolver su asignación, emitir resultados estructurados, exportar CSV/IR y ejecutar una simulación reproducible.
