@@ -11,6 +11,17 @@ from ronin.identifiability import diagnose_sir_early_phase
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def projector(directions):
+    size = len(directions[0]) if directions else 0
+    return [
+        [
+            sum(vector[row] * vector[col] for vector in directions)
+            for col in range(size)
+        ]
+        for row in range(size)
+    ]
+
+
 def main():
     times = list(range(31))
     parameters = (0.4, 0.15, 0.1, 100.0, 0.1)
@@ -27,6 +38,16 @@ def main():
     rs = json.loads(result.stdout)
 
     assert py.local_information.local_rank == rs["local_rank"]
+    assert py.structural_status == rs["structural_status"]
+    python_projector = projector(py.local_information.weak_directions)
+    rust_projector = projector(rs["weak_directions"])
+    for row, values in enumerate(python_projector):
+        for col, value in enumerate(values):
+            if not math.isclose(value, rust_projector[row][col], rel_tol=1e-8, abs_tol=1e-10):
+                raise AssertionError(
+                    f"weak-direction subspace projector[{row},{col}]: "
+                    f"Python={value}, Rust={rust_projector[row][col]}"
+                )
     assert py.growth_rate == rs["growth_rate"]
     assert py.observed_amplitude == rs["observed_amplitude"]
     for index, value in enumerate(py.local_information.singular_values):
