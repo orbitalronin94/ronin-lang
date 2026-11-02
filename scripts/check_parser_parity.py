@@ -65,6 +65,12 @@ INVALID_SOURCES = {
           agents: [{phi: 1, psi: 1, frequency: 1}],
           params: {alpha: 1, alpha: 2} }
     """,
+    "duplicate_k_aliases": """
+        system Bad = { parts: 2, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 0.5},
+                   {phi: 1, psi: 1, frequency: 0.5}],
+          params: {model: "hill", K: 1.0, k: 2.0} }
+    """,
     "duplicate_nested_object_key": """
         system Bad = { parts: 1, resource: 1,
           agents: [{phi: 1, psi: 1, frequency: 1, meta: {x: 1, x: 2}}] }
