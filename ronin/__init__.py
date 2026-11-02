@@ -8,10 +8,12 @@ from .identifiability import (
     HillDesignDiagnostic,
     LocalInformationDiagnostic,
     SIREarlyPhaseDiagnostic,
+    SobolFirstOrderDiagnostic,
     d_optimal_design,
     diagnose_hill_design,
     diagnose_jacobian,
     diagnose_sir_early_phase,
+    sobol_first_order,
 )
 from .model import Agent, DegeneracyReport, Params, Simulation, Solution, System
 from .parser import parse
@@ -35,6 +37,8 @@ __all__ = [
     "diagnose_hill_design",
     "LocalInformationDiagnostic",
     "SIREarlyPhaseDiagnostic",
+    "SobolFirstOrderDiagnostic",
+    "sobol_first_order",
     "diagnose_jacobian",
     "diagnose_sir_early_phase",
     "__version__",
