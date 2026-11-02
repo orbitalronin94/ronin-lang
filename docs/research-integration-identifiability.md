@@ -257,6 +257,8 @@ Por tanto, la transformación tiene rango 2 y es invertible; de hecho, `K = A^(-
 
 Además, el texto alterna entre “solo A es identificable” y “reportar A y n_H”, que son afirmaciones diferentes. Deben reconciliarse.
 
+La Perspective *Epistemología de la Degeneración* §3.3 define el invariante como una función que separa fibras distintas, y en §5.1 escribe `I(K,n_H) = (K^(-n_H), n_H)`. Ese par también determina `K` de forma única, por lo que sus fibras son puntos, no la curva `K^(-n_H)=A0` de §3.1. Si el invariante pretendido es únicamente `A`, entonces la curva sí existe, pero `n_H` no puede presentarse a la vez como una segunda cantidad identificada por ese mismo mapa. Esta contradicción entre el paper Hill y la Perspective debe resolverse explícitamente.
+
 Esto no niega la **no-identificabilidad práctica** en diseños sub-saturados: cuando la respuesta es pequeña, el ruido, el rango de Ω, el número de puntos y la replicación pueden hacer que la FIM esté mal condicionada y que la incertidumbre de `K` sea enorme. Tampoco niega que, en un límite asintótico estricto, desaparezcan términos de orden superior. Pero el umbral operativo `Omega/K < 0.1` no demuestra por sí solo una pérdida de rango estructural para cualquier diseño con múltiples valores Ω.
 
 Decisión de ingeniería actual:
