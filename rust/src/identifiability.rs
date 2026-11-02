@@ -458,7 +458,7 @@ pub fn d_optimal_hill_design(
 
 #[cfg(test)]
 mod tests {
-    use super::{d_optimal_design, d_optimal_hill_design, diagnose_hill_design, sobol_first_order};
+    use super::diagnose_hill_design;
 
     #[test]
     fn broad_hill_design_has_full_local_rank() {
@@ -888,7 +888,10 @@ pub fn diagnose_sir_early_phase(
 
 #[cfg(test)]
 mod generic_tests {
-    use super::{diagnose_jacobian, diagnose_sir_early_phase};
+    use super::{
+        d_optimal_design, d_optimal_hill_design, diagnose_jacobian,
+        diagnose_sir_early_phase, sobol_first_order,
+    };
 
     #[test]
     fn sobol_first_order_matches_saltelli_estimator() {
