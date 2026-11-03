@@ -65,7 +65,12 @@ class Parser:
             return float(token.value)
         if token.kind == "STRING":
             self.take()
-            return json.loads(token.value)
+            decoded = json.loads(token.value)
+            if any(0xD800 <= ord(char) <= 0xDFFF for char in decoded):
+                raise SyntaxError(
+                    f"Invalid Unicode surrogate sequence at {token.line}:{token.column}"
+                )
+            return decoded
         if token.value == "∞":
             self.take()
             return math.inf
