@@ -264,3 +264,22 @@ def test_memory_weights_require_matching_order_and_unit_sum():
     )
     with pytest.raises(SemanticError, match="memory_weights must sum to 1"):
         validate_coherence(parse(sum_source)["Maquinas"].params)
+
+def test_memory_weights_reject_booleans_in_direct_semantic_validation():
+    from dataclasses import replace
+
+    system = parse(MAQ)["Maquinas"]
+    params = replace(system.params, memory_weights=[True])
+    with pytest.raises(SemanticError, match="memory_weights must be finite and non-negative numbers"):
+        validate_coherence(params)
+
+def test_memory_weights_use_absolute_tolerance_matching_rust():
+    system = parse(MAQ)["Maquinas"]
+    params = replace(system.params, memory_weights=[1.0000000015])
+    with pytest.raises(SemanticError, match="memory_weights must sum to 1"):
+        validate_coherence(params)
+
+@pytest.mark.parametrize("delta", [0.0, -0.01, 0.1000001, float("nan"), float("inf")])
+def test_solve_rejects_invalid_delta_overrides_like_rust(delta):
+    with pytest.raises(SemanticError, match=r"delta must be in \(0,0.1\]"):
+        solve(parse(MAQ)["Maquinas"], delta=delta)

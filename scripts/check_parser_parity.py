@@ -81,6 +81,54 @@ INVALID_SOURCES = {
         system Bad = { parts: 1, resource: 1,
           agents: [{phi: 1, psi: 1, frequency: 1}] 
     """,
+    "boolean_parts": """
+        system Bad = { parts: true, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}] }
+    """,
+    "boolean_resource": """
+        system Bad = { parts: 1, resource: true,
+          agents: [{phi: 1, psi: 1, frequency: 1}] }
+    """,
+    "boolean_agent_number": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: true, psi: 1, frequency: 1}] }
+    """,
+    "boolean_parameter_number": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {alpha: true} }
+    """,
+    "unknown_parameter": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {alhpa: 1} }
+    """,
+    "unknown_system_field": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], resorce: 1 }
+    """,
+    "negative_parts": """
+        system Bad = { parts: -1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}] }
+    """,
+    "negative_memory_order": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {memory_order: -1} }
+    """,
+    "numeric_degeneracy_flag": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {degeneracy_check: 1} }
+    """,
+    "string_omega_flag": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {omega_range_report: "false"} }
+    """,
+    "non_array_memory_weights": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {memory_weights: "bad"} }
+    """,
+    "boolean_memory_weight": """
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1}], params: {memory_weights: [1, true]} }
+    """,
 }
 
 
@@ -125,11 +173,11 @@ def main():
             path = Path(directory) / f"{label}.ronin"
             path.write_text(source, encoding="utf-8")
             expected_names = {
-            "comments_and_extended_params": ["Coastal"],
-            "escaped_unicode_string": ["Escapes"],
-            "nested_object_and_arrays": ["Nested"],
-        }[label]
-        compare(path, True, label, expected_names)
+                "comments_and_extended_params": ["Coastal"],
+                "escaped_unicode_string": ["Escapes"],
+                "nested_object_and_arrays": ["Nested"],
+            }[label]
+            compare(path, True, label, expected_names)
         for label, source in INVALID_SOURCES.items():
             path = Path(directory) / f"{label}.ronin"
             path.write_text(source, encoding="utf-8")
