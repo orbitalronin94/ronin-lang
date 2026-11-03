@@ -135,6 +135,12 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 - Revisado el diagnóstico normativo: `NORM-005` baja de I a P porque la inferencia de parámetros libres desde valores numéricos sigue provisional (ADR-0002). La propuesta de perfil limita el compromiso estable de identificabilidad hasta resolverlo.
 - C1 sigue abierto: esta es una primera revisión semántica de las filas de simulación/diagnóstico, no la revisión completa de las 62 filas I/P.
 
+### 2026-11-03 — C6, primera puerta de distribución
+
+- CI actual instala el proyecto en modo editable; eso no demuestra que el wheel sea instalable fuera del checkout. Se añadieron jobs separados para construir sdist/wheel, instalar el wheel en un virtualenv limpio y ejecutar check/solve/run CSV/compile/simulate.
+- Se añadió un smoke test del binario Rust optimizado (`cargo build --release --locked`) para check/run CSV/compile/simulate.
+- Los dos jobs quedan pendientes de la primera ejecución CI. No se declara todavía distribución publicada ni soporte multiplataforma.
+
 ### 2026-11-03 — C3, propuestas normativas preparadas
 
 - Se trasladaron al plan de release dos propuestas que existían en la rama de investigación: [ADR-0001 — CES lambda→0](decisions/ADR-0001-ces-zero-limit.md) y [ADR-0002 — modos de parámetros](decisions/ADR-0002-parameter-modes.md).
