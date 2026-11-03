@@ -79,7 +79,7 @@ def main():
         if not line.startswith("|"):
             continue
         cells = table_cells(line)
-        if len(cells) < 4 or cells[0].lower() == "área":
+        if len(cells) < 4 or cells[0].lower() == "área" or all(set(cell) <= {"-", ":"} for cell in cells):
             continue
         row_ids = {item for item in requirement_ids(cells[1]) if not item.startswith("OPEN-")}
         if not row_ids:
