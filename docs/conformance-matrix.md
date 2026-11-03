@@ -103,12 +103,12 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | BUILD-004 | §6.3 | Generar C | N | N | No hay backend C |
 | BUILD-005 | §6.4 | Generar código Python | N | N | No hay codegen Python |
 | BUILD-006 | §6.5–6.8 | LLVM, JVM, .NET y JavaScript codegen | N | N | No implementados |
-| BUILD-007 | §6.9 | Ejecutar/resolver proyecto desde CLI | I | P | Python `run` multi-sistema; Rust `run` alias de solve para sistemas parseados |
+| BUILD-007 | §6.9 | Ejecutar/resolver proyecto desde CLI | I | I | Python y Rust `run` procesan todos los sistemas; `scripts/check_cli_selection_parity.py` contrasta `solve` (primero por defecto) frente a `run` (todos) en proyectos multi-sistema |
 | BUILD-008 | §6.10 | Niveles de optimización `-O0`…`-O3` | N | N | No hay pipeline de optimización |
 | BUILD-009 | §6.11 | Perfilado RONIN | N | N | No hay profiler propio |
 | BUILD-010 | §6.12 | Depurador RONIN | N | N | No hay debugger |
 | BUILD-011 | §6.13 | REPL general del lenguaje | P | N | Existe consola Python básica; no ejecuta el lenguaje completo |
-| BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | P | Python `diagnose`; Rust expone módulo pero no subcomando CLI |
+| BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | I | Python `diagnose`; Rust `diagnose` en `rust/src/main.rs`; `scripts/check_diagnostic_parity.py` compara informes del corpus compartido |
 | BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR |
 | BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile/diagnose/simulate | — | I | `rust/src/main.rs`; pruebas CLI y paridad de selección multi-sistema; `bootstrap_ci` permanece null porque el estimador no está implementado |
 
