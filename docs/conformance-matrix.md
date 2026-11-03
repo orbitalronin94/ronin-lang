@@ -37,11 +37,11 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 
 | ID | Referencia MDES | Requisito / comportamiento | Python | Rust | Evidencia actual / observaciones |
 |---|---|---|---|---|---|
-| LANG-001 | §2.1 | Parsear declaraciones de sistema | I | I | `ronin/parser.py`, `rust/src/parser.rs`; `tests/test_core.py::test_parser_and_pesca_validation`, `tests/test_examples.py`; `examples/maquinas.ronin`, `examples/pesca.ronin` |
-| LANG-002 | §2.2 | Parsear parámetros principales y extendidos | I | P | `ronin/parser.py`, `ronin/model.py`, `rust/src/parser.rs`, `rust/src/ast.rs`; `tests/test_core.py::test_parser_supports_strings_signed_values_and_memory_arrays`; cobertura Rust no idéntica |
+| LANG-001 | §2.1 | Parsear declaraciones de sistema | I | I | Parser Python y Rust; fixtures Maquinas/Pesca |
+| LANG-002 | §2.2 | Parsear parámetros principales y extendidos | I | P | Defaults, tipos y parámetros soportados; cobertura no idéntica |
 | LANG-003 | §2.4 | Parsear campos numéricos del agente | I | I | `phi`, `psi`, `frequency`; tests de parser y solver |
 | LANG-004 | §2.5 | Conservar metadatos extendidos del agente | I | I | Python metadata; Rust `Value` incluye arrays/objetos; tests `test_agent_metadata.py` y parser Rust |
-| LANG-005 | §2.6 | Parsear arrays y estructuras anidadas en valores admitidos | P | P | `ronin/parser.py`, `rust/src/parser.rs`; `tests/fixtures/conformance/metadata_nested.ronin`, `full_order1.ronin`, `full_order3_unsupported.ronin`; arrays/objetos en datos y metadata, no expresiones generales |
+| LANG-005 | §2.6 | Parsear arrays y estructuras anidadas en valores admitidos | P | P | Arrays y objetos admitidos en datos/metadata; no equivale a expresiones o estructuras generales del lenguaje |
 | PARSER-001 | R.5–R.6 | Aceptación léxica/sintáctica equivalente en el subconjunto compartido | I | I | `scripts/check_parser_parity.py`: 9 ficheros válidos, 3 fuentes válidas inline y 29 inválidas inline; incluye escapes/Unicode, rechazo de controles sin escape, espacios no admitidos, literales case-insensitive, rechazo de NaN y de alias k; sentinel compartido línea/columna. No prueba validación semántica |
 | LANG-006 | §2.7 | Declarar y evaluar funciones puras RONIN | N | N | No existe parser/evaluador general de funciones |
 | LANG-007 | §2.8 | Ejecutar funciones impuras | N | N | No existe runtime general de funciones impuras |
@@ -60,8 +60,8 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 |---|---|---|---|---|---|
 | TYPE-001 | §3.1 | Reconocer escalares numéricos, booleanos, cadenas y null en los contextos soportados | I | I | Lexer/parser y enum Rust `Value`; no implica sistema de tipos general |
 | TYPE-002 | §3.2 | Implementar el catálogo completo de más de 160 tipos de dominio | N | N | El runtime usa tipos Python/Rust ordinarios y validaciones explícitas, no el catálogo tipado de MDES |
-| TYPE-003 | §3.3 | Implementar tipos compuestos RONIN como tipos del lenguaje | P | P | `ronin/model.py`, `rust/src/ast.rs`; estructuras System/Agent/Params en runtime, sin sistema de tipos de usuario |
-| TYPE-004 | §3.4 | Comprobar rangos y tipos antes de ejecutar/compilar | I | P | `ronin/validator.py`, `rust/src/solver.rs`, `scripts/check_validation_parity.py`; Python valida antes de compilar, Rust valida parcialmente al resolver |
+| TYPE-003 | §3.3 | Implementar tipos compuestos RONIN como tipos del lenguaje | P | P | Estructuras System/Agent/Params en runtime; sin sistema de tipos de usuario |
+| TYPE-004 | §3.4 | Comprobar rangos y tipos antes de ejecutar/compilar | I | P | Python validator y compilación validada; Rust valida parcialmente al resolver |
 | TYPE-005 | §3.5 | Validar invariantes del sistema (frecuencias, phi/psi, partes, recurso) | I | P | `ronin/validator.py`; pruebas de frecuencia y casos inválidos |
 | TYPE-006 | §3.6 | Inferencia de tipos de expresiones | N | N | No existe evaluador de expresiones |
 | TYPE-007 | §3.7 | Tipos paramétricos genéricos | N | N | No implementados |
@@ -75,7 +75,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | CONC-001 | §4.1–4.4 | Actores, mensajes, recepción y canales | N | N | No existe modelo de actores/canales en el runtime |
 | CONC-002 | §4.5–4.6 | Paralelismo automático y bloque `par` | N | N | No implementado |
 | CONC-003 | §4.7–4.8 | Futures, promises y await | N | N | No implementado |
-| CONC-004 | §4.9 | Streams de simulación | P | P | `ronin/simulator.py`, `rust/src/simulator.rs`, `tests/test_core.py::test_simulation_is_seed_reproducible_and_normalized`; la simulación produce historial, pero no existe abstracción de stream consumible |
+| CONC-004 | §4.9 | Streams de simulación | P | P | La simulación produce historial, pero no existe abstracción de stream consumible |
 | CONC-005 | §4.10 | Canales con backpressure | N | N | No implementado |
 | CONC-006 | §4.11 | Diagnóstico paralelo | N | N | No existe ejecución paralela de sentencias RONIN |
 
@@ -107,7 +107,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | BUILD-008 | §6.10 | Niveles de optimización `-O0`…`-O3` | N | N | No hay pipeline de optimización |
 | BUILD-009 | §6.11 | Perfilado RONIN | N | N | No hay profiler propio |
 | BUILD-010 | §6.12 | Depurador RONIN | N | N | No hay debugger |
-| BUILD-011 | §6.13 | REPL general del lenguaje | P | N | `ronin/repl.py`, `tests/test_repl.py`; consola Python básica para cargar/listar/comprobar/resolver sistemas, no un REPL del lenguaje completo |
+| BUILD-011 | §6.13 | REPL general del lenguaje | P | N | Existe consola Python básica; no ejecuta el lenguaje completo |
 | BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | I | Python `diagnose`; Rust `diagnose` en `rust/src/main.rs`; `scripts/check_diagnostic_parity.py` compara informes del corpus compartido |
 | BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR; `scripts/check_cli_error_parity.py` contrasta diez fallos compartidos con stdout vacío y stderr diagnóstico |
 | BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile/diagnose/simulate | — | I | `rust/src/main.rs`; pruebas CLI, paridad de selección multi-sistema y diez rutas de error compartidas; `bootstrap_ci` permanece null porque el estimador no está implementado |
@@ -125,11 +125,11 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | PY-007 | R.10 | Simulador con semilla reproducible | I | `ronin/simulator.py`; tests de normalización, semilla y sigma=0 |
 | SIM-002 | R.10 | Simulación reproducible y trayectoria común con semilla fija | I | I | `scripts/check_simulation_contracts.py`; compara historial completo Python/Rust en 12 proyectos con tolerancia 1e-12 y valida simplex, semilla y supervivencia |
 | SIM-003 | R.11 | Informes de diagnóstico equivalentes en el corpus compartido | I | I | `scripts/check_diagnostic_parity.py`; compara estado, identificabilidad, recomendación, rango Ω y `bootstrap_ci` |
-| PY-008 | R.11 | Diagnóstico K–α y bootstrap CI | P | `ronin/diagnose.py`, `ronin/semantics.py`, `scripts/check_diagnostic_parity.py`, `tests/test_core.py`; rango/degeneración implementados, bootstrap devuelve null |
+| PY-008 | R.11 | Diagnóstico K–α y bootstrap CI | P | Rango/degeneración implementados; bootstrap devuelve null |
 | PY-009 | R.12 | CLI de referencia | I | `ronin/cli.py`; list/check/solve/simulate/diagnose/run/compile/repl |
-| PY-010 | R.13 | Tests normativos y regresión | P | `tests/test_core.py`, `tests/test_parser_strictness.py`, `tests/test_conformance_fixtures.py`; suite de regresión existente, faltan vectores completos para todos los requisitos MDES |
-| PY-011 | R.14 | Ejemplos ejecutables y datasets completos | P | `tests/test_examples.py`, `examples/README.md`, `examples/maquinas.ronin`, `examples/maquinas_ces.ronin`, `examples/pesca.ronin`, `examples/degeneracy_active.ronin`, `examples/degeneracy_inactive.ronin`; ejemplos 101–130 son plantillas y los cuerpos 1–100 están ausentes |
-| PY-012 | R.15–R.16 | Arquitectura y conformidad integral del runtime | P | `ronin/cli.py`, `ronin/model.py`, `ronin/solver.py`, `tests/test_core.py`; arquitectura modular presente, conformidad integral no demostrada |
+| PY-010 | R.13 | Tests normativos y regresión | P | Suite pytest existente; faltan vectores completos para todos los requisitos MDES |
+| PY-011 | R.14 | Ejemplos ejecutables y datasets completos | P | Maquinas, Pesca, CES y degeneración; ejemplos 101–130 tienen plantillas; cuerpos 1–100 ausentes |
+| PY-012 | R.15–R.16 | Arquitectura y conformidad integral del runtime | P | Arquitectura modular presente; conformidad integral no demostrada |
 
 ## 9. Backend Rust — Parte VI
 
@@ -137,14 +137,14 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 |---|---|---|---|---|
 | RS-001 | 6.2 | AST y modelos de datos | I | `rust/src/ast.rs`; metadata y Value anidados |
 | RS-002 | 6.3–6.4 | Lexer/parser de proyectos soportados | I | `rust/src/parser.rs`; tests de sintaxis, escapes, Unicode y objetos |
-| RS-003 | 6.5 | Validación semántica | P | `rust/src/solver.rs`, `rust/tests/runtime.rs`; validación integrada en solver, no cubre el validador completo de MDES |
+| RS-003 | 6.5 | Validación semántica | P | Validación integrada en solver; no cubre el validador completo de MDES |
 | RS-004 | 6.6 | Lowering a IR | I | `rust/src/ir.rs`; tests de campos y metadata |
 | RS-005 | 6.6 | Serializar IR con contrato JSON equivalente a Python | I | `rust/src/ir.rs`; `ronin-core compile`; `scripts/check_ir_parity.py` compara 12 fixtures válidos y 4 rechazos entre Python/Rust |
 | RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; `scripts/check_runtime_parity.py` compara 11 proyectos válidos, 4 rechazos y override de delta; faltan otras construcciones/semánticas MDES |
 | RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; tests de semilla reproducible, simplex y steps inválidos; necesita vectores cruzados de conformidad |
 | RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; tests de degeneración activa/inactiva/unknown y fixtures compartidos; bootstrap no implementado |
 | RS-009 | 6.10 | CLI Rust list/check/solve/run/compile/diagnose/simulate | I | `rust/src/main.rs`; tests de CLI, informe diagnóstico, simulación y exportación CSV; RNG distinto al de Python |
-| RS-010 | 6.11 | Suite normativa Rust completa | P | `rust/tests/runtime.rs`, `rust/src/parser.rs`, `rust/src/main.rs`; tests unitarios/parser/CLI presentes, no cubren todas las normas MDES |
+| RS-010 | 6.11 | Suite normativa Rust completa | P | Tests unitarios/parser/CLI presentes; no cubren todas las normas MDES |
 | RS-011 | 6.12 | Bindings Python con PyO3 | N | No existe crate/binding PyO3 en el workspace actual |
 | RS-012 | 6.13 | Backend WASM | N | No implementado |
 | RS-013 | 6.14 | Backend C | N | No implementado |
@@ -153,32 +153,32 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 
 | ID | Referencia | Requisito | Estado | Evidencia / límite |
 |---|---|---|---|---|
-| NORM-001 | N.1 pasos 1–4 | Parsear, validar tipos/rangos/agentes y coherencia de modelo | P | `ronin/parser.py`, `ronin/validator.py`, `rust/src/parser.rs`, `rust/src/solver.rs`; Python implementa el subconjunto y Rust valida parcialmente |
-| NORM-002 | N.1 pasos 5–7 | Calcular Hill/CES fitness y asignación | P | `ronin/solver.py`, `ronin/semantics.py`, `rust/src/solver.rs`, `tests/test_core.py::test_ces_near_zero_uses_geometric_mean_not_pusfre`; modelos ejecutables, discrepancia de límite CES pendiente (OPEN-001) |
-| NORM-003 | N.1 paso 8 | Calcular coexistencia y k_min | P | `ronin/semantics.py::k_min`, `ronin/solver.py`, `rust/src/solver.rs`, `tests/test_core.py::test_k_min_uses_configured_delta`; cálculo de k_min y comparación disponibles, contrato de coexistencia requiere cierre |
+| NORM-001 | N.1 pasos 1–4 | Parsear, validar tipos/rangos/agentes y coherencia de modelo | P | Python implementa el subconjunto; Rust parcial |
+| NORM-002 | N.1 pasos 5–7 | Calcular Hill/CES fitness y asignación | P | Modelos ejecutables, pero discrepancia de límite CES pendiente |
+| NORM-003 | N.1 paso 8 | Calcular coexistencia y k_min | P | Fórmula k_min y comparación disponibles; contrato de coexistencia requiere cierre |
 | NORM-004 | N.1 paso 9 | Calcular deuda | N | Placeholder 0.0 no satisface estimación normativa |
-| NORM-005 | N.1 pasos 10–11 | Rango Ω, degeneración y advertencias | I | `ronin/diagnose.py`, `ronin/semantics.py`, `rust/src/diagnose.rs`, `tests/test_core.py`; pruebas de umbral y diagnóstico en el subconjunto implementado |
+| NORM-005 | N.1 pasos 10–11 | Rango Ω, degeneración y advertencias | I | Pruebas de umbral y diagnóstico |
 | NORM-006 | N.2 Tests 1–2 | Compatibilidad Maquinas y PUSFRE explícito | I | `tests/test_core.py::test_maquinas_normative_result`, `test_explicit_pusfre_matches_legacy_default` |
 | NORM-007 | N.2 Test 3 | CES con lambda→0 recupera PUSFRE | A | La prueba implementada sigue media geométrica; el anexo pide equivalencia PUSFRE. Requiere decisión normativa, no un cambio silencioso |
 | NORM-008 | N.2 Test 4 | Rechazar modelo/parámetros incoherentes | I | `test_explicit_pusfre_matches_legacy_default`, `test_model_coherence_is_enforced`; Rust `rejects_model_parameter_incoherence` |
 | NORM-009 | N.2 Tests 5–6 | Detectar degeneración activa/inactiva con el umbral normativo | A | La rama activa/inactiva está implementada y probada con fixtures sintéticos (`tests/test_core.py::test_degeneracy_active_for_narrow_omega_range`, `test_degeneracy_inactive_requires_three_full_orders`; `tests/fixtures/conformance/degeneracy_active.ronin`, `degeneracy_inactive.ronin`; Rust `shared_diagnostic_fixtures_match_expected_states`). Pero el ejemplo literal de N.2 Test 6 (`0.001, 0.01, 0.989`) cubre 2.9952 órdenes, no 3.0; `test_source_degeneracy_example_is_below_threshold` confirma que resulta activo. El comportamiento implementado está probado; la aceptación normativa exacta sigue bloqueada por OPEN-002 |
 | NORM-010 | N.2 Test 7 | Diagnóstico del dataset Neural Scaling real | A | Datos fuente incompletos y valores phi/psi fuera del rango normativo |
-| NORM-011 | N.3 | Cumplimiento integral de tolerancias, simulación y requisitos | P | `scripts/check_runtime_parity.py`, `scripts/check_simulation_contracts.py`, `scripts/check_diagnostic_parity.py`, `tests/test_conformance_fixtures.py`; hay pruebas parciales, no procede declarar conformidad global |
+| NORM-011 | N.3 | Cumplimiento integral de tolerancias, simulación y requisitos | P | Hay pruebas parciales; no procede declarar conformidad global |
 
 ## 11. Fixtures compartidos de conformidad
 
 El corpus sintético `tests/fixtures/conformance/` contiene siete fixtures positivos (PUSFRE, CES, Hill, CES-Hill, full/order 1, metadata anidada y suma de frecuencias dentro de tolerancia), diez negativos, tres diagnósticos y uno check-only. El job `Conformance fixture catalog / traceability` verifica en CI que cada `.ronin` esté catalogado, exista y enlace IDs presentes en la matriz. No reemplaza los datasets normativos ausentes ni resuelve contradicciones de MDES.
 
-El catálogo enumera las fixtures, su propósito y los IDs asociados. El verificador automático comprueba inventario y referencias fixture → matriz, exige en sentido inverso una nota de evidencia o limitación en cada fila I/P y valida que las rutas de archivo citadas con código inline existan en el repositorio. Estas comprobaciones son estructurales: no prueban que cada test cubra toda la semántica del requisito. La auditoría sustantiva detectó además una discrepancia normativa concreta en NORM-009 / N.2 Test 6, registrada como OPEN-002 y detallada en [source-coverage.md](source-coverage.md).
+El catálogo enumera las fixtures, su propósito y los IDs asociados. El verificador automático comprueba inventario y referencias fixture → matriz, exige en sentido inverso una nota de evidencia o limitación en cada fila I/P y valida que las rutas de archivo citadas con código inline existan en el repositorio. En esta iteración se añadieron rutas concretas a las filas que antes solo describían la evidencia. Estas comprobaciones son estructurales: no prueban que cada test cubra toda la semántica del requisito. La auditoría sustantiva detectó además una discrepancia normativa concreta en NORM-009 / N.2 Test 6, registrada como OPEN-002 y detallada en [source-coverage.md](source-coverage.md).
 
 ## 12. Ejemplos y datos de aceptación
 
 | ID | Referencia | Estado | Qué demuestra y qué no demuestra |
 |---|---|---|---|
-| EX-001 | R.14, §8.1 | I | `examples/maquinas.ronin`, `tests/test_core.py::test_maquinas_normative_result`, `rust/src/solver.rs`; resultado PUSFRE de aceptación, solver y asignación |
-| EX-002 | R.14, §8.2 | I | `examples/maquinas_ces.ronin`, `scripts/check_runtime_parity.py`; ejecución de la variante CES en el corpus de paridad |
-| EX-003 | R.14, §8.1 | I | `examples/pesca.ronin`, `tests/test_core.py::test_parser_and_pesca_validation`, `scripts/check_validation_parity.py`; parseo y validación del fixture |
-| EX-004 | N.2 Tests 5–6 | I | `tests/fixtures/conformance/degeneracy_active.ronin`, `degeneracy_inactive.ronin`, `tests/test_core.py::test_degeneracy_active_for_narrow_omega_range`, `test_degeneracy_inactive_requires_three_full_orders`; fixtures sintéticas con rango medido. El vector literal de Test 6 sigue bloqueado por OPEN-002 (NORM-009 A) |
+| EX-001 | R.14, §8.1 | I | Maquinas: resultado PUSFRE de aceptación, solver y asignación |
+| EX-002 | R.14, §8.2 | I | Maquinas CES: ejecución de la variante CES |
+| EX-003 | R.14, §8.1 | I | Pesca: parseo y validación del fixture |
+| EX-004 | N.2 Tests 5–6 | I | Fixtures degeneración activa/inactiva con rango medido |
 | EX-005 | Ejemplos 101–130 | P | `tests/test_examples.py` prueba parseo de todos los ficheros; no prueba ejecución semántica |
 | EX-006 | Ejemplos 1–100 | A | Los cuerpos no están en el Markdown maestro disponible |
 | EX-007 | §8.3, §8.9 | A | NeuralScaling/FamaFrench carecen de registros completos; no son datasets de aceptación |
