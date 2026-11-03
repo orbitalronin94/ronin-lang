@@ -142,6 +142,13 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 - CI completo en commit `16b6945ccaaa3ffb8be0705c7728eccc5c8a0add`: **15/15 jobs correctos** (https://github.com/orbitalronin94/ronin-lang/actions/runs/41689832857).
 - Issue [#39](https://github.com/orbitalronin94/ronin-lang/issues/39) cerrada con alcance y límites explícitos. C2 queda completado para el contrato compartido documentado; no implica paridad completa de MDES.
 
+### 2026-11-03 — C1, revisión semántica de evidencia (primera pasada)
+
+- Se contrastaron las afirmaciones de deuda, bootstrap, memoria temporal, diagnóstico K–α, coexistencia, parser/validación, IR y simulación entre matriz, source-coverage, propuesta de perfil y código Python/Rust.
+- Hallazgo corregido: la fila NORM-004 de la matriz decía que el runtime devolvía un placeholder `0.0`; el código real `ronin/semantics.py::debt` devuelve `None` y ambos backends serializan `debt: null`. Se corrigió la evidencia en commit `64a1a73c1b2c7c82746afadda800ed18a214a40b`. CI disparado: https://github.com/orbitalronin94/ronin-lang/actions/runs/41691331075 (pendiente al registrar esta nota).
+- Confirmado que la propuesta de perfil excluye bootstrap, deuda, modos libres/fijos aún no aprobados, memoria temporal superior y capacidades no implementadas. La matriz conserva explícitos los estados P/N/A.
+- La revisión no cierra C1: falta recorrer y validar una por una las 62 filas I/P contra la semántica real de cada test, y aprobar el perfil candidato. No se convierten comprobaciones estructurales en evidencia semántica.
+
 ### 2026-11-03 — C1, primera ejecución
 
 - Revisadas las PR #79 y #82: #79 comprueba declaraciones `def`/`fn` pero no tenía tests dedicados; #82 mejora la extracción `ruta::símbolo`, pero su búsqueda por subcadena acepta menciones en comentarios/cadenas y prefijos. Se consolidó extracción estructurada más verificación de declaración anclada y pruebas negativas/positivas.
