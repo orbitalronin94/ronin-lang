@@ -380,6 +380,15 @@ mod tests {
     }
 
     #[test]
+    fn csv_field_quotes_combined_special_characters() {
+        let value = "comma, quote \"double\" and line\r\nnext";
+        assert_eq!(
+            csv_field(value),
+            "\"comma, quote \"\"double\"\" and line\r\nnext\""
+        );
+    }
+
+    #[test]
     fn solve_defaults_to_first_system_while_run_executes_all() {
         let path = std::env::temp_dir()
             .join(format!("ronin-multi-solve-{}.ronin", std::process::id()));
