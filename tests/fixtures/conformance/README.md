@@ -13,6 +13,7 @@ These synthetic RONIN files are a shared input corpus for the Python and Rust im
 | `full_order1.ronin` | Valid full model with first-order memory and normalized weights | LANG-002/005, TYPE-003/004, PARSER-001; only the explicitly supported first-order profile |
 | `metadata_nested.ronin` | Nested metadata, escapes, Unicode-safe JSON values and a very small finite number | LANG-004/005, TYPE-001, PARSER-001, INTEROP-008, RS-005 |
 | `frequency_sum_within_tolerance.ronin` | Frequency sum differs from one by less than 1e-9 and remains valid | TYPE-004/005, VAL-CLI-001 |
+| `ir_json_escaping.ronin` | IR v1 JSON escaping, Unicode and nested metadata serialization | LANG-004, INTEROP-008, RS-005 |
 
 ## Negative fixtures
 
@@ -82,3 +83,4 @@ When a script's input list changes, update this table in the same change. Unit t
 All fixtures use synthetic values. They do not replace normative examples or missing real datasets in MDES v0.5. Expected behavior is tested by both implementations where the corresponding feature exists.
 
 A traceability ID identifies the intended requirement area; it does not upgrade a matrix status from P/A/N to I. In particular, parser acceptance does not prove semantic validation, solver correctness, or full MDES conformance. The matrix remains authoritative for the status and evidence of each requirement.
+

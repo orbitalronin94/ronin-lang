@@ -1,7 +1,7 @@
 # Roadmap de RONIN Runtime v0.1 a v1.0
 
 **Base de diseño:** MDES v0.5  
-**Estado actual:** línea de base v0.1 con avances verificables en v0.2/v0.3; los hitos siguen abiertos  
+**Estado actual:** v0.3 cerrado para el contrato compartido Python/Rust e IR v1; v0.2 continúa en curso  
 **Idioma canónico de proyecto:** castellano
 
 ## 1. Política de versiones
@@ -44,7 +44,7 @@ Esta línea no permite etiquetar como implementadas funciones ausentes ni relaja
 
 ### Estado verificado a 2026-11-03
 
-Se han integrado checkpoints separados para: tolerancias y validación de frecuencias; auditoría automática de trazabilidad del catálogo de fixtures; paridad de selección de sistemas en `simulate`/`diagnose`; rutas de error de CLI; ubicaciones de diagnóstico del parser; escapes Unicode surrogate inválidos; y validación de longitud/suma de `memory_weights`. La CI de la última PR de validación de memoria terminó con 15/15 jobs correctos ([ejecución](https://github.com/orbitalronin94/ronin-lang/actions/runs/41658388618)). Esto mejora la evidencia de v0.2/v0.3, pero no cierra esos hitos ni demuestra conformidad integral.
+Se han integrado checkpoints separados para: tolerancias y validación de frecuencias; auditoría automática de trazabilidad del catálogo de fixtures; paridad de selección de sistemas en `simulate`/`diagnose`; rutas de error de CLI; ubicaciones de diagnóstico del parser; escapes Unicode surrogate inválidos; y validación de longitud/suma de `memory_weights`. La CI de la última PR de validación de memoria terminó con 15/15 jobs correctos ([ejecución](https://github.com/orbitalronin94/ronin-lang/actions/runs/41658388618)). Esto mejora la evidencia de v0.2; v0.3 está cerrado para el contrato compartido delimitado más abajo. No demuestra conformidad integral.
 
 
 ### v0.1 — Foundation / baseline (estado actual)
@@ -86,24 +86,15 @@ Trabajo:
 - Ningún ejemplo incompleto se presenta como aceptación ejecutable.
 - La cobertura reportada se calcula desde la matriz, no por estimación subjetiva.
 
-### v0.3 — Python/Rust parity and portable IR (en curso)
+### v0.3 — Python/Rust parity and portable IR (cerrado para el contrato compartido documentado)
 
-**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa; `scripts/check_ir_parity.py` compara 11 proyectos válidos y cuatro rechazos. `scripts/check_runtime_parity.py` contrasta fitness, allocation, coexistence, k_min, degeneracy y override de delta en 11 proyectos. `scripts/check_diagnostic_parity.py` compara cuatro informes; `scripts/check_simulation_contracts.py` compara trayectorias con semilla fija en 12 proyectos con tolerancia 1e-12; y `scripts/check_csv_parity.py` compara exportaciones CSV en 11 proyectos y un proyecto multi-sistema; `scripts/check_validation_parity.py` contrasta aceptación/rechazo, selección de sistemas y proyectos válidos con fitness cero; `scripts/check_cli_selection_parity.py` fija la diferencia intencionada entre `solve` (primer sistema) y `run`/`check` (todos); `scripts/check_parser_parity.py` contrasta ocho ficheros válidos, tres fuentes válidas inline y 21 fuentes inválidas inline; incluye escapes, Unicode, metadatos anidados, rechazo de surrogate aislado y una comprobación de ubicación línea/columna. `scripts/check_cli_error_parity.py` verifica diez fallos compartidos; `scripts/check_cli_selection_parity.py` cubre selección por defecto y explícita en solve/simulate/diagnose y el alcance de run/check. Los casos de longitud/suma de memory_weights están incluidos en la paridad de validación. Todo queda integrado en jobs independientes de CI.
+**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa; `scripts/check_ir_parity.py` compara 12 proyectos válidos y cuatro rechazos. `scripts/check_runtime_parity.py` contrasta fitness, allocation, coexistence, k_min, degeneracy y override de delta en 11 proyectos. `scripts/check_diagnostic_parity.py` compara cuatro informes; `scripts/check_simulation_contracts.py` compara trayectorias con semilla fija en 12 proyectos con tolerancia 1e-12; y `scripts/check_csv_parity.py` compara exportaciones CSV en 11 proyectos y un proyecto multi-sistema; `scripts/check_validation_parity.py` contrasta aceptación/rechazo, selección de sistemas y proyectos válidos con fitness cero; `scripts/check_cli_selection_parity.py` fija la diferencia intencionada entre `solve` (primer sistema) y `run`/`check` (todos); `scripts/check_parser_parity.py` contrasta ocho ficheros válidos, tres fuentes válidas inline y 24 fuentes inválidas inline; incluye escapes, Unicode, metadatos anidados, rechazo de surrogate aislado y una comprobación de ubicación línea/columna. `scripts/check_cli_error_parity.py` verifica diez fallos compartidos; `scripts/check_cli_selection_parity.py` cubre selección por defecto y explícita en solve/simulate/diagnose y el alcance de run/check. Los casos de longitud/suma de memory_weights están incluidos en la paridad de validación. Todo queda integrado en jobs independientes de CI.
+
+**Resultado:** contrato de datos y ejecución compartido verificado para el corpus/campos enumerados. Los errores se comparan por fallo limpio, no por igualdad textual/código; las semillas reproducen dentro de cada backend, sin promesa de RNG común; IR v1 es salida, no importación de vuelta a `.ronin`.
 
 **Objetivo:** hacer que Python y Rust compartan un contrato de datos y ejecución verificable.
 
-Trabajo:
-- Consolidar `ronin-core compile` con salida JSON IR equivalente al compilador Python y cerrar diferencias de validación restantes.
-- Definir fixtures de entrada y salidas IR canónicas.
-- Ampliar la paridad cruzada a validación y comandos multi-sistema; mantener las trayectorias aleatorias como contrato de invariantes hasta acordar un RNG común.
-- Alinear errores, valores por defecto, precisión numérica y serialización de valores no finitos.
-- Añadir pruebas de round-trip donde la semántica lo permita.
-
-**Criterios de salida:**
-- El conjunto de fixtures comunes genera IR equivalente.
-- Los casos numéricos compartidos cumplen tolerancias documentadas.
-- Diferencias intencionadas quedan identificadas y justificadas.
-- El CLI Rust tiene pruebas de integración para todos sus comandos publicados.
+Trabajo futuro (fuera del cierre v0.3): importación del IR a un modelo ejecutable, RNG idéntico entre backends, ampliación de vectores normativos cuando se recuperen las fuentes completas y mayor cobertura de comandos/casos no incluidos en los scripts. Estos puntos no se consideran contratos actuales ni se simulan con expectativas inventadas.
 
 ### v0.4 — Normative semantics closure
 
