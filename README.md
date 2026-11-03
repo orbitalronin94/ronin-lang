@@ -6,9 +6,12 @@ RONIN Runtime **v0.1** es una versión temprana y funcional: incluye un runtime 
 
 > **Versionado del proyecto:** v0.1 identifica el estado del software. **MDES v0.5** identifica la versión de la especificación de diseño. Son versiones independientes. El material fuente conserva sus rótulos editoriales originales cuando corresponde.
 
+> **Estado del siguiente release:** se está preparando un candidato RONIN Runtime v0.5.0 con alcance deliberadamente limitado. Los gates C0–C2, C5 y C6 están completados; C1, C3 y la aprobación C4 siguen abiertos. Consulta el [plan de release](docs/runtime-v0.5-release-plan.md), el [perfil candidato](docs/runtime-v0.5-profile-proposal.md) y el [changelog](CHANGELOG.md). La versión publicada sigue siendo 0.1.0; no se declara conformidad integral con MDES v0.5.
+
 ## Instalación y primeros pasos
 
 Para un recorrido completo y comprobable desde la instalación hasta la resolución, exportación CSV/IR y simulación, consulta el [inicio práctico](docs/quickstart-practico.md). Este recorrido usa los comandos implementados actualmente, no sintaxis futura del lenguaje.
+
 
 ```bash
 python -m pip install -e .
