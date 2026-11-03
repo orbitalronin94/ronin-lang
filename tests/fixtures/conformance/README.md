@@ -65,7 +65,7 @@ This inventory records the concrete scope visible in each parity script. Counts 
 | `check_diagnostic_parity.py` | 4 diagnostic/check-only fixtures | Report fields and range comparison; bootstrap confidence interval remains null |
 | `check_simulation_contracts.py` | 12 valid files, 12 steps, fixed seed 73 | Seeded trajectory/invariant comparison for these fixtures; not a universal RNG contract |
 | `check_cli_selection_parity.py` | Synthetic two-system valid and mixed-validity projects | Default `solve`, all-system `run`, and named selection; error paths are covered separately |
-| `check_cli_error_parity.py` | 4 shared failures: missing file, unknown system, malformed source and semantic rejection | Both runtimes must fail, keep stdout empty and provide stderr; exact wording and numeric exit codes are intentionally not equated |
+| `check_cli_error_parity.py` | 7 shared failures: missing file, unknown system, malformed source, semantic rejection, unsupported format, missing option value and unknown option | Both runtimes must fail, keep stdout empty and provide stderr; exact wording and numeric exit codes are intentionally not equated |
 | `check_csv_parity.py` | 11 files and one synthetic multi-system project | Header, row identity and numeric values; quoting/escaping edge cases are not yet covered by this cross-runtime script |
 
 When a script's input list changes, update this table in the same change. Unit tests and workflow jobs may provide additional evidence; they should be linked separately rather than silently folded into these counts.
