@@ -308,4 +308,4 @@ jobs:
           "$BIN" run examples/maquinas.ronin --format csv > "$RUNNER_TEMP/rust-run.csv"
           "$BIN" compile examples/maquinas.ronin -o "$RUNNER_TEMP/rust-project.ir.json"
           "$BIN" simulate examples/maquinas.ronin --steps 8 --seed 42 > "$RUNNER_TEMP/rust-sim.json"
-          python -c "import csv,json,pathlib; root=pathlib.Path('$RUNNER_TEMP'); json.loads((root/'rust-project.ir.json').read_text()); json.loads((root/'rust-sim.json').read_text()); rows=list(csv.reader((root/'rust-run.csv').open())); assert rows[0] == ['system','agent_index','model','fitness','allocation']; assert len(rows)==3"
+          python -c "import csv,json,pathlib; root=pathlib.Path('$RUNNER_TEMP'); json.loads((root/'rust-project.ir.json').read_text()); json.loads((root/'rust-sim.json').read_text()); rows=[row for row in csv.reader((root/'rust-run.csv').open()) if row]; assert rows[0] == ['system','agent_index','model','fitness','allocation']; assert len(rows)==3"
