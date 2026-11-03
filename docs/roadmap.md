@@ -68,7 +68,7 @@ No implica:
 
 **Primera línea base creada.**
 
-La [matriz de trazabilidad](conformance-matrix.md) ya asigna IDs a los requisitos de las secciones 0–15, Partes V–VI, el anexo normativo y los ejemplos; distingue el estado Python/Rust y registra evidencias y bloqueos. El corpus compartido y su catálogo contienen siete fixtures positivos, diez negativos, tres diagnósticos y uno check-only. Un job de CI comprueba que los `.ronin` estén catalogados, existan y enlacen IDs presentes en la matriz; además, audita en sentido inverso que cada fila I/P tenga una nota de evidencia o limitación. Es una línea base trazable, no el cierre del hito: la suficiencia de la evidencia requiere revisión.
+La [matriz de trazabilidad](conformance-matrix.md) ya asigna IDs a los requisitos de las secciones 0–15, Partes V–VI, el anexo normativo y los ejemplos; distingue el estado Python/Rust y registra evidencias y bloqueos. El corpus compartido y su catálogo contienen siete fixtures positivos, diez negativos, tres diagnósticos y uno check-only. Un job de CI comprueba que los `.ronin` estén catalogados, existan y enlacen IDs presentes en la matriz; además, audita en sentido inverso que cada fila I/P tenga una nota de evidencia o limitación. Esta comprobación se integró en [PR #67](https://github.com/orbitalronin94/ronin-lang/pull/67), con [15/15 jobs CI correctos](https://github.com/orbitalronin94/ronin-lang/actions/runs/41667655968). Es una línea base trazable, no el cierre del hito: la suficiencia de la evidencia requiere revisión.
 
 **Objetivo:** convertir MDES v0.5 en una matriz de requisitos trazable y una suite de conformidad.
 
