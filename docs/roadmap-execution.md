@@ -52,10 +52,10 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Alinear opciones CLI Rust con Python: `--system` solo en check/solve/simulate/diagnose y `--delta` solo en solve/run; añadir tres casos de rechazo a la paridad CLI.
 - [x] Normalizar números no finitos del JSON CLI Python a cadenas `inf`/`-inf`/`nan`, con `allow_nan=False`, y fijar el mismo contrato en tests Rust/Python.
 - [x] Verificar el ciclo de serialización del IR v1 en ambos runtimes mediante parseo JSON estructural y comparación de objetos; el IR sigue siendo un formato de salida, no un importador/round-trip de vuelta a `.ronin`.
-- [x] Delimitar RNG: la misma semilla garantiza reproducibilidad dentro de cada backend; no se declara secuencia aleatoria común Python/Rust.
+- [x] Delimitar RNG: Rust replica MT19937 y gauss cacheado de CPython; la misma semilla produce trayectorias coincidentes en 12 proyectos con tolerancia 1e-12. Sin semilla, las ejecuciones son independientes.
 - [x] Registrar vectores ausentes como fuera del alcance de paridad ejecutable mientras falten datos/fuentes normativas (OPEN-001 a OPEN-007); no se inventan resultados esperados.
 
-La paridad se limita a los casos y campos enumerados por cada script. Los contratos de error no exigen texto/código idéntico; la simulación no promete secuencia RNG común; IR v1 se emite y compara estructuralmente, pero no se importa como fuente. No equivale a paridad completa de todos los comandos, fórmulas o capacidades de MDES.
+La paridad se limita a los casos y campos enumerados por cada script. Los contratos de error no exigen texto/código idéntico; la simulación seeded sí promete la secuencia común probada en el corpus de 12 proyectos; IR v1 se emite y compara estructuralmente, pero no se importa como fuente. No equivale a paridad completa de todos los comandos, fórmulas o capacidades de MDES.
 
 ## v0.4 — decisiones normativas
 
