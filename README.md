@@ -8,6 +8,8 @@ RONIN Runtime **v0.1** es una versión temprana y funcional: incluye un runtime 
 
 ## Instalación y primeros pasos
 
+Para un recorrido completo y comprobable desde la instalación hasta la resolución, exportación CSV/IR y simulación, consulta el [inicio práctico](docs/quickstart-practico.md). Este recorrido usa los comandos implementados actualmente, no sintaxis futura del lenguaje.
+
 Para un recorrido completo y comprobable desde la instalación hasta la resolución, exportación CSV/IR y simulación, consulta el [inicio práctico](docs/quickstart-practico.md). Este recorrido usa los comandos implementados actualmente en el runtime, no sintaxis futura del lenguaje.
 
 ```bash
