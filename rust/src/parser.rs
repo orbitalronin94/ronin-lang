@@ -537,6 +537,20 @@ mod tests {
     }
 
     #[test]
+    fn reports_line_and_column_for_missing_separator() {
+        let source = "system S = {\\n  parts 2,\\n  resource: 1,\\n  agents: [{phi: 1, psi: 1, frequency: 1}]\\n}";
+        let error = parse(source).unwrap_err();
+        assert!(error.contains("at 2:9"), "unexpected diagnostic: {error}");
+    }
+
+    #[test]
+    fn reports_line_and_column_for_unexpected_character() {
+        let source = "system S = {\\n  parts: 1,\\n  resource: 1,\\n  agents: [{phi: 1, psi: 1, frequency: 1, note: @}]\\n}";
+        let error = parse(source).unwrap_err();
+        assert!(error.contains("at 4:"), "unexpected diagnostic: {error}");
+    }
+
+    #[test]
     fn parses_supported_numeric_project_fixture() {
         let systems = parse(include_str!("../../examples/maquinas.ronin")).unwrap();
         assert_eq!(systems.len(), 1);
