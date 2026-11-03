@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_DIR = ROOT / "tests" / "fixtures" / "conformance"
 CATALOG = FIXTURE_DIR / "README.md"
 MATRIX = ROOT / "docs" / "conformance-matrix.md"
-ID_PATTERN = re.compile(r"\\b([A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*)-(\\d{3})(?:[–/-](\\d{3}))?\\b")
+ID_PATTERN = re.compile(r"\b([A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*)-(\d{3})(?:[–/-](\d{3}))?\b")
 
 
 def requirement_ids(text):
@@ -33,7 +33,7 @@ def main():
         if not line.startswith("|"):
             continue
         cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
-        if not cells or not cells[0].startswith("`") or not cells[0].endswith("`.ronin`"):
+        if not cells or not cells[0].startswith("`") or not cells[0].endswith(".ronin`"):
             continue
         filename = cells[0][1:-1]
         if filename in catalogued:
@@ -59,7 +59,7 @@ def main():
         errors.append(f"catalog entry without fixture: {filename}")
 
     if errors:
-        print("\\n".join(errors), file=sys.stderr)
+        print("\n".join(errors), file=sys.stderr)
         return 1
     print(
         f"Fixture catalog OK: {len(actual)} files; every entry exists and references known matrix IDs."
