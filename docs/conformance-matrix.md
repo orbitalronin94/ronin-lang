@@ -42,7 +42,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | LANG-003 | §2.4 | Parsear campos numéricos del agente | I | I | `phi`, `psi`, `frequency`; tests de parser y solver |
 | LANG-004 | §2.5 | Conservar metadatos extendidos del agente | I | I | Python metadata; Rust `Value` incluye arrays/objetos; tests `test_agent_metadata.py` y parser Rust |
 | LANG-005 | §2.6 | Parsear arrays y estructuras anidadas en valores admitidos | P | P | Arrays y objetos admitidos en datos/metadata; no equivale a expresiones o estructuras generales del lenguaje |
-| PARSER-001 | R.5–R.6 | Aceptación léxica/sintáctica equivalente en el subconjunto compartido | I | I | `scripts/check_parser_parity.py`: 8 ficheros válidos, 3 fuentes válidas inline y 21 inválidas inline; incluye Unicode, rechazo de surrogate aislado y sentinel compartido línea/columna. No prueba validación semántica |
+| PARSER-001 | R.5–R.6 | Aceptación léxica/sintáctica equivalente en el subconjunto compartido | I | I | `scripts/check_parser_parity.py`: 8 ficheros válidos, 3 fuentes válidas inline y 24 inválidas inline; incluye Unicode, rechazo de surrogate aislado y sentinel compartido línea/columna. No prueba validación semántica |
 | LANG-006 | §2.7 | Declarar y evaluar funciones puras RONIN | N | N | No existe parser/evaluador general de funciones |
 | LANG-007 | §2.8 | Ejecutar funciones impuras | N | N | No existe runtime general de funciones impuras |
 | LANG-008 | §2.9 | Parsear la sintaxis DSL `simulate ... with {...}` | N | N | Simulación disponible como API/CLI, no como sentencia general del lenguaje |
@@ -139,7 +139,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | RS-002 | 6.3–6.4 | Lexer/parser de proyectos soportados | I | `rust/src/parser.rs`; tests de sintaxis, escapes, Unicode y objetos |
 | RS-003 | 6.5 | Validación semántica | P | Validación integrada en solver; no cubre el validador completo de MDES |
 | RS-004 | 6.6 | Lowering a IR | I | `rust/src/ir.rs`; tests de campos y metadata |
-| RS-005 | 6.6 | Serializar IR con contrato JSON equivalente a Python | I | `rust/src/ir.rs`; `ronin-core compile`; `scripts/check_ir_parity.py` compara 11 fixtures válidos y 4 rechazos entre Python/Rust |
+| RS-005 | 6.6 | Serializar IR con contrato JSON equivalente a Python | I | `rust/src/ir.rs`; `ronin-core compile`; `scripts/check_ir_parity.py` compara 12 fixtures válidos y 4 rechazos entre Python/Rust |
 | RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; `scripts/check_runtime_parity.py` compara 11 proyectos válidos, 4 rechazos y override de delta; faltan otras construcciones/semánticas MDES |
 | RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; tests de semilla reproducible, simplex y steps inválidos; necesita vectores cruzados de conformidad |
 | RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; tests de degeneración activa/inactiva/unknown y fixtures compartidos; bootstrap no implementado |
