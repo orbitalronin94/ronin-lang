@@ -29,7 +29,7 @@ La siguiente tabla propone el núcleo mínimo que ya tiene evidencia significati
 | Diagnóstico | CORE-007, SIM-003, subconjunto PY-008/RS-008 | Rango/degeneración para los casos compartidos; sin bootstrap inferido | Fixtures activos/inactivos/indeterminados y paridad de informe |
 | IR | INTEROP-008, BUILD-001, RS-004/005 | JSON IR v1 normalizado, validado y equivalente | Fixtures canónicos, comparación estructural y errores |
 | CLI | PY-009, RS-009, BUILD-013/014 | Comandos list/check/solve/run/compile/simulate/diagnose en el alcance real de cada backend | Pruebas de integración; diferencias de selección documentadas |
-| CSV | INTEROP-009 | Exportación CSV Python únicamente hasta que Rust tenga soporte probado | Golden files y contrato de columnas/tipos |
+| CSV | INTEROP-009 | Exportación CSV en Python y Rust para el corpus compartido | `scripts/check_csv_parity.py` compara cabecera, filas y valores numéricos; ampliar casos de quoting/escapes antes de declarar cobertura general de CSV |
 
 **Restricción importante:** que un ID aparezca aquí no lo convierte automáticamente en conforme. El perfil solo lo incorpora cuando la condición de aceptación se satisface en CI y la matriz apunta a esa evidencia.
 
