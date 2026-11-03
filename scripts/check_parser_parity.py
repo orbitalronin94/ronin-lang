@@ -125,6 +125,10 @@ INVALID_SOURCES = {
         system Bad = { parts: 1, resource: 1,
           agents: [{phi: 1, psi: 1, frequency: 1}], params: {memory_weights: "bad"} }
     """,
+    "isolated_unicode_surrogate": r"""
+        system Bad = { parts: 1, resource: 1,
+          agents: [{phi: 1, psi: 1, frequency: 1, note: "\uD800"}] }
+    """,
     "missing_separator_with_source_location": """system Bad = {
   parts 2,
   resource: 1,
