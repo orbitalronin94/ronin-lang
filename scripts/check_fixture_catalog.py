@@ -8,8 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_DIR = ROOT / "tests" / "fixtures" / "conformance"
 CATALOG = FIXTURE_DIR / "README.md"
 MATRIX = ROOT / "docs" / "conformance-matrix.md"
-ID_PATTERN = re.compile(r"\b([A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*)-(\d{3})(?:[–/-](\d{3}))?\b")
-ROW_ID_PATTERN = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\d{3}$")
+ID_PATTERN = re.compile(r"\b([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*)-(\d{3})(?:[–/-](\d{3}))?\b")
+ROW_ID_PATTERN = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-\d{3}$")
+INLINE_CODE_PATTERN = re.compile(chr(96) + r"([^" + chr(96) + r"]+)" + chr(96))
 
 
 def table_cells(line):
@@ -25,6 +26,16 @@ def requirement_ids(text):
             raise ValueError(f"invalid requirement range: {prefix}-{start}-{end}")
         found.update(f"{prefix}-{number:03d}" for number in range(first, last + 1))
     return found
+
+
+def evidence_file_paths(text):
+    """Return repository-relative paths explicitly formatted as inline code."""
+    for match in INLINE_CODE_PATTERN.findall(text):
+        if "/" not in match:
+            continue
+        path = match.split("::", 1)[0].strip().rstrip(".,;)")
+        if path:
+            yield path
 
 
 def main():
@@ -61,9 +72,10 @@ def main():
     for filename in sorted(catalogued - actual):
         errors.append(f"catalog entry without fixture: {filename}")
 
-    # Reverse direction: I/P rows must have an evidence or limitation note.
-    # This checks traceability presence, not whether evidence proves full MDES.
+    # Reverse direction: I/P rows need evidence notes and any cited file paths
+    # must resolve. This validates references, not semantic test sufficiency.
     audited_rows = 0
+    checked_paths = 0
     for line_number, line in enumerate(matrix_text.splitlines(), start=1):
         if not line.startswith("|"):
             continue
@@ -77,11 +89,21 @@ def main():
         evidence = cells[-1].strip()
         if not evidence or evidence in {"—", "-", "TBD", "TODO"}:
             errors.append(f"conformance-matrix.md:{line_number}: {cells[0]} is I/P without evidence or an explicit limitation")
+            continue
+        for path in evidence_file_paths(evidence):
+            checked_paths += 1
+            if not (ROOT / path).is_file():
+                errors.append(
+                    f"conformance-matrix.md:{line_number}: {cells[0]} cites missing evidence path {path}"
+                )
 
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    print(f"Traceability OK: {len(actual)} fixtures; {audited_rows} I/P matrix rows have an evidence or limitation note.")
+    print(
+        f"Traceability OK: {len(actual)} fixtures; {audited_rows} I/P rows; "
+        f"{checked_paths} cited evidence paths resolve."
+    )
     return 0
 
 
