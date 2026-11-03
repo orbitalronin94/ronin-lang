@@ -46,3 +46,27 @@ def test_run_json_remains_the_default_format(capsys):
     fixture = Path(__file__).parents[1] / "examples" / "maquinas.ronin"
     assert main(["run", str(fixture)]) == 0
     assert "Maquinas" in json.loads(capsys.readouterr().out)
+
+
+def test_csv_writer_round_trips_comma_quote_and_newline_fields():
+    from types import SimpleNamespace
+
+    from ronin.cli import _write_run_csv
+
+    name = 'System, "quoted"\\nsecond line\\r\\nthird line'
+    model = 'model, "quoted"\\nvariant'
+    system = SimpleNamespace(params=SimpleNamespace(model=model))
+    output = io.StringIO(newline="")
+
+    _write_run_csv(
+        {name: system},
+        {name: {"fitness": [0.5], "allocation": [10.0]}},
+        output,
+    )
+
+    rows = list(csv.DictReader(io.StringIO(output.getvalue())))
+    assert len(rows) == 1
+    assert rows[0]["system"] == name
+    assert rows[0]["model"] == model
+    assert rows[0]["fitness"] == "0.5"
+    assert rows[0]["allocation"] == "10"
