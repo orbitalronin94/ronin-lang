@@ -31,7 +31,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | CORE-007 | §1.7, N.1.5 | Diagnosticar rango Ω y degeneración K–α | I | P | `ronin/diagnose.py`, `rust/src/diagnose.rs`; pruebas de umbral y parámetros no identificables |
 | CORE-008 | §2.3, §3.5 | Rechazar combinaciones incoherentes entre modelo y parámetros | I | P | `ronin/validator.py`; `tests/test_core.py::test_model_coherence_is_enforced`; Rust valida a través de solver |
 | VAL-CLI-001 | R.7, R.12 | `check` valida sin ejecutar el solver y revisa todos los sistemas por defecto | I | I | `scripts/check_validation_parity.py`; casos válidos/no válidos (incluye recurso negativo, phi/gamma fuera de rango y suma de frecuencias dentro/fuera de 1e-9 y memory_weights con longitud/suma inválidas), fitness cero y selección multi-sistema |
-| CLI-SELECT-001 | R.12 | `solve` selecciona el primer sistema por defecto; `run` procesa todos | I | I | `scripts/check_cli_selection_parity.py`; compara solve, run, simulate, diagnose, `--system` y proyecto multi-sistema parcialmente inválido |
+| CLI-SELECT-001 | R.12 | `solve` selecciona el primer sistema por defecto; `run` procesa todos | I | I | `scripts/check_cli_selection_parity.py`; comprueba selección por defecto en solve/simulate/diagnose, run/check sobre todos los sistemas y selección explícita; complementa `check_cli_error_parity.py` (10 fallos compartidos) |
 
 ## 3. Sintaxis y construcciones del lenguaje
 
@@ -42,7 +42,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | LANG-003 | §2.4 | Parsear campos numéricos del agente | I | I | `phi`, `psi`, `frequency`; tests de parser y solver |
 | LANG-004 | §2.5 | Conservar metadatos extendidos del agente | I | I | Python metadata; Rust `Value` incluye arrays/objetos; tests `test_agent_metadata.py` y parser Rust |
 | LANG-005 | §2.6 | Parsear arrays y estructuras anidadas en valores admitidos | P | P | Arrays y objetos admitidos en datos/metadata; no equivale a expresiones o estructuras generales del lenguaje |
-| PARSER-001 | R.5–R.6 | Aceptación léxica/sintáctica equivalente en el subconjunto compartido | I | I | `scripts/check_parser_parity.py`; cadenas escapadas, Unicode, metadata anidada, duplicados y entradas malformadas |
+| PARSER-001 | R.5–R.6 | Aceptación léxica/sintáctica equivalente en el subconjunto compartido | I | I | `scripts/check_parser_parity.py`: 8 ficheros válidos, 3 fuentes válidas inline y 21 inválidas inline; incluye Unicode, rechazo de surrogate aislado y sentinel compartido línea/columna. No prueba validación semántica |
 | LANG-006 | §2.7 | Declarar y evaluar funciones puras RONIN | N | N | No existe parser/evaluador general de funciones |
 | LANG-007 | §2.8 | Ejecutar funciones impuras | N | N | No existe runtime general de funciones impuras |
 | LANG-008 | §2.9 | Parsear la sintaxis DSL `simulate ... with {...}` | N | N | Simulación disponible como API/CLI, no como sentencia general del lenguaje |
@@ -91,7 +91,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | INTEROP-006 | §5.10 | Importar JSON de datos como proyecto/sistema | N | N | La exportación JSON IR no equivale a importar JSON externo como System |
 | INTEROP-007 | §5.11–5.19 | YAML, TOML, XML, Protobuf, MsgPack, BSON, Avro, Parquet y Arrow | N | N | No implementados |
 | INTEROP-008 | §3.2, §5.10 | Exportar IR JSON versionado | I | I | Python `ronin compile`; Rust `ronin-core compile`; ambos validan y emiten IR v1 con metadata y valores no finitos normalizados |
-| INTEROP-009 | §5.9 | Exportar resultados a CSV | I | I | Python `ronin run --format csv`; Rust `ronin-core run --format csv`; `tests/test_run_csv.py`; `scripts/check_csv_parity.py` compara cabecera, filas, campos y valores numéricos en 11 proyectos más un multi-sistema |
+| INTEROP-009 | §5.9 | Exportar resultados a CSV | I | I | Python `ronin run --format csv`; Rust `ronin-core run --format csv`; `scripts/check_csv_parity.py` compara cabecera, identidad de filas y valores numéricos en 11 proyectos más un multi-sistema. Tests unitarios Python/Rust cubren además comas, comillas y CR/LF combinados; esos casos aún no forman parte de la paridad CLI cross-runtime |
 
 ## 7. Compilación, ejecución y herramientas
 
@@ -109,8 +109,8 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | BUILD-010 | §6.12 | Depurador RONIN | N | N | No hay debugger |
 | BUILD-011 | §6.13 | REPL general del lenguaje | P | N | Existe consola Python básica; no ejecuta el lenguaje completo |
 | BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | I | Python `diagnose`; Rust `diagnose` en `rust/src/main.rs`; `scripts/check_diagnostic_parity.py` compara informes del corpus compartido |
-| BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR |
-| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile/diagnose/simulate | — | I | `rust/src/main.rs`; pruebas CLI y paridad de selección multi-sistema; `bootstrap_ci` permanece null porque el estimador no está implementado |
+| BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR; `scripts/check_cli_error_parity.py` contrasta diez fallos compartidos con stdout vacío y stderr diagnóstico |
+| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile/diagnose/simulate | — | I | `rust/src/main.rs`; pruebas CLI, paridad de selección multi-sistema y diez rutas de error compartidas; `bootstrap_ci` permanece null porque el estimador no está implementado |
 
 ## 8. Runtime de referencia Python — Parte V
 
@@ -167,9 +167,9 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 
 ## 11. Fixtures compartidos de conformidad
 
-El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python como en Rust: seis perfiles positivos (PUSFRE, CES, Hill, CES-Hill, full/order 1 y metadata anidada), cuatro casos negativos y tres diagnósticos compartidos. Su catálogo está en `tests/fixtures/conformance/README.md`. No reemplaza los datasets normativos ausentes ni resuelve contradicciones de MDES.
+El corpus sintético `tests/fixtures/conformance/` contiene siete fixtures positivos (PUSFRE, CES, Hill, CES-Hill, full/order 1, metadata anidada y suma de frecuencias dentro de tolerancia), diez negativos, tres diagnósticos y uno check-only. El job `Conformance fixture catalog / traceability` verifica en CI que cada `.ronin` esté catalogado, exista y enlace IDs presentes en la matriz. No reemplaza los datasets normativos ausentes ni resuelve contradicciones de MDES.
 
-El catálogo de fixtures incluye ahora una tabla de trazabilidad inicial hacia los IDs de esta matriz y enumera los scripts de paridad que consumen el corpus. Esa relación identifica el área cubierta, pero no cambia por sí sola el estado I/P/A de ningún requisito: la evidencia concreta y el alcance de cada script deben revisarse antes de cerrar v0.2.
+El catálogo enumera las fixtures, su propósito y los IDs asociados. El verificador automático comprueba integridad del inventario y referencias existentes; no verifica que el test demuestre toda la semántica del requisito. La evidencia concreta y el alcance de cada script siguen siendo necesarios para cerrar v0.2.
 
 ## 12. Ejemplos y datos de aceptación
 
