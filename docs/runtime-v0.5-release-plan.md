@@ -19,7 +19,7 @@ Los elementos que dependan de una decisión normativa del autor se preparan como
 | C1 | Cierre de evidencia v0.2 | Cada requisito del perfil candidato tiene estado correcto, evidencia concreta y referencias válidas; matriz y catálogo se validan en CI | En curso |
 | C2 | Contrato compartido v0.3 | CLI, errores, selección, CSV, IR y comportamiento Python/Rust cubiertos por pruebas de integración/paridad; diferencias intencionadas documentadas | **Completado para el contrato documentado** |
 | C3 | Decisiones normativas v0.4 | OPEN-001…OPEN-007 resueltos por fuente/ADR aprobado o excluidos explícitamente del perfil; ningún placeholder se presenta como resultado | Bloqueado por decisiones/fuentes |
-| C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Baseline parser completado; aprobación pendiente |
+| C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Propuesta de perfil Runtime v0.5 redactada; aprobación pendiente |
 | C5 | Núcleo matemático y diagnósticos | Funcionalidades que se incluyan desde la línea de investigación integradas en PR pequeñas, con definición, fixtures y paridad; el resto se marca experimental/no incluido | En curso en PR #35 |
 | C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | Pendiente |
 | C7 | Release candidate | Alcance congelado; matriz de compatibilidad, migración, documentación, suite completa y CI en verde en commit candidato | Pendiente |
@@ -134,6 +134,13 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 - Detectada y corregida una afirmación obsoleta: `docs/conformance-matrix.md` y `docs/roadmap-execution.md` decían que Python/Rust no compartían RNG, pero `rust/src/simulator.rs` replica MT19937, uniform de 53 bits y gauss cacheado de CPython; `scripts/check_simulation_contracts.py` compara 12 trayectorias con semilla fija a tolerancia 1e-12. Corregidas también `roadmap.md` y `source-coverage.md`.
 - Revisado el diagnóstico normativo: `NORM-005` baja de I a P porque la inferencia de parámetros libres desde valores numéricos sigue provisional (ADR-0002). La propuesta de perfil limita el compromiso estable de identificabilidad hasta resolverlo.
 - C1 sigue abierto: esta es una primera revisión semántica de las filas de simulación/diagnóstico, no la revisión completa de las 62 filas I/P.
+
+### 2026-11-03 — C4, perfil Runtime v0.5 propuesto
+
+- Creado [`docs/runtime-v0.5-profile-proposal.md`](runtime-v0.5-profile-proposal.md), con alcance incluido, límites de contrato y exclusiones explícitas.
+- Se propone mantener `diagnose`/identificabilidad como experimental hasta resolver ADR-0002; excluir CES lambda→0 hasta ADR-0001; mantener fuera deuda, bootstrap, datasets incompletos, tipos generales, concurrencia y backends no implementados.
+- PR #35 (investigación) se propone como línea experimental separada; solo se integrará en v0.5 lo que se seleccione explícitamente y tenga contrato/paridad.
+- **C4 no se cierra:** el perfil requiere aprobación del mantenedor. La propuesta evita afirmar conformidad integral con MDES v0.5.
 
 ### 2026-11-03 — C3, propuestas normativas preparadas
 
