@@ -128,6 +128,12 @@ Cada unidad debe tener contrato matemático, supuestos, límites, fixtures, prue
 C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta que ambos gates estén resueltos. C5 puede desarrollar investigación en paralelo, pero solo se incluye en el release lo que cumpla sus pruebas y tenga supuestos documentados. C6 empieza con el quickstart existente y se completa tras congelar el perfil.
 
 ## Registro de trabajo
+### 2026-11-03 — C7, documentación preliminar de release
+
+- PR [#97](https://github.com/orbitalronin94/ronin-lang/pull/97) prepara `CHANGELOG.md`, la guía [migration-v0.1-to-v0.5.md](migration-v0.1-to-v0.5.md), el índice documental y la actualización de estado del roadmap/README.
+- El changelog está marcado explícitamente como Unreleased; la guía no promete compatibilidad antes de la aprobación del perfil y de un RC real.
+- C7 permanece abierto: aún faltan aprobación del perfil, cierre de C1/C3, congelación de alcance, matriz final y CI del SHA candidato.
+
 ### 2026-11-03 — C1, revisión semántica de simulación y diagnóstico
 
 - PR [#85](https://github.com/orbitalronin94/ronin-lang/pull/85) fusionada: corrigió la afirmación de RNG distinta, documentó la paridad seeded real de MT19937/gauss CPython y degradó NORM-005 a P porque la libertad de parámetros se infiere de valores y ADR-0002 sigue pendiente.
