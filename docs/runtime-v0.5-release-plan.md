@@ -19,9 +19,9 @@ Los elementos que dependan de una decisión normativa del autor se preparan como
 | C1 | Cierre de evidencia v0.2 | Cada requisito del perfil candidato tiene estado correcto, evidencia concreta y referencias válidas; matriz y catálogo se validan en CI | En curso |
 | C2 | Contrato compartido v0.3 | CLI, errores, selección, CSV, IR y comportamiento Python/Rust cubiertos por pruebas de integración/paridad; diferencias intencionadas documentadas | **Completado para el contrato documentado** |
 | C3 | Decisiones normativas v0.4 | OPEN-001…OPEN-007 resueltos por fuente/ADR aprobado o excluidos explícitamente del perfil; ningún placeholder se presenta como resultado | Bloqueado por decisiones/fuentes |
-| C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Propuesta de perfil Runtime v0.5 redactada; aprobación pendiente |
-| C5 | Núcleo matemático y diagnósticos | Funcionalidades que se incluyan desde la línea de investigación integradas en PR pequeñas, con definición, fixtures y paridad; el resto se marca experimental/no incluido | En curso en PR #35 |
-| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | Pendiente |
+| C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Baseline parser completado; aprobación pendiente |
+| C5 | Núcleo matemático y diagnósticos | Funcionalidades seleccionadas de investigación con definición, fixtures y paridad; el resto se marca experimental/no incluido | **En validación CI:** 80 casos de solver y 15 trayectorias de simulación generadas añadidos; APIs FIM/SIR/D-óptimo/Sobol excluidas del contrato estable v0.5 |
+| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | **En curso:** quickstart práctico incorporado; CI ya contiene smoke test de sus comandos |
 | C7 | Release candidate | Alcance congelado; matriz de compatibilidad, migración, documentación, suite completa y CI en verde en commit candidato | Pendiente |
 | C8 | Declaración v0.5.0 | Tag/release, notas, artefactos, hashes y limitaciones publicados; ningún bloqueo crítico abierto | Pendiente |
 
@@ -128,19 +128,13 @@ Cada unidad debe tener contrato matemático, supuestos, límites, fixtures, prue
 C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta que ambos gates estén resueltos. C5 puede desarrollar investigación en paralelo, pero solo se incluye en el release lo que cumpla sus pruebas y tenga supuestos documentados. C6 empieza con el quickstart existente y se completa tras congelar el perfil.
 
 ## Registro de trabajo
+### 2026-11-03 — C5/C6, integración selectiva y quickstart
 
-### 2026-11-03 — C1, revisión semántica inicial
+- Revisada PR #35 como fuente de mejoras de investigación. Se decidió no importar al runtime estable v0.5 las APIs nuevas de FIM/Jacobiano, SIR, D-óptimo y Sobol: son herramientas con entradas/supuestos externos y requieren contrato y revisión separados. Alcance registrado en [research-integration-scope-v0.5.md](research-integration-scope-v0.5.md).
+- Integradas selectivamente las pruebas de estrés deterministas de PR #35: 80 sistemas solver (16 × 5 modelos) y 15 sistemas de simulación (3 × 5 modelos, 24 pasos). Adaptado el generador solver para pasar explícitamente el `coexistence_delta` del proyecto y evitar depender del default de la API Python.
+- Incorporado [quickstart-practico.md](quickstart-practico.md), enlazado desde README e índice de documentación. El workflow ya contiene un smoke test que ejecuta los comandos del recorrido (list/check/solve/run/CSV/IR/simulate/diagnose y segundo ejemplo).
+- CI del commit de integración aún debe completar antes de aceptar C5/C6; no se declara la suite de estrés aprobada por el mero hecho de copiar los scripts.
 
-- Detectada y corregida una afirmación obsoleta: `docs/conformance-matrix.md` y `docs/roadmap-execution.md` decían que Python/Rust no compartían RNG, pero `rust/src/simulator.rs` replica MT19937, uniform de 53 bits y gauss cacheado de CPython; `scripts/check_simulation_contracts.py` compara 12 trayectorias con semilla fija a tolerancia 1e-12. Corregidas también `roadmap.md` y `source-coverage.md`.
-- Revisado el diagnóstico normativo: `NORM-005` baja de I a P porque la inferencia de parámetros libres desde valores numéricos sigue provisional (ADR-0002). La propuesta de perfil limita el compromiso estable de identificabilidad hasta resolverlo.
-- C1 sigue abierto: esta es una primera revisión semántica de las filas de simulación/diagnóstico, no la revisión completa de las 62 filas I/P.
-
-### 2026-11-03 — C4, perfil Runtime v0.5 propuesto
-
-- Creado [`docs/runtime-v0.5-profile-proposal.md`](runtime-v0.5-profile-proposal.md), con alcance incluido, límites de contrato y exclusiones explícitas.
-- Se propone mantener `diagnose`/identificabilidad como experimental hasta resolver ADR-0002; excluir CES lambda→0 hasta ADR-0001; mantener fuera deuda, bootstrap, datasets incompletos, tipos generales, concurrencia y backends no implementados.
-- PR #35 (investigación) se propone como línea experimental separada; solo se integrará en v0.5 lo que se seleccione explícitamente y tenga contrato/paridad.
-- **C4 no se cierra:** el perfil requiere aprobación del mantenedor. La propuesta evita afirmar conformidad integral con MDES v0.5.
 
 ### 2026-11-03 — C3, propuestas normativas preparadas
 
@@ -154,6 +148,13 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 - Contrato JSON: el CLI Python emitía `Infinity` no estándar para parámetros por defecto; se reutilizó la normalización JSON del IR para emitir `"inf"`/`"-inf"`/`"nan"`, con `allow_nan=False`. Añadidas aserciones Python y Rust.
 - CI completo en commit `16b6945ccaaa3ffb8be0705c7728eccc5c8a0add`: **15/15 jobs correctos** (https://github.com/orbitalronin94/ronin-lang/actions/runs/41689832857).
 - Issue [#39](https://github.com/orbitalronin94/ronin-lang/issues/39) cerrada con alcance y límites explícitos. C2 queda completado para el contrato compartido documentado; no implica paridad completa de MDES.
+
+### 2026-11-03 — C1, revisión semántica de evidencia (primera pasada)
+
+- Se contrastaron las afirmaciones de deuda, bootstrap, memoria temporal, diagnóstico K–α, coexistencia, parser/validación, IR y simulación entre matriz, source-coverage, propuesta de perfil y código Python/Rust.
+- Hallazgo corregido: la fila NORM-004 de la matriz decía que el runtime devolvía un placeholder `0.0`; el código real `ronin/semantics.py::debt` devuelve `None` y ambos backends serializan `debt: null`. Se corrigió la evidencia en commit `64a1a73c1b2c7c82746afadda800ed18a214a40b`. CI disparado: https://github.com/orbitalronin94/ronin-lang/actions/runs/41691331075 (pendiente al registrar esta nota).
+- Confirmado que la propuesta de perfil excluye bootstrap, deuda, modos libres/fijos aún no aprobados, memoria temporal superior y capacidades no implementadas. La matriz conserva explícitos los estados P/N/A.
+- La revisión no cierra C1: falta recorrer y validar una por una las 62 filas I/P contra la semántica real de cada test, y aprobar el perfil candidato. No se convierten comprobaciones estructurales en evidencia semántica.
 
 ### 2026-11-03 — C1, primera ejecución
 
