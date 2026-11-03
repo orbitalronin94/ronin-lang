@@ -128,6 +128,11 @@ Cada unidad debe tener contrato matemático, supuestos, límites, fixtures, prue
 C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta que ambos gates estén resueltos. C5 puede desarrollar investigación en paralelo, pero solo se incluye en el release lo que cumpla sus pruebas y tenga supuestos documentados. C6 empieza con el quickstart existente y se completa tras congelar el perfil.
 
 ## Registro de trabajo
+### 2026-11-03 — C1, recuento actualizado de trazabilidad estructural
+
+- La CI de trazabilidad de PR #96 reporta: **117 IDs únicos**, **62 filas I/P**, **197 rutas de evidencia resueltas**, **22 fixtures** y 81 IDs del perfil mapeados. Salida exacta en el job [Conformance fixture catalog / traceability](https://github.com/orbitalronin94/ronin-lang/actions/runs/41695675868).
+- La cifra anterior de 192 rutas estaba desactualizada y se corrige en el seguimiento. Este resultado es estructural: el propio checker aclara que valida referencias y declaraciones, no la suficiencia semántica de las 62 filas. La revisión humana de C1 sigue abierta.
+
 ### 2026-11-03 — C7, documentación preliminar de release
 
 - PR [#97](https://github.com/orbitalronin94/ronin-lang/pull/97) prepara `CHANGELOG.md`, la guía [migration-v0.1-to-v0.5.md](migration-v0.1-to-v0.5.md), el índice documental y la actualización de estado del roadmap/README.
