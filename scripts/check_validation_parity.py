@@ -19,6 +19,7 @@ VALID = [
     ROOT / "tests" / "fixtures" / "conformance" / "ces_hill.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "full_order1.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "metadata_nested.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "frequency_sum_within_tolerance.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "valid_zero_fitness_check_only.ronin",
 ]
 INVALID = [
@@ -29,6 +30,7 @@ INVALID = [
     ROOT / "tests" / "fixtures" / "conformance" / "invalid_resource_negative.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "invalid_phi_out_of_range.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "invalid_gamma.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "frequency_sum_outside_tolerance.ronin",
 ]
 
 

@@ -1,0 +1,7 @@
+system FrequencyOutsideTolerance = {
+  parts: 2, resource: 10,
+  agents: [
+    { phi: 0.5, psi: 0.5, frequency: 0.500000001 },
+    { phi: 0.5, psi: 0.5, frequency: 0.500000001 }
+  ]
+}
