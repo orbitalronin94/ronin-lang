@@ -555,7 +555,7 @@ mod tests {
     #[test]
     fn compile_rejects_system_filter() {
         let args = vec!["compile".into(), fixture(), "--system".into(), "Maquinas".into()];
-        assert!(execute(&args).unwrap_err().contains("--system is not supported"));
+        assert!(execute(&args).unwrap_err().contains("--system is only supported"));
     }
 
     #[test]
