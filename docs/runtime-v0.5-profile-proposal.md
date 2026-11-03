@@ -68,8 +68,8 @@ No será todavía el lenguaje general de MDES: no incluye funciones generales, m
 - [x] C2 cerrado para el contrato compartido documentado (issue #39).
 - [ ] C3: cada OPEN-001…OPEN-007 resuelto por fuente/ADR aprobada o excluido expresamente del perfil.
 - [ ] C4: gramática/subconjunto, errores y separación parser/validación/ejecución revisados.
-- [ ] C5: PR #35 particionada; solo se integra en v0.5 lo que tenga contrato, tests y paridad. El resto queda experimental.
-- [ ] C6: instalación limpia, quickstart, ejemplos, dependencias y plataformas declaradas verificados.
+- [x] C5: alcance de investigación delimitado en `research-integration-scope-v0.5.md`; PR #89 aporta 80 casos solver y 15 trayectorias de simulación con paridad. FIM/Jacobiano, SIR, D-óptimo y Sobol quedan fuera del perfil estable.
+- [ ] C6: instalación limpia, quickstart, ejemplos, dependencias y plataformas declaradas verificados; PR #94 (17/17) y PR #96 (17/17 en el commit de código) aportan evidencia Ubuntu; se espera CI del SHA documental final antes de cerrar.
 - [ ] C7: release candidate con matriz, changelog, migración y CI completa.
 - [ ] C8: tag `v0.5.0`, artefactos y checksums.
 
@@ -86,4 +86,4 @@ No se permite afirmar “RONIN es completamente conforme con MDES v0.5” mientr
 1. Aprobar o modificar el alcance de este perfil.
 2. Resolver si diagnóstico de identificabilidad queda experimental (recomendación actual) o si se prioriza aprobar ADR-0002 e implementarlo.
 3. Aprobar ADR-0001 o mantener el límite CES próximo a cero fuera del perfil.
-4. Confirmar que las capacidades avanzadas de PR #35 permanecen experimentales para v0.5 o seleccionar explícitamente cuáles deben entrar.
+4. Confirmar que FIM/Jacobiano, SIR, D-óptimo y Sobol permanecen experimentales/fuera del perfil v0.5, según el alcance documentado, o seleccionar explícitamente cuáles deben entrar.
