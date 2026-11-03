@@ -272,3 +272,9 @@ def test_memory_weights_reject_booleans_in_direct_semantic_validation():
     params = replace(system.params, memory_weights=[True])
     with pytest.raises(SemanticError, match="memory_weights must be finite and non-negative numbers"):
         validate_coherence(params)
+
+def test_memory_weights_use_absolute_tolerance_matching_rust():
+    system = parse(MAQ)["Maquinas"]
+    params = replace(system.params, memory_weights=[1.0000000015])
+    with pytest.raises(SemanticError, match="memory_weights must sum to 1"):
+        validate_coherence(params)
