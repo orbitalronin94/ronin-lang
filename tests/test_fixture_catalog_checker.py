@@ -1,6 +1,11 @@
 """Regression tests for source-symbol references in conformance evidence."""
 
+import sys
 import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 from scripts.check_fixture_catalog import evidence_references, evidence_symbol_declared
 
