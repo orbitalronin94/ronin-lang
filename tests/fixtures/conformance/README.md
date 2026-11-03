@@ -13,6 +13,7 @@ These synthetic RONIN files are a shared input corpus for the Python and Rust im
 | `full_order1.ronin` | Valid full model with first-order memory and normalized weights | LANG-002/005, TYPE-003/004, PARSER-001; only the explicitly supported first-order profile |
 | `metadata_nested.ronin` | Nested metadata, escapes, Unicode-safe JSON values and a very small finite number | LANG-004/005, TYPE-001, PARSER-001, INTEROP-008, RS-005 |
 | `frequency_sum_within_tolerance.ronin` | Frequency sum differs from one by less than 1e-9 and remains valid | TYPE-004/005, VAL-CLI-001 |
+| `ir_json_escaping.ronin` | IR v1 JSON escaping, Unicode and nested metadata serialization | LANG-004, INTEROP-008, RS-005 |
 
 ## Negative fixtures
 
