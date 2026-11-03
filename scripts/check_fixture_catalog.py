@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Verify that every conformance fixture is catalogued and traces to matrix IDs."""
-
+"""Verify fixture inventory and both directions of its matrix traceability."""
 import re
 import sys
 from pathlib import Path
@@ -10,6 +9,11 @@ FIXTURE_DIR = ROOT / "tests" / "fixtures" / "conformance"
 CATALOG = FIXTURE_DIR / "README.md"
 MATRIX = ROOT / "docs" / "conformance-matrix.md"
 ID_PATTERN = re.compile(r"\b([A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*)-(\d{3})(?:[–/-](\d{3}))?\b")
+ROW_ID_PATTERN = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\d{3}$")
+
+
+def table_cells(line):
+    return [cell.strip() for cell in line.strip().strip("|").split("|")]
 
 
 def requirement_ids(text):
@@ -25,15 +29,16 @@ def requirement_ids(text):
 
 def main():
     errors = []
-    matrix_ids = requirement_ids(MATRIX.read_text(encoding="utf-8"))
+    matrix_text = MATRIX.read_text(encoding="utf-8")
+    matrix_ids = requirement_ids(matrix_text)
     catalog_text = CATALOG.read_text(encoding="utf-8")
     catalogued = set()
 
     for line_number, line in enumerate(catalog_text.splitlines(), start=1):
         if not line.startswith("|"):
             continue
-        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
-        if not cells or not cells[0].startswith("`") or not cells[0].endswith(".ronin`"):
+        cells = table_cells(line)
+        if not cells or not cells[0].startswith(chr(96)) or not cells[0].endswith(".ronin" + chr(96)):
             continue
         filename = cells[0][1:-1]
         if filename in catalogued:
@@ -48,9 +53,7 @@ def main():
         if not ids:
             errors.append(f"README.md:{line_number}: no requirement IDs for {filename}")
         for requirement_id in sorted(ids - matrix_ids):
-            errors.append(
-                f"README.md:{line_number}: {filename} references unknown matrix ID {requirement_id}"
-            )
+            errors.append(f"README.md:{line_number}: {filename} references unknown matrix ID {requirement_id}")
 
     actual = {path.name for path in FIXTURE_DIR.glob("*.ronin")}
     for filename in sorted(actual - catalogued):
@@ -58,12 +61,27 @@ def main():
     for filename in sorted(catalogued - actual):
         errors.append(f"catalog entry without fixture: {filename}")
 
+    # Reverse direction: I/P rows must have an evidence or limitation note.
+    # This checks traceability presence, not whether evidence proves full MDES.
+    audited_rows = 0
+    for line_number, line in enumerate(matrix_text.splitlines(), start=1):
+        if not line.startswith("|"):
+            continue
+        cells = table_cells(line)
+        if len(cells) < 4 or not ROW_ID_PATTERN.fullmatch(cells[0]):
+            continue
+        statuses = {cell.strip("* " + chr(96)) for cell in cells[1:-1]}
+        if not statuses.intersection({"I", "P"}):
+            continue
+        audited_rows += 1
+        evidence = cells[-1].strip()
+        if not evidence or evidence in {"—", "-", "TBD", "TODO"}:
+            errors.append(f"conformance-matrix.md:{line_number}: {cells[0]} is I/P without evidence or an explicit limitation")
+
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    print(
-        f"Fixture catalog OK: {len(actual)} files; every entry exists and references known matrix IDs."
-    )
+    print(f"Traceability OK: {len(actual)} fixtures; {audited_rows} I/P matrix rows have an evidence or limitation note.")
     return 0
 
 

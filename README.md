@@ -97,12 +97,12 @@ Los hitos son objetivos de ingeniería, no afirmaciones de funcionalidades ya en
 
 ### Estado de avance comprobado
 
-**Situación: v0.1 sigue siendo la versión publicada; las líneas de trabajo v0.2 y v0.3 tienen entregas parciales verificadas.**
+**Situación: v0.1 sigue siendo la versión publicada; v0.3 está cerrado para el contrato compartido documentado y v0.2 continúa en curso.** El baseline técnico del parser previsto para v0.5 también está completado, sin que ello apruebe el perfil normativo v1.0.
 
-- **v0.2 — baseline de conformidad establecido, hito aún en curso.** Existe una matriz con requisitos trazables, estados por backend, fixtures positivos/negativos y discrepancias abiertas. La CI ya separa suites Python y Rust.
-- **v0.3 — paridad parcial integrada.** Hay comprobaciones cruzadas de parser, solver, validación, diagnóstico, simulación, CLI, CSV y JSON IR para el subconjunto compartido. Esto no equivale todavía a declarar paridad completa.
+- **v0.2 — baseline de conformidad establecido, hito aún en curso.** La matriz, los fixtures y el catálogo están conectados en ambos sentidos: CI comprueba inventario, referencias y presencia de evidencia/limitaciones en filas I/P. Sigue pendiente la revisión sustantiva de cada evidencia y el cierre de criterios de perfil.
+- **v0.3 — cerrado para el contrato compartido documentado.** Las comprobaciones cruzadas cubren parser, solver, validación, diagnóstico, simulación, CLI, CSV y JSON IR en los corpus enumerados. No equivale a paridad completa de todas las capacidades MDES.
 - **CI verificada:** el commit de código `d285b1500bf0532c4b8601e223a84587a3c13a14` completó **13 jobs con resultado satisfactorio**, incluidos pytest en Python 3.9–3.12 y las suites de conformidad Rust y de paridad Python/Rust. La CI también completó satisfactoriamente para la actualización documental posterior ([ejecución de CI](https://github.com/orbitalronin94/ronin-lang/actions/runs/41522385611)).
-- **Siguiente umbral:** cerrar los criterios de `docs/conformance-matrix.md` §14, resolver o excluir explícitamente los bloqueos normativos y mantener CI verde sobre la revisión final. Hasta entonces no se etiqueta v0.2 como completada ni se publica un porcentaje global.
+- **Siguiente umbral:** completar la auditoría sustantiva de evidencia de `docs/conformance-matrix.md` §14, resolver o excluir explícitamente los bloqueos normativos y mantener CI verde sobre la revisión final. La comprobación automática garantiza presencia de evidencia, no su suficiencia. Hasta entonces no se etiqueta v0.2 como completada ni se publica un porcentaje global.
 
 Esta fotografía de progreso no cambia la versión del paquete: `pyproject.toml` continúa en `0.1.0`. Tampoco afirma conformidad integral con MDES v0.5.
 

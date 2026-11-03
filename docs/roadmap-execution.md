@@ -22,13 +22,14 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Matriz con IDs y estados Python/Rust.
 - [x] Catálogo de fixtures positivos, negativos, diagnósticos y check-only.
 - [x] Trazabilidad inicial fixture → requisito.
-- [x] Job CI para detectar fixtures sin catalogar, referencias a archivos ausentes y IDs desconocidos.
-- [ ] Auditar cada fila I/P y enlazar evidencia específica o una limitación.
-- [ ] Completar trazabilidad inversa y revisar que cada requisito del perfil tenga fixture/prueba cuando sea automatizable.
+- [x] Job CI para detectar fixtures sin catalogar, referencias a archivos ausentes e IDs desconocidos.
+- [x] Comprobación inversa automatizada: cada fila I/P de la matriz debe incluir una nota de evidencia o limitación.
+- [ ] Revisar sustantivamente cada fila I/P y confirmar que la evidencia enlazada cubre el alcance descrito.
+- [ ] Completar trazabilidad inversa de requisitos a pruebas/fixtures cuando sea automatizable.
 - [ ] Delimitar y aprobar el denominador del perfil v1.0 antes de calcular métricas.
 - [ ] Registrar resultados CI por área con enlaces vigentes desde la matriz.
 
-**No cerrar v0.2:** el verificador comprueba integridad del inventario y de los IDs, no que cada fixture demuestre por sí solo el requisito asociado.
+**No cerrar v0.2 todavía:** el verificador comprueba inventario, IDs y presencia de notas de evidencia/limitación; no juzga si cada prueba demuestra el requisito ni si la matriz identifica todos los tests relevantes.
 
 ## v0.3 — paridad Python/Rust e IR
 
