@@ -5,6 +5,8 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 ## Empezar
 
 - [Inicio práctico: primer flujo ejecutable](quickstart-practico.md) · [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
+- [Integración selectiva de investigación v0.5](research-integration-scope-v0.5.md) · alcance de FIM, SIR, D-óptimo y Sobol
+- [Propuesta de perfil Runtime v0.5](runtime-v0.5-profile-proposal.md) · alcance estable y exclusiones pendientes de aprobación
 - [Roadmap de v0.1 a v1.0](roadmap.md)
 - [Plan de ejecución y siguientes pasos](roadmap-execution.md) — estado verificado, cierre del baseline técnico v0.5 y tareas pendientes de v0.2/aprobación v1.0, sin adelantar decisiones normativas.
 - [Subconjunto técnico del parser](language-subset.md) — inventario del lenguaje actualmente aceptado, sin aprobación normativa.
