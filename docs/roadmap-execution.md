@@ -2,7 +2,7 @@
 
 **Corte de estado:** 2026-11-03  
 **Base:** `docs/roadmap.md`, `docs/conformance-matrix.md`, catálogo de fixtures y CI de GitHub Actions.  
-**Estado:** v0.2 sigue en curso. v0.3 queda cerrado para el contrato de paridad Python/Rust e IR v1 delimitado en esta hoja; esto no implica conformidad global MDES ni cierra v0.2. v0.4/v0.5 no están cerrados. No se declara conformidad global ni aprobación normativa del perfil v1.0.
+**Estado:** v0.2 sigue en curso. v0.3 queda cerrado para el contrato de paridad Python/Rust e IR v1 delimitado en esta hoja; esto no implica conformidad global MDES ni cierra v0.2. v0.4 sigue bloqueado por decisiones normativas; el baseline técnico v0.5 del parser está completado, pero el perfil v1.0 no está aprobado. No se declara conformidad global.
 
 ## Avances integrados desde la línea base anterior
 
