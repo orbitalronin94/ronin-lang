@@ -129,6 +129,12 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 
 ## Registro de trabajo
 
+### 2026-11-03 — C2, primera auditoría de CLI
+
+- Auditoría de opciones: Rust aceptaba `--system` en `list`/`run` y `--delta` en comandos ajenos, aunque Python los rechaza. Se alineó el alcance de opciones y se añadieron tres casos a la paridad de errores (10 → 13).
+- Contrato JSON: el CLI Python emitía `Infinity` no estándar para parámetros por defecto; se reutilizó la normalización JSON del IR para emitir `"inf"`/`"-inf"`/`"nan"`, con `allow_nan=False`. Añadidas aserciones Python y Rust.
+- C2 sigue abierto hasta que CI confirme los cambios y se actualice issue #39 con el alcance de diferencias deliberadas.
+
 ### 2026-11-03 — C1, primera ejecución
 
 - Revisadas las PR #79 y #82: #79 comprueba declaraciones `def`/`fn` pero no tenía tests dedicados; #82 mejora la extracción `ruta::símbolo`, pero su búsqueda por subcadena acepta menciones en comentarios/cadenas y prefijos. Se consolidó extracción estructurada más verificación de declaración anclada y pruebas negativas/positivas.
