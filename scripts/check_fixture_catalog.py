@@ -29,14 +29,15 @@ def requirement_ids(text):
     return found
 
 
-def evidence_file_paths(text):
-    """Return repository-relative paths explicitly formatted as inline code."""
+def evidence_references(text):
+    """Return (path, optional symbol) pairs from inline-code evidence references."""
     for match in INLINE_CODE_PATTERN.findall(text):
         if "/" not in match:
             continue
-        path = match.split("::", 1)[0].strip().rstrip(".,;)")
+        reference = match.strip().rstrip(".,;)")
+        path, separator, symbol = reference.partition("::")
         if path:
-            yield path
+            yield path, symbol.strip() if separator else None
 
 
 def main():
@@ -151,17 +152,32 @@ def main():
         if not evidence or evidence in {"—", "-", "TBD", "TODO"}:
             errors.append(f"conformance-matrix.md:{line_number}: {cells[0]} is I/P without evidence or an explicit limitation")
             continue
-        row_paths = list(evidence_file_paths(evidence))
+        row_references = list(evidence_references(evidence))
+        row_paths = [path for path, _ in row_references]
         if not any(path.startswith(("tests/", "rust/tests/", "scripts/")) for path in row_paths):
             errors.append(
                 f"conformance-matrix.md:{line_number}: {cells[0]} has no explicit test, fixture, or parity-script reference"
             )
-        for path in row_paths:
+        for path, symbol in row_references:
             checked_paths += 1
-            if not (ROOT / path).is_file():
+            source_path = ROOT / path
+            if not source_path.is_file():
                 errors.append(
                     f"conformance-matrix.md:{line_number}: {cells[0]} cites missing evidence path {path}"
                 )
+                continue
+            if symbol:
+                try:
+                    source_text = source_path.read_text(encoding="utf-8")
+                except UnicodeDecodeError:
+                    errors.append(
+                        f"conformance-matrix.md:{line_number}: {cells[0]} symbol target is not UTF-8 text: {path}::{symbol}"
+                    )
+                    continue
+                if symbol not in source_text:
+                    errors.append(
+                        f"conformance-matrix.md:{line_number}: {cells[0]} cites missing symbol {path}::{symbol}"
+                    )
 
     if errors:
         print("\n".join(errors), file=sys.stderr)
