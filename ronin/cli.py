@@ -7,7 +7,7 @@ from dataclasses import asdict
 from . import __version__
 from .diagnose import diagnose
 from .errors import RoninError
-from .ir import compile_program
+from .ir import _json_value, compile_program
 from .parser import parse
 from .simulator import simulate
 from .solver import solve
@@ -133,7 +133,7 @@ def main(argv=None):
             if args.format == "csv":
                 _write_run_csv(systems, results, sys.stdout)
             else:
-                print(json.dumps(results, indent=2, default=str))
+                print(json.dumps(_json_value(results), indent=2, allow_nan=False))
             return 0
 
         if args.command == "check" and args.system is None:
@@ -155,7 +155,7 @@ def main(argv=None):
             result = simulate(system, steps=args.steps, seed=args.seed)
         else:
             result = diagnose(system, bootstrap=args.bootstrap)
-        print(json.dumps(asdict(result), indent=2, default=str))
+        print(json.dumps(_json_value(asdict(result)), indent=2, allow_nan=False))
         return 0
     except RoninError as error:
         print(f"RONIN ERROR: {error}", file=sys.stderr)
