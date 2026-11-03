@@ -26,6 +26,9 @@ INVALID = [
     ROOT / "tests" / "fixtures" / "conformance" / "invalid_pusfre_lambda.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "invalid_alpha.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "full_order3_unsupported.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "invalid_resource_negative.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "invalid_phi_out_of_range.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "invalid_gamma.ronin",
 ]
 
 
