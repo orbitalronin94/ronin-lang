@@ -31,6 +31,8 @@ INVALID = [
     ROOT / "tests" / "fixtures" / "conformance" / "invalid_phi_out_of_range.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "invalid_gamma.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "frequency_sum_outside_tolerance.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "invalid_memory_weights_length.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "invalid_memory_weights_sum.ronin",
 ]
 
 
