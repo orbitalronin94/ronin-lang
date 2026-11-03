@@ -32,3 +32,6 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 4. Los ejemplos con agentes, variables o datasets omitidos se identifican como plantillas parser-only cuando corresponde.
 
 El castellano es el idioma principal; los archivos `.en.md` son resúmenes de acompañamiento, no traducciones literales completas. El material fuente se conserva en sus documentos españoles.
+
+
+- [Propuesta de perfil Runtime v0.5](runtime-v0.5-profile-proposal.md): alcance de compatibilidad del runtime v0.5.0 y exclusiones pendientes de aprobación.
