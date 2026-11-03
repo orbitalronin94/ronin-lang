@@ -7,7 +7,7 @@
 ## Avances integrados desde la línea base anterior
 
 - Validación numérica compartida: sumas de frecuencias dentro/fuera de la tolerancia de 1e-9, y rechazo de pesos de memoria con longitud o suma inválidas.
-- CLI: paridad de selección por defecto/explícita en `solve`, `simulate`, `diagnose`, `run` y `check`; diez rutas de fallo compartidas con stdout vacío y diagnóstico en stderr.
+- CLI: paridad de selección por defecto/explícita en `solve`, `simulate`, `diagnose`, `run` y `check`; trece rutas de fallo compartidas con stdout vacío y diagnóstico en stderr.
 - Parser: aceptación/rechazo del subconjunto común, rechazo de escapes Unicode surrogate aislados y un caso testigo de ubicación línea/columna.
 - CSV: pruebas unitarias de campos con comas, comillas y saltos de línea en Python y Rust. La paridad CLI sigue cubriendo cabecera, identidad de filas y valores numéricos; no se afirma aún round-trip cross-runtime de todos los casos de escape.
 - Trazabilidad: job CI independiente que verifica el inventario de fixtures, los IDs del catálogo, las notas de evidencia/limitación de filas I/P y las rutas de archivo citadas en esas evidencias. Las filas marcadas I enlazan también a tests, fixtures o scripts que respaldan el alcance indicado.
@@ -47,7 +47,7 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Simulación: 12 proyectos, 12 pasos, semilla 73 y comparación de trayectorias con tolerancia (10^{-12}).
 - [x] CSV: 11 proyectos y un proyecto multi-sistema; tests unitarios adicionales de escape en ambos backends.
 - [x] Validación: 13 entradas válidas, diez inválidas y cinco casos multi-sistema.
-- [x] CLI: selección y diez rutas de error comparadas entre runtimes.
+- [x] CLI: selección y trece rutas de error comparadas entre runtimes.
 - [x] Documentar diferencias intencionadas y contratos observados: selección por comando; errores comparados por fallo no-cero, stdout vacío y stderr explicativo, sin exigir igualdad textual ni códigos numéricos idénticos.
 - [x] Verificar el ciclo de serialización del IR v1 en ambos runtimes mediante parseo JSON estructural y comparación de objetos; el IR sigue siendo un formato de salida, no un importador/round-trip de vuelta a `.ronin`.
 - [x] Delimitar RNG: la misma semilla garantiza reproducibilidad dentro de cada backend; no se declara secuencia aleatoria común Python/Rust.
