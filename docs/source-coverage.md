@@ -32,7 +32,7 @@ La [matriz de trazabilidad MDES v0.5](conformance-matrix.md) contiene IDs por re
 
 ### Umbral del fixture de degeneración inactiva
 
-El test de la fuente usa frecuencias `0.001, 0.01, 0.989`. Su rango real es `log10(0.989 / 0.001) = log10(989) ≈ 2.9952`, inferior al umbral declarado de 3.0 órdenes. Por tanto, el algoritmo lo clasifica correctamente como activo. El repositorio conserva este hecho en una prueba de regresión y usa `0.0009, 0.0090, 0.9901` para un fixture realmente inactivo.
+El test de la fuente (N.2 Test 6) usa frecuencias `0.001, 0.01, 0.989`. Su rango real es `log10(0.989 / 0.001) = log10(989) ≈ 2.9952`, inferior al umbral declarado de 3.0 órdenes. Por tanto, el algoritmo lo clasifica correctamente como activo, aunque el texto espera `inactive`. `tests/test_core.py::test_source_degeneracy_example_is_below_threshold` conserva esta discrepancia como regresión; `test_degeneracy_inactive_requires_three_full_orders` usa `0.0009, 0.0090, 0.9901` para probar por separado la rama inactiva con un rango realmente superior a tres órdenes. El estado de NORM-009 permanece A: la implementación de ambas ramas está probada, pero el vector literal normativo no es compatible con el resultado esperado. No se altera el umbral ni se modifica el ejemplo sin una decisión normativa (OPEN-002).
 
 ### Contradicción de rango en NeuralScaling
 

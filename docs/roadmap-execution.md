@@ -24,7 +24,8 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Trazabilidad inicial fixture → requisito.
 - [x] Job CI para detectar fixtures sin catalogar, referencias a archivos ausentes e IDs desconocidos.
 - [x] Comprobación inversa automatizada: cada fila I/P de la matriz debe incluir una nota de evidencia o limitación ([PR #67](https://github.com/orbitalronin94/ronin-lang/pull/67), [CI 15/15](https://github.com/orbitalronin94/ronin-lang/actions/runs/41667655968)).
-- [ ] Revisar sustantivamente cada fila I/P y confirmar que la evidencia enlazada cubre el alcance descrito.
+- [x] Auditar NORM-009 / N.2 Test 6: separar la prueba sintética de la rama inactiva del vector literal de la fuente, cuyo rango real (2.9952) contradice el esperado (3.0); registrar estado A y mantener OPEN-002 sin alterar la semántica.
+- [ ] Revisar sustantivamente el resto de filas I/P y confirmar que la evidencia enlazada cubre el alcance descrito.
 - [ ] Completar trazabilidad inversa de requisitos a pruebas/fixtures cuando sea automatizable.
 - [ ] Delimitar y aprobar el denominador del perfil v1.0 antes de calcular métricas.
 - [ ] Registrar resultados CI por área con enlaces vigentes desde la matriz.
@@ -53,7 +54,7 @@ La paridad se limita a los casos y campos enumerados por cada script. Los contra
 
 **Estado: bloqueado por decisiones/fuentes pendientes.**
 
-Siguen abiertos OPEN-001 a OPEN-007: límite CES cuando lambda tiende a cero, umbral N.2 Test 6, datos NeuralScaling/FamaFrench incompletos, referencia N.6 ausente, catálogo de tipos y contrato de deuda. No implementar deuda, bootstrap ni memoria temporal de orden superior a partir de fórmulas inferidas. Cada resolución requiere fuente normativa completa o propuesta aprobada explícitamente.
+Siguen abiertos OPEN-001 a OPEN-007: límite CES cuando lambda tiende a cero, umbral N.2 Test 6 (NORM-009 A por discrepancia numérica del vector fuente), datos NeuralScaling/FamaFrench incompletos, referencia N.6 ausente, catálogo de tipos y contrato de deuda. No implementar deuda, bootstrap ni memoria temporal de orden superior a partir de fórmulas inferidas. Cada resolución requiere fuente normativa completa o propuesta aprobada explícitamente.
 
 ## v0.5 — perfil técnico del lenguaje
 
