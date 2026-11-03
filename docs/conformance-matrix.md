@@ -201,11 +201,11 @@ El catálogo enumera las fixtures, su propósito y los IDs asociados. El verific
 Esta primera matriz es la línea base, no el cierre del hito. v0.2 podrá declararse completada cuando:
 
 - [ ] Cada requisito del perfil v1.0 tenga un ID estable y una referencia exacta a MDES.
-- [ ] Cada fila I/P tenga al menos una prueba o una explicación explícita de por qué no es automatizable.
-- [ ] Los tests se separen en parser-only, validación, solver, simulación, CLI e interoperabilidad.
-- [ ] Los casos normativos N.2 tengan resultado esperado, prueba ejecutable o bloqueo documentado.
-- [ ] CI publique el resultado de las suites Python y Rust por separado.
-- [ ] Los ejemplos incompletos se excluyan expresamente de la aceptación de ejecución.
+- [x] Cada fila I/P tiene nota de evidencia/limitación y referencia explícita a test, fixture o script; el job de trazabilidad lo comprueba ([PR #74](https://github.com/orbitalronin94/ronin-lang/pull/74)).
+- [x] Los tests están separados por parser, validación, solver, simulación, CLI e interoperabilidad (IR/CSV) en los jobs y pasos de [ci.yml](../.github/workflows/ci.yml).
+- [x] Los casos normativos N.2 tienen resultado esperado, prueba ejecutable o bloqueo documentado: NORM-007, NORM-009 y NORM-010 quedan marcados A cuando la fuente no permite aceptación inequívoca.
+- [x] CI publica por separado las suites Python (matriz 3.9–3.12) y Rust, además de jobs de paridad; [ejecución 15/15](https://github.com/orbitalronin94/ronin-lang/actions/runs/41674388833).
+- [x] Los ejemplos incompletos están excluidos de aceptación semántica/ejecución: `examples/README.md` y EX-005–EX-008 delimitan los casos parser-only, incompletos o sin datasets.
 - [ ] Las discrepancias OPEN-* tengan responsable/decisión o permanezcan fuera del perfil estable.
 - [ ] Se defina el denominador del perfil de conformidad antes de publicar cualquier porcentaje.
 
