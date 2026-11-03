@@ -374,6 +374,9 @@ mod tests {
     fn csv_field_quotes_commas_quotes_and_newlines() {
         assert_eq!(csv_field("a,b"), "\"a,b\"");
         assert_eq!(csv_field("say \"hi\""), "\"say \"\"hi\"\"\"");
+        assert_eq!(csv_field("line\nbreak"), "\"line\nbreak\"");
+        assert_eq!(csv_field("carriage\rreturn"), "\"carriage\rreturn\"");
+        assert_eq!(csv_field("windows\r\nline"), "\"windows\r\nline\"");
     }
 
     #[test]
