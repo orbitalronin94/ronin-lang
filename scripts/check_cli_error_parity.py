@@ -66,6 +66,18 @@ def main():
         rs = run_rust("solve", valid, "--system", "Absent")
         assert_failure("unknown selected system", py, rs)
 
+        py = run_python("run", valid, "--format", "xml")
+        rs = run_rust("run", valid, "--format", "xml")
+        assert_failure("unsupported output format", py, rs)
+
+        py = run_python("check", valid, "--system")
+        rs = run_rust("check", valid, "--system")
+        assert_failure("missing system option value", py, rs)
+
+        py = run_python("check", valid, "--unknown-option")
+        rs = run_rust("check", valid, "--unknown-option")
+        assert_failure("unknown CLI option", py, rs)
+
         malformed = root / "malformed.ronin"
         malformed.write_text("system Broken = { parts: }", encoding="utf-8")
         py = run_python("check", malformed)
@@ -78,7 +90,7 @@ def main():
         rs = run_rust("check", invalid)
         assert_failure("semantic validation rejection", py, rs)
 
-    print("CLI error-path parity OK: both runtimes fail cleanly on four shared cases.")
+    print("CLI error-path parity OK: both runtimes fail cleanly on seven shared cases.")
     return 0
 
 
