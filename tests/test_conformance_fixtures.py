@@ -12,7 +12,7 @@ FIXTURES = Path(__file__).parent / "fixtures" / "conformance"
 
 @pytest.mark.parametrize(
     "filename",
-    ["pusfre.ronin", "ces.ronin", "hill.ronin", "ces_hill.ronin", "full_order1.ronin", "metadata_nested.ronin"],
+    ["pusfre.ronin", "ces.ronin", "hill.ronin", "ces_hill.ronin", "full_order1.ronin", "metadata_nested.ronin", "frequency_sum_within_tolerance.ronin"],
 )
 def test_shared_positive_fixtures_validate_and_solve(filename):
     systems = parse((FIXTURES / filename).read_text(encoding="utf-8"))
@@ -34,6 +34,7 @@ def test_shared_positive_fixtures_validate_and_solve(filename):
         "invalid_resource_negative.ronin",
         "invalid_phi_out_of_range.ronin",
         "invalid_gamma.ronin",
+        "frequency_sum_outside_tolerance.ronin",
     ],
 )
 def test_shared_negative_fixtures_are_rejected(filename):
