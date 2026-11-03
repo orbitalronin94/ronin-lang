@@ -10,7 +10,7 @@
 - CLI: paridad de selección por defecto/explícita en `solve`, `simulate`, `diagnose`, `run` y `check`; diez rutas de fallo compartidas con stdout vacío y diagnóstico en stderr.
 - Parser: aceptación/rechazo del subconjunto común, rechazo de escapes Unicode surrogate aislados y un caso testigo de ubicación línea/columna.
 - CSV: pruebas unitarias de campos con comas, comillas y saltos de línea en Python y Rust. La paridad CLI sigue cubriendo cabecera, identidad de filas y valores numéricos; no se afirma aún round-trip cross-runtime de todos los casos de escape.
-- Trazabilidad: job CI independiente que verifica el inventario de fixtures, los IDs del catálogo, las notas de evidencia/limitación de filas I/P y las rutas de archivo citadas en esas evidencias.
+- Trazabilidad: job CI independiente que verifica el inventario de fixtures, los IDs del catálogo, las notas de evidencia/limitación de filas I/P y las rutas de archivo citadas en esas evidencias. Esta iteración también reemplaza descripciones genéricas de evidencia por referencias concretas a archivos en las filas auditadas.
 - Última ejecución completa de CI observada para la validación de memoria: [15/15 jobs correctos](https://github.com/orbitalronin94/ronin-lang/actions/runs/41658388618).
 
 Estos resultados son evidencia de los alcances concretos enumerados, no un porcentaje de conformidad ni sustituyen la revisión de cada requisito MDES.
@@ -25,6 +25,7 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Job CI para detectar fixtures sin catalogar, referencias a archivos ausentes e IDs desconocidos.
 - [x] Comprobación inversa automatizada: cada fila I/P de la matriz debe incluir una nota de evidencia o limitación ([PR #67](https://github.com/orbitalronin94/ronin-lang/pull/67), [CI 15/15](https://github.com/orbitalronin94/ronin-lang/actions/runs/41667655968)).
 - [x] Auditar NORM-009 / N.2 Test 6: separar la prueba sintética de la rama inactiva del vector literal de la fuente, cuyo rango real (2.9952) contradice el esperado (3.0); registrar estado A y mantener OPEN-002 sin alterar la semántica.
+- [x] Añadir referencias a archivos concretos de implementación, tests, fixtures o scripts en las filas I/P que antes solo describían la evidencia de forma genérica.
 - [ ] Revisar sustantivamente el resto de filas I/P y confirmar que la evidencia enlazada cubre el alcance descrito.
 - [ ] Completar trazabilidad inversa de requisitos a pruebas/fixtures cuando sea automatizable.
 - [ ] Delimitar y aprobar el denominador del perfil v1.0 antes de calcular métricas.
