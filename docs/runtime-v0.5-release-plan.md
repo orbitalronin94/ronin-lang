@@ -128,6 +128,11 @@ Cada unidad debe tener contrato matemático, supuestos, límites, fixtures, prue
 C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta que ambos gates estén resueltos. C5 puede desarrollar investigación en paralelo, pero solo se incluye en el release lo que cumpla sus pruebas y tenga supuestos documentados. C6 empieza con el quickstart existente y se completa tras congelar el perfil.
 
 ## Registro de trabajo
+### 2026-11-03 — C1, corrección de evidencia de deuda
+
+- Detectada una afirmación obsoleta en la matriz: `NORM-004` decía “Placeholder 0.0”, pero `ronin/semantics.py::debt` devuelve `None` y Rust conserva `debt: None`, serializado como `debt: null`. Corregidas también las notas de `PY-006` para no sugerir que el placeholder es cero.
+- La exclusión de deuda se mantiene: falta el contrato normativo completo y no existe estimador. La corrección es documental, no cambia comportamiento.
+
 
 ### 2026-11-03 — C1, revisión semántica inicial
 
