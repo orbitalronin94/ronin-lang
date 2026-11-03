@@ -82,6 +82,26 @@ def make_system(rng, index, model):
     )
 
 
+def make_large_system():
+    """A deterministic 1,000-agent case to exercise parser/solver scale without timing claims."""
+    count = 1000
+    agents = [
+        "    { phi: %s, psi: %s, frequency: 0.001 }"
+        % (number(0.5 + (index % 11) / 22.0), number(0.4 + (index % 7) / 12.0))
+        for index in range(count)
+    ]
+    return (
+        "system Large1000 = {\n"
+        + "  parts: 1000,\n"
+        + "  resource: 100000,\n"
+        + "  agents: [\n"
+        + ",\n".join(agents)
+        + "\n  ],\n"
+        + "  params: { model: \"ces_hill\", lambda: 0.5, K: 0.2, alpha_h: 1.5, alpha: 1.2 }\n"
+        + "}\n"
+    )
+
+
 def rust_run(path):
     args = [
         "cargo", "run", "--quiet", "--manifest-path",
@@ -188,6 +208,7 @@ def main():
             index += 1
             cases.append(make_system(rng, index, model))
     compare_source("\n".join(cases), f"seed={SEED}, cases={len(cases)}")
+    compare_source(make_large_system(), "large project / 1000 agents")
 
     # A valid but numerically degenerate Hill system must fail consistently
     # instead of dividing by a zero total fitness in either runtime.
@@ -207,7 +228,7 @@ def main():
     print(
         "Randomized Python/Rust solver parity OK: "
         f"{len(cases)} deterministic systems, seed={SEED}, models={','.join(MODELS)}, "
-        "plus a matched degenerate-system rejection"
+        "plus a 1,000-agent CES-Hill project and matched degenerate-system rejection"
     )
 
 
