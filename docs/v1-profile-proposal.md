@@ -21,7 +21,7 @@ La siguiente tabla propone el núcleo mínimo que ya tiene evidencia significati
 
 | Área | IDs de matriz | Alcance candidato | Condición de aceptación |
 |---|---|---|---|
-| Modelo de proyecto | CORE-001, LANG-001–004, TYPE-001 | Sistemas, agentes, parámetros, escalares y metadatos admitidos | Fixtures positivos/negativos en ambos parsers; round-trip de IR |
+| Modelo de proyecto | CORE-001, LANG-001–004, TYPE-001 | Sistemas, agentes, parámetros, escalares y metadatos admitidos | Fixtures positivos/negativos en ambos parsers; IR v1 validado y comparado estructuralmente (sin importador IR→RONIN en el alcance actual) |
 | Parser compartido | PARSER-001, PY-003/004, RS-001/002 | Subconjunto léxico/sintáctico implementado y documentado | Corpus compartido y pruebas de rechazo |
 | Validación | VAL-CLI-001, TYPE-004/005 en alcance común | Validación previa a ejecución/compilación para invariantes compartidas | Mismos proyectos aceptados/rechazados y errores clasificados |
 | Solver | CORE-002, NORM-006 y subconjunto probado de PY-006/RS-006 | PUSFRE y perfiles CES/Hill/CES-Hill que superan fixtures compartidos | Vectores de referencia, tolerancias explícitas y paridad |

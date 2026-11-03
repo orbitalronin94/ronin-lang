@@ -16,6 +16,7 @@ VALID_FILES = [
     ROOT / "tests" / "fixtures" / "conformance" / "hill.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "ces_hill.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "metadata_nested.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "ir_json_escaping.ronin",
 ]
 
 VALID_SOURCES = {
@@ -142,6 +143,11 @@ line two"}] }
         system Bad = { parts: 1, resource: 1,
           agents: [{phi: 1, psi: 1, frequency: 1, note: "before	after"}] }
     """,
+    "nan_numeric_resource": "system Bad = { parts: 1, resource: NaN, agents: [{phi: 1, psi: 1, frequency: 1}] }",
+    "lowercase_k_parameter": "system Bad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}], params: {k: 2} }",
+    "nonbreaking_space_separator": "system\u00a0Bad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}] }",
+    "form_feed_separator": "system\u000cBad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}] }",
+    "vertical_tab_separator": "system\u000bBad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}] }",
     "missing_separator_with_source_location": """system Bad = {
   parts 2,
   resource: 1,

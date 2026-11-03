@@ -2,7 +2,7 @@
 
 **Corte de estado:** 2026-11-03  
 **Base:** `docs/roadmap.md`, `docs/conformance-matrix.md`, catálogo de fixtures y CI de GitHub Actions.  
-**Estado:** v0.2 sigue en curso. v0.3 queda cerrado para el contrato de paridad Python/Rust e IR v1 delimitado en esta hoja; esto no implica conformidad global MDES ni cierra v0.2. v0.4/v0.5 no están cerrados. No se declara conformidad global ni aprobación normativa del perfil v1.0.
+**Estado:** v0.2 sigue en curso. v0.3 queda cerrado para el contrato de paridad Python/Rust e IR v1 delimitado en esta hoja; esto no implica conformidad global MDES ni cierra v0.2. v0.4 sigue bloqueado por decisiones normativas; el baseline técnico v0.5 del parser está completado, pero el perfil v1.0 no está aprobado. No se declara conformidad global.
 
 ## Avances integrados desde la línea base anterior
 
@@ -54,16 +54,16 @@ La paridad se limita a los casos y campos enumerados por cada script. Los contra
 
 Siguen abiertos OPEN-001 a OPEN-007: límite CES cuando lambda tiende a cero, umbral N.2 Test 6, datos NeuralScaling/FamaFrench incompletos, referencia N.6 ausente, catálogo de tipos y contrato de deuda. No implementar deuda, bootstrap ni memoria temporal de orden superior a partir de fórmulas inferidas. Cada resolución requiere fuente normativa completa o propuesta aprobada explícitamente.
 
-## v0.5 — perfil de lenguaje
+## v0.5 — perfil técnico del lenguaje
 
-**Estado: parcial; no declarar completitud.**
+**Estado: baseline técnico del parser compartido completado; el compromiso de compatibilidad del perfil v1.0 sigue pendiente de aprobación explícita.**
 
-- [x] Endurecer y comparar casos del parser compartido, escapes, Unicode y ubicaciones de error.
-- [ ] Delimitar explícitamente el subconjunto de lenguaje comprometido.
-- [ ] Completar inventario de construcciones léxicas/sintácticas y pruebas positivas/negativas para el perfil aprobado.
-- [ ] Resolver si imports/módulos y construcciones de alto nivel pertenecen al perfil v1.0.
+- [x] Endurecer y comparar el parser compartido: escapes, Unicode, controles sin escape, espacios admitidos, literales, claves y ubicaciones de error.
+- [x] Delimitar el subconjunto actualmente implementado en [language-subset.md](language-subset.md), sin presentarlo como gramática completa de MDES ni como aprobación normativa.
+- [x] Inventariar construcciones léxicas/sintácticas del subconjunto y añadir evidencia positiva/negativa en ambos backends.
+- [x] Revisar el contrato de errores: categoría/fallo y ubicaciones en casos testigo; no exigir igualdad textual entre runtimes.
+- [ ] Aprobar explícitamente qué construcciones de alto nivel, imports y módulos formarían parte del perfil v1.0; hasta entonces quedan fuera del subconjunto comprometido.
 - [ ] Recuperar fuentes completas de ejemplos/datasets ausentes; no reconstruirlos por conjetura.
-- [ ] Revisar la matriz de errores para contexto y sugerencias sin exigir igualdad textual innecesaria entre backends.
 
 ## Bloqueos normativos
 
