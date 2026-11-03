@@ -53,8 +53,8 @@ def test_csv_writer_round_trips_comma_quote_and_newline_fields():
 
     from ronin.cli import _write_run_csv
 
-    name = 'System, "quoted"\\nsecond line\\r\\nthird line'
-    model = 'model, "quoted"\\nvariant'
+    name = 'System, "quoted"\nsecond line\r\nthird line'
+    model = 'model, "quoted"\nvariant'
     system = SimpleNamespace(params=SimpleNamespace(model=model))
     output = io.StringIO(newline="")
 
