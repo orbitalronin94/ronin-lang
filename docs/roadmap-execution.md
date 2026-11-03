@@ -26,6 +26,7 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Comprobación inversa automatizada: cada fila I/P de la matriz debe incluir una nota de evidencia o limitación ([PR #67](https://github.com/orbitalronin94/ronin-lang/pull/67), [CI 15/15](https://github.com/orbitalronin94/ronin-lang/actions/runs/41667655968)).
 - [x] Verificar unicidad de IDs de fila y exigir que las referencias del catálogo apunten a IDs que existan como filas reales de la matriz.
 - [x] Exigir al menos una referencia explícita a test, fixture o script de paridad en cada fila I/P.
+- [x] Comprobar que todos los IDs de la propuesta v1.0 mapean a filas reales de la matriz con referencia MDES; la revisión de exactitud y aprobación del perfil siguen pendientes.
 - [x] Auditar NORM-009 / N.2 Test 6: separar la prueba sintética de la rama inactiva del vector literal de la fuente, cuyo rango real (2.9952) contradice el esperado (3.0); registrar estado A y mantener OPEN-002 sin alterar la semántica.
 - [x] Añadir referencias a archivos concretos de implementación en las filas I/P y enlazar tests, fixtures o scripts en las filas marcadas I; el job CI comprueba que las rutas citadas existen.
 - [ ] Revisar sustantivamente el resto de filas I/P y confirmar que la evidencia enlazada cubre el alcance descrito.
@@ -33,7 +34,7 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [ ] Delimitar y aprobar el denominador del perfil v1.0 antes de calcular métricas.
 - [ ] Registrar resultados CI por área con enlaces vigentes desde la matriz.
 
-**No cerrar v0.2 todavía:** el verificador comprueba inventario, unicidad y existencia de IDs de fila, presencia de notas, referencias explícitas a pruebas y resolución de rutas; no juzga si cada prueba demuestra el requisito ni si la matriz identifica todos los tests relevantes.
+**No cerrar v0.2 todavía:** el verificador comprueba inventario, unicidad y existencia de IDs de fila, mapeo de IDs del perfil candidato, presencia de notas, referencias explícitas a pruebas y resolución de rutas; no juzga si la referencia MDES es semánticamente exacta ni si cada prueba demuestra el requisito.
 
 ## v0.3 — paridad Python/Rust e IR
 
