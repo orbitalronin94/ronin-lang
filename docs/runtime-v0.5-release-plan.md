@@ -129,6 +129,12 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 
 ## Registro de trabajo
 
+### 2026-11-03 — C3, propuestas normativas preparadas
+
+- Se trasladaron al plan de release dos propuestas que existían en la rama de investigación: [ADR-0001 — CES lambda→0](decisions/ADR-0001-ces-zero-limit.md) y [ADR-0002 — modos de parámetros](decisions/ADR-0002-parameter-modes.md).
+- Ambas siguen **pendientes de aprobación**. ADR-0001 cambia N.2 Test 3; ADR-0002 cambia el significado de identificabilidad. No se modifica MDES ni el comportamiento del runtime en esta tanda.
+- OPEN-003/004 siguen dependiendo de datasets fuente completos; OPEN-005 de recuperar/aclarar la referencia N.6; OPEN-006 de decisión de alcance del sistema de tipos; OPEN-007 de una definición normativa de deuda. Si no se recuperan fuentes, deberán quedar excluidos explícitamente del perfil v0.5.
+
 ### 2026-11-03 — C2, primera auditoría de CLI
 
 - Auditoría de opciones: Rust aceptaba `--system` en `list`/`run` y `--delta` en comandos ajenos, aunque Python los rechaza. Se alineó el alcance de opciones y se añadieron tres casos a la paridad de errores (10 → 13).
