@@ -73,13 +73,35 @@ def main():
             errors.append(f"v1-profile-proposal.md: {requirement_id} has no matrix MDES reference")
 
     candidate_section = profile_text.split("## 2. Candidato de alcance incluido", 1)[1].split("## 3. Exclusiones", 1)[0]
-    candidate_ids = {item for item in requirement_ids(candidate_section) if not item.startswith("OPEN-")}
-    for requirement_id in sorted(candidate_ids):
-        statuses = matrix_statuses.get(requirement_id, set())
-        if not statuses.intersection({"I", "P"}):
+    candidate_ids = set()
+    candidate_rows = 0
+    for line_number, line in enumerate(candidate_section.splitlines(), start=1):
+        if not line.startswith("|"):
+            continue
+        cells = table_cells(line)
+        if len(cells) < 4 or cells[0].lower() == "área":
+            continue
+        row_ids = {item for item in requirement_ids(cells[1]) if not item.startswith("OPEN-")}
+        if not row_ids:
             errors.append(
-                f"v1-profile-proposal.md: candidate ID {requirement_id} is not I/P in the conformance matrix"
+                f"v1-profile-proposal.md:candidate table line {line_number}: row has no matrix requirement IDs"
             )
+            continue
+        duplicate_ids = candidate_ids.intersection(row_ids)
+        for requirement_id in sorted(duplicate_ids):
+            errors.append(
+                f"v1-profile-proposal.md:candidate table line {line_number}: duplicate candidate ID {requirement_id}"
+            )
+        candidate_ids.update(row_ids)
+        candidate_rows += 1
+        for requirement_id in sorted(row_ids):
+            statuses = matrix_statuses.get(requirement_id, set())
+            if not statuses.intersection({"I", "P"}):
+                errors.append(
+                    f"v1-profile-proposal.md: candidate ID {requirement_id} is not I/P in the conformance matrix"
+                )
+    if candidate_rows == 0:
+        errors.append("v1-profile-proposal.md: candidate scope table is empty or unreadable")
 
     catalog_text = CATALOG.read_text(encoding="utf-8")
     catalogued = set()
@@ -147,7 +169,7 @@ def main():
     print(
         f"Traceability OK: {len(matrix_row_ids)} unique matrix requirements; "
         f"{len(profile_ids)} profile proposal IDs map to matrix rows; "
-        f"{len(candidate_ids)} candidate IDs are I/P; {len(actual)} fixtures; "
+        f"{len(candidate_ids)} candidate IDs across {candidate_rows} scope rows are I/P; {len(actual)} fixtures; "
         f"{audited_rows} I/P rows; {checked_paths} cited evidence paths resolve."
     )
     return 0
