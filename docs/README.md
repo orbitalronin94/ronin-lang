@@ -1,4 +1,4 @@
-# Documentación de RONIN Runtime (v0.1 publicada; v0.5 en preparación) · MDES v0.5
+# Documentación de RONIN Runtime v0.1 · MDES v0.5
 
 La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es la versión de referencia de la especificación; RONIN Runtime v0.1 es el estado actual del software. No son el mismo número de versión.
 
@@ -7,6 +7,8 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 - [Inicio práctico: primer flujo ejecutable](quickstart-practico.md) · [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
 - [Integración selectiva de investigación v0.5](research-integration-scope-v0.5.md) · alcance de FIM, SIR, D-óptimo y Sobol
 - [Propuesta de perfil Runtime v0.5](runtime-v0.5-profile-proposal.md) · alcance estable y exclusiones pendientes de aprobación
+- [Borrador de migración v0.1 → v0.5](migration-v0.1-to-v0.5.md) · advertencias de compatibilidad y campos null
+- [Changelog](../CHANGELOG.md) · cambios acumulados y límites del candidato no publicado
 - [Roadmap de v0.1 a v1.0](roadmap.md)
 - [Plan de ejecución y siguientes pasos](roadmap-execution.md) — estado verificado, cierre del baseline técnico v0.5 y tareas pendientes de v0.2/aprobación v1.0, sin adelantar decisiones normativas.
 - [Subconjunto técnico del parser](language-subset.md) — inventario del lenguaje actualmente aceptado, sin aprobación normativa.
@@ -35,3 +37,5 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 
 El castellano es el idioma principal; los archivos `.en.md` son resúmenes de acompañamiento, no traducciones literales completas. El material fuente se conserva en sus documentos españoles.
 
+
+- [Propuesta de perfil Runtime v0.5](runtime-v0.5-profile-proposal.md): alcance de compatibilidad del runtime v0.5.0 y exclusiones pendientes de aprobación.
