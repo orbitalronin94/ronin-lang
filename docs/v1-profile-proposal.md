@@ -4,7 +4,7 @@
 **Base:** MDES v0.5, `docs/conformance-matrix.md`, `docs/roadmap.md`.
 **Objetivo:** fijar un denominador honesto y verificable para medir el primer release estable.
 
-Esta propuesta delimita un perfil inicial de producto. No redefine MDES, no convierte requisitos opcionales en obligatorios y no afirma conformidad integral con MDES v0.5. CI verifica que los IDs citados aquí correspondan a filas reales de `docs/conformance-matrix.md` con una referencia MDES no vacía y que todos los IDs de la tabla de alcance candidato estén marcados I/P; esta comprobación no evalúa la exactitud semántica de cada referencia ni sustituye la revisión explícita del mantenedor. La aprobación final del alcance requiere esa revisión.
+Esta propuesta delimita un perfil inicial de producto. No redefine MDES, no convierte requisitos opcionales en obligatorios y no afirma conformidad integral con MDES v0.5. CI verifica que los IDs citados aquí correspondan a filas reales de `docs/conformance-matrix.md` con una referencia MDES no vacía y que todos los IDs de la tabla de alcance candidato estén marcados I/P; el mismo job también comprueba que los símbolos `def`/`fn` citados en la matriz existan en el archivo referenciado. Estas comprobaciones no evalúan la exactitud semántica de cada referencia ni sustituyen la revisión explícita del mantenedor. La aprobación final del alcance requiere esa revisión.
 
 ## 1. Reglas del perfil
 
