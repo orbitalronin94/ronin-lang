@@ -135,11 +135,15 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 - Revisado el diagnóstico normativo: `NORM-005` baja de I a P porque la inferencia de parámetros libres desde valores numéricos sigue provisional (ADR-0002). La propuesta de perfil limita el compromiso estable de identificabilidad hasta resolverlo.
 - C1 sigue abierto: esta es una primera revisión semántica de las filas de simulación/diagnóstico, no la revisión completa de las 62 filas I/P.
 
+### 2026-11-03 — C1, corrección de evidencia de deuda
+
+- `NORM-004` describía incorrectamente un placeholder `0.0`; la implementación devuelve `None` en Python y `debt: null` en Rust. Se corrigen NORM-004 y la nota de PY-006. La deuda sigue excluida por falta de estimador normativo.
+
 ### 2026-11-03 — C5, stress numérico compartido
 
 - Se incorporan dos pruebas deterministas procedentes de la línea de investigación, sin introducir nuevas fórmulas ni cambiar el runtime: `check_randomized_runtime_parity.py` genera 80 sistemas (16 por cada modelo PUSFRE/CES/Hill/CES-Hill/full), incluye frecuencias de 1e-300 y recursos/parametrizaciones extremos, y verifica rechazo degenerado; `check_randomized_simulation_parity.py` genera 15 sistemas (3 por modelo), 24 pasos y semillas fijas.
 - Ambos scripts se añaden a los jobs de solver/simulación de CI y a las filas CORE-002/PY-006/RS-006/SIM-002/RS-007 de la matriz.
-- Estos tests fortalecen el núcleo compartido, pero no integran las APIs experimentales FIM/D-optimal/Sobol/SIR de PR #35. La línea de investigación avanzada permanece fuera del perfil estable propuesto.
+- Estos tests fortalecen el núcleo compartido, pero no integran las APIs experimentales FIM/D-optimal/Sobol/SIR de PR #35. La línea de investigación avanzada permanece fuera del perfil estable propuesto. La evaluación Hill en espacio logarítmico ya estaba en la línea base Python/Rust; no se vuelve a importar ni se cambia.
 
 ### 2026-11-03 — C4, perfil Runtime v0.5 propuesto
 
