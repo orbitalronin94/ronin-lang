@@ -129,6 +129,16 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 
 ## Registro de trabajo
 
+### 2026-11-03 — C1, primera ejecución
+
+- Revisadas las PR #79 y #82: #79 comprueba declaraciones `def`/`fn` pero no tenía tests dedicados; #82 mejora la extracción `ruta::símbolo`, pero su búsqueda por subcadena acepta menciones en comentarios/cadenas y prefijos. Se consolidó extracción estructurada más verificación de declaración anclada y pruebas negativas/positivas.
+- Añadido `tests/test_fixture_catalog_checker.py` y conectado a CI antes del chequeo de matriz.
+- Primer intento CI detectó un escape incorrecto en la expresión regular; corregido antes de aceptar el resultado.
+- CI final del commit `18175e451fb07d23676cff5a8f01fa31044c0722`: **15/15 jobs correctos**, incluido el job de trazabilidad. Evidencia: https://github.com/orbitalronin94/ronin-lang/actions/runs/41688569556.
+- Corregida la documentación: el catálogo actual contiene ocho fixtures positivos, no siete.
+- **C1 sigue en curso:** la verificación estructural pasa, pero falta la revisión semántica manual de todas las filas I/P y la aprobación del perfil.
+
+
 Cada avance debe actualizar este archivo con:
 - checkpoint e ítem;
 - PR/commit/issue que aporta el cambio;
