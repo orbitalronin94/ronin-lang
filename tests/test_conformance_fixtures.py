@@ -31,6 +31,9 @@ def test_shared_positive_fixtures_validate_and_solve(filename):
         "invalid_pusfre_lambda.ronin",
         "invalid_alpha.ronin",
         "full_order3_unsupported.ronin",
+        "invalid_resource_negative.ronin",
+        "invalid_phi_out_of_range.ronin",
+        "invalid_gamma.ronin",
     ],
 )
 def test_shared_negative_fixtures_are_rejected(filename):

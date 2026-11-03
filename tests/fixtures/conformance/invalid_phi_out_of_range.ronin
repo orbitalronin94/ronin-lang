@@ -1,0 +1,7 @@
+system InvalidPhi = {
+  parts: 2, resource: 10,
+  agents: [
+    { phi: 1.2, psi: 0.5, frequency: 0.5 },
+    { phi: 0.5, psi: 0.5, frequency: 0.5 }
+  ]
+}

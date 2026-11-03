@@ -21,6 +21,9 @@ These synthetic RONIN files are a shared input corpus for the Python and Rust im
 | `invalid_pusfre_lambda.ronin` | PUSFRE with non-zero lambda | CORE-008, TYPE-004, VAL-CLI-001 |
 | `invalid_alpha.ronin` | Alpha outside the supported range | TYPE-004/005, VAL-CLI-001 |
 | `full_order3_unsupported.ronin` | Higher-order temporal memory is not implemented | LANG-005, PY-006, RS-006; negative capability boundary, not a positive conformance claim |
+| `invalid_resource_negative.ronin` | Resource must be non-negative | CORE-001, TYPE-004/005, VAL-CLI-001 |
+| `invalid_phi_out_of_range.ronin` | Agent phi outside [0,1] | CORE-008, TYPE-004/005, VAL-CLI-001 |
+| `invalid_gamma.ronin` | Gamma outside supported [0,1] range | TYPE-004/005, VAL-CLI-001 |
 
 ## Diagnostic fixtures
 
@@ -59,7 +62,7 @@ This inventory records the concrete scope visible in each parity script. Counts 
 | Script | Concrete coverage in the current script | Important boundary |
 |---|---|---|
 | `check_parser_parity.py` | 8 valid files, 3 valid inline sources and 19 invalid inline sources | Parser acceptance and declared system names only; not semantic execution |
-| `check_validation_parity.py` | 12 valid files, 4 invalid files and 5 multi-system selection cases | Acceptance/rejection and selected-system behavior; does not compare all diagnostic wording |
+| `check_validation_parity.py` | 12 valid files, 7 invalid files and 5 multi-system selection cases | Acceptance/rejection and selected-system behavior; does not compare all diagnostic wording |
 | `check_ir_parity.py` | 11 valid files and 4 invalid files | Structural JSON equality and rejection parity for the listed corpus |
 | `check_runtime_parity.py` | 11 valid files, 4 invalid files and one explicit delta override | Solver fields and numeric tolerances for the enumerated models; not all MDES formulas |
 | `check_diagnostic_parity.py` | 4 diagnostic/check-only fixtures | Report fields and range comparison; bootstrap confidence interval remains null |
