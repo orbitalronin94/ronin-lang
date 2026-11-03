@@ -129,6 +129,11 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 
 ## Registro de trabajo
 
+### 2026-11-03 — C1, corrección de evidencia de deuda
+
+- Detectada otra afirmación obsoleta en la matriz: `NORM-004` decía “Placeholder 0.0”, pero `ronin/semantics.py::debt` devuelve `None` y Rust conserva `debt: None`, serializado como `debt: null`. Corregidas también las notas de `PY-006` para no sugerir que el placeholder es cero.
+- La exclusión de deuda se mantiene: falta el contrato normativo completo y no existe estimador. La corrección es de evidencia/documentación, no de comportamiento.
+
 ### 2026-11-03 — C1, revisión semántica inicial
 
 - Detectada y corregida una afirmación obsoleta: `docs/conformance-matrix.md` y `docs/roadmap-execution.md` decían que Python/Rust no compartían RNG, pero `rust/src/simulator.rs` replica MT19937, uniform de 53 bits y gauss cacheado de CPython; `scripts/check_simulation_contracts.py` compara 12 trayectorias con semilla fija a tolerancia 1e-12. Corregidas también `roadmap.md` y `source-coverage.md`.
