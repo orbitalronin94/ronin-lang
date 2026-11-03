@@ -100,7 +100,12 @@ def main():
         if not evidence or evidence in {"—", "-", "TBD", "TODO"}:
             errors.append(f"conformance-matrix.md:{line_number}: {cells[0]} is I/P without evidence or an explicit limitation")
             continue
-        for path in evidence_file_paths(evidence):
+        row_paths = list(evidence_file_paths(evidence))
+        if not any(path.startswith(("tests/", "rust/tests/", "scripts/")) for path in row_paths):
+            errors.append(
+                f"conformance-matrix.md:{line_number}: {cells[0]} has no explicit test, fixture, or parity-script reference"
+            )
+        for path in row_paths:
             checked_paths += 1
             if not (ROOT / path).is_file():
                 errors.append(
