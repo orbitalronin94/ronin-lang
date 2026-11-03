@@ -69,7 +69,7 @@ No será todavía el lenguaje general de MDES: no incluye funciones generales, m
 - [ ] C3: cada OPEN-001…OPEN-007 resuelto por fuente/ADR aprobada o excluido expresamente del perfil.
 - [ ] C4: gramática/subconjunto, errores y separación parser/validación/ejecución revisados.
 - [x] C5: alcance de investigación delimitado en `research-integration-scope-v0.5.md`; PR #89 aporta 80 casos solver y 15 trayectorias de simulación con paridad. FIM/Jacobiano, SIR, D-óptimo y Sobol quedan fuera del perfil estable.
-- [ ] C6: instalación limpia, quickstart, ejemplos, dependencias y plataformas declaradas verificados; PR #94 (17/17) y PR #96 (17/17 en el commit de código) aportan evidencia Ubuntu; se espera CI del SHA documental final antes de cerrar.
+- [x] C6: instalación limpia, quickstart, ejemplos, dependencias y plataformas declaradas verificados para Ubuntu CI; PR #94 y PR #96 fusionadas, 17/17 jobs en el SHA final de PR #96. Python 3.9–3.12 en matriz, wheel aislado en Python 3.12 y Rust `--release --locked`; Windows/macOS no declarados.
 - [ ] C7: release candidate con matriz, changelog, migración y CI completa.
 - [ ] C8: tag `v0.5.0`, artefactos y checksums.
 
