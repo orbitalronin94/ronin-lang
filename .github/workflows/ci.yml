@@ -120,6 +120,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Compare Python and Rust solver results
         run: python scripts/check_runtime_parity.py
+      - name: Stress solver parity with deterministic randomized systems
+        run: python scripts/check_randomized_runtime_parity.py
 
 
   cross-runtime-simulation-contracts:
@@ -137,8 +139,12 @@ jobs:
           python -m pip install -e .
       - name: Install stable Rust
         uses: dtolnay/rust-toolchain@stable
+      - name: Build Rust CLI for generated simulation parity
+        run: cargo build --manifest-path rust/Cargo.toml --bin ronin-core
       - name: Compare shared simulation invariants
         run: python scripts/check_simulation_contracts.py
+      - name: Stress seeded simulation parity on generated systems
+        run: python scripts/check_randomized_simulation_parity.py
 
 
   cross-runtime-diagnostics:
