@@ -278,3 +278,8 @@ def test_memory_weights_use_absolute_tolerance_matching_rust():
     params = replace(system.params, memory_weights=[1.0000000015])
     with pytest.raises(SemanticError, match="memory_weights must sum to 1"):
         validate_coherence(params)
+
+@pytest.mark.parametrize("delta", [0.0, -0.01, 0.1000001, float("nan"), float("inf")])
+def test_solve_rejects_invalid_delta_overrides_like_rust(delta):
+    with pytest.raises(SemanticError, match=r"delta must be in \(0,0.1\]"):
+        solve(parse(MAQ)["Maquinas"], delta=delta)
