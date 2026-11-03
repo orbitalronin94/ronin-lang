@@ -19,9 +19,9 @@ Los elementos que dependan de una decisión normativa del autor se preparan como
 | C1 | Cierre de evidencia v0.2 | Cada requisito del perfil candidato tiene estado correcto, evidencia concreta y referencias válidas; matriz y catálogo se validan en CI | En curso |
 | C2 | Contrato compartido v0.3 | CLI, errores, selección, CSV, IR y comportamiento Python/Rust cubiertos por pruebas de integración/paridad; diferencias intencionadas documentadas | **Completado para el contrato documentado** |
 | C3 | Decisiones normativas v0.4 | OPEN-001…OPEN-007 resueltos por fuente/ADR aprobado o excluidos explícitamente del perfil; ningún placeholder se presenta como resultado | Bloqueado por decisiones/fuentes |
-| C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Propuesta de perfil Runtime v0.5 redactada; aprobación pendiente |
-| C5 | Núcleo matemático y diagnósticos | Funcionalidades que se incluyan desde la línea de investigación integradas en PR pequeñas, con definición, fixtures y paridad; el resto se marca experimental/no incluido | En curso en PR #35 |
-| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | Pendiente |
+| C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Propuesta de perfil Runtime v0.5 fusionada en PR #86; aprobación explícita pendiente |
+| C5 | Núcleo matemático y diagnósticos | Funcionalidades seleccionadas de investigación con definición, fixtures y paridad; el resto se marca experimental/no incluido | **Completado para alcance v0.5:** PR #89 fusionada; 80 casos solver + 15 trayectorias simuladas; APIs FIM/SIR/D-óptimo/Sobol excluidas explícitamente |
+| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | **En validación:** quickstart/smoke CLI existente; wheel Python aislado y Rust release `--locked` añadidos en esta rama; falta CI integrada |
 | C7 | Release candidate | Alcance congelado; matriz de compatibilidad, migración, documentación, suite completa y CI en verde en commit candidato | Pendiente |
 | C8 | Declaración v0.5.0 | Tag/release, notas, artefactos, hashes y limitaciones publicados; ningún bloqueo crítico abierto | Pendiente |
 
@@ -128,6 +128,25 @@ Cada unidad debe tener contrato matemático, supuestos, límites, fixtures, prue
 C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta que ambos gates estén resueltos. C5 puede desarrollar investigación en paralelo, pero solo se incluye en el release lo que cumpla sus pruebas y tenga supuestos documentados. C6 empieza con el quickstart existente y se completa tras congelar el perfil.
 
 ## Registro de trabajo
+### 2026-11-03 — C1, revisión semántica de simulación y diagnóstico
+
+- PR [#85](https://github.com/orbitalronin94/ronin-lang/pull/85) fusionada: corrigió la afirmación de RNG distinta, documentó la paridad seeded real de MT19937/gauss CPython y degradó NORM-005 a P porque la libertad de parámetros se infiere de valores y ADR-0002 sigue pendiente.
+- La revisión sigue siendo parcial; C1 no se cierra hasta revisar el resto de las filas I/P.
+
+### 2026-11-03 — C1, evidencia de deuda
+
+- PR [#91](https://github.com/orbitalronin94/ronin-lang/pull/91) propone corregir NORM-004/PY-006: `debt()` devuelve `None`, Rust usa `None`, y el JSON contiene `debt: null`, no cero. PR pendiente de merge/revisión.
+
+### 2026-11-03 — C5, paridad aleatoria integrada
+
+- PR [#89](https://github.com/orbitalronin94/ronin-lang/pull/89) fusionada con 15/15 jobs correctos: 80 sistemas solver deterministas (16 por cada uno de cinco modelos) y 15 sistemas de simulación × 24 pasos. CI: https://github.com/orbitalronin94/ronin-lang/actions/runs/41693306589.
+- Las APIs FIM/Jacobiano, SIR, D-óptimo y Sobol se mantienen fuera del contrato estable, según [research-integration-scope-v0.5.md](research-integration-scope-v0.5.md). C5 queda cerrado solo para el alcance explícito de Runtime v0.5, no como implementación de toda la línea de investigación.
+
+### 2026-11-03 — C6, instalación aislada y binario release
+
+- PR [#87](https://github.com/orbitalronin94/ronin-lang/pull/87) aporta build de sdist/wheel, instalación en venv limpio y smoke del CLI instalado; también build Rust `--release --locked` y smoke del binario. Su rama obtuvo 17/17 jobs: https://github.com/orbitalronin94/ronin-lang/actions/runs/41692876766.
+- Se portaron esos dos jobs y `rust/Cargo.lock` a una rama limpia basada en el main que ya contiene PR #89. La CI integrada de esta rama debe pasar antes de cerrar C6.
+
 
 ### 2026-11-03 — C1, revisión semántica inicial
 
