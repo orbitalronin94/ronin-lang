@@ -114,3 +114,15 @@ def test_parser_rejects_isolated_unicode_surrogate_escape():
     source = r'system S = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, note: "\uD800"}] }'
     with pytest.raises(SyntaxError, match="Invalid Unicode surrogate sequence"):
         parse(source)
+
+@pytest.mark.parametrize(
+    "raw_value",
+    ["line one\nline two", "before\tafter", "carriage\rreturn"],
+)
+def test_parser_rejects_unescaped_control_characters_in_strings(raw_value):
+    source = (
+        'system S = { parts: 1, resource: 1, agents: '
+        '[{phi: 1, psi: 1, frequency: 1, note: "' + raw_value + '"}] }'
+    )
+    with pytest.raises((SyntaxError, ValueError)):
+        parse(source)
