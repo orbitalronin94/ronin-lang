@@ -166,8 +166,13 @@ fn parse_args(
     if bootstrap.is_some() && command != "diagnose" {
         return Err("--bootstrap is only supported by diagnose".into());
     }
-    if system.is_some() && command == "compile" {
-        return Err("--system is not supported by compile; all systems are compiled".into());
+    if system.is_some()
+        && !["check", "solve", "simulate", "diagnose"].contains(&command.as_str())
+    {
+        return Err("--system is only supported by check, solve, simulate and diagnose".into());
+    }
+    if delta.is_some() && !["solve", "run"].contains(&command.as_str()) {
+        return Err("--delta is only supported by solve and run".into());
     }
     Ok((command, file, system, delta, output, bootstrap, steps, seed, output_format))
 }
@@ -371,6 +376,22 @@ mod tests {
     }
 
     #[test]
+    fn system_option_is_restricted_to_supported_commands() {
+        for command in ["list", "run", "compile"] {
+            let args = vec![command.into(), fixture(), "--system".into(), "Maquinas".into()];
+            assert!(execute(&args).unwrap_err().contains("--system is only supported"));
+        }
+    }
+
+    #[test]
+    fn delta_option_is_restricted_to_solve_and_run() {
+        for command in ["list", "check", "simulate", "diagnose", "compile"] {
+            let args = vec![command.into(), fixture(), "--delta".into(), "0.05".into()];
+            assert!(execute(&args).unwrap_err().contains("--delta is only supported"));
+        }
+    }
+
+    #[test]
     fn csv_field_quotes_commas_quotes_and_newlines() {
         assert_eq!(csv_field("a,b"), "\"a,b\"");
         assert_eq!(csv_field("say \"hi\""), "\"say \"\"hi\"\"\"");
@@ -433,6 +454,7 @@ mod tests {
         assert!(output.contains("\"allocation\":["));
         assert!(output.contains("\"fitness\":["));
         assert!(output.contains("\"debt\":null"));
+        assert!(output.contains("\"K_used\":\"inf\""));
     }
 
     #[test]
@@ -533,7 +555,7 @@ mod tests {
     #[test]
     fn compile_rejects_system_filter() {
         let args = vec!["compile".into(), fixture(), "--system".into(), "Maquinas".into()];
-        assert!(execute(&args).unwrap_err().contains("--system is not supported"));
+        assert!(execute(&args).unwrap_err().contains("--system is only supported"));
     }
 
     #[test]

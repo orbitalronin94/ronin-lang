@@ -7,7 +7,7 @@
 ## Avances integrados desde la línea base anterior
 
 - Validación numérica compartida: sumas de frecuencias dentro/fuera de la tolerancia de 1e-9, y rechazo de pesos de memoria con longitud o suma inválidas.
-- CLI: paridad de selección por defecto/explícita en `solve`, `simulate`, `diagnose`, `run` y `check`; diez rutas de fallo compartidas con stdout vacío y diagnóstico en stderr.
+- CLI: paridad de selección por defecto/explícita en `solve`, `simulate`, `diagnose`, `run` y `check`; trece rutas de fallo compartidas con stdout vacío y diagnóstico en stderr.
 - Parser: aceptación/rechazo del subconjunto común, rechazo de escapes Unicode surrogate aislados y un caso testigo de ubicación línea/columna.
 - CSV: pruebas unitarias de campos con comas, comillas y saltos de línea en Python y Rust. La paridad CLI sigue cubriendo cabecera, identidad de filas y valores numéricos; no se afirma aún round-trip cross-runtime de todos los casos de escape.
 - Trazabilidad: job CI independiente que verifica el inventario de fixtures, los IDs del catálogo, las notas de evidencia/limitación de filas I/P y las rutas de archivo citadas en esas evidencias. Las filas marcadas I enlazan también a tests, fixtures o scripts que respaldan el alcance indicado.
@@ -29,6 +29,7 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Comprobar que todos los IDs de la propuesta v1.0 mapean a filas reales de la matriz con referencia MDES y que los IDs del alcance candidato están marcados I/P; la revisión de exactitud y aprobación del perfil siguen pendientes.
 - [x] Auditar NORM-009 / N.2 Test 6: separar la prueba sintética de la rama inactiva del vector literal de la fuente, cuyo rango real (2.9952) contradice el esperado (3.0); registrar estado A y mantener OPEN-002 sin alterar la semántica.
 - [x] Añadir referencias a archivos concretos de implementación en las filas I/P y enlazar tests, fixtures o scripts en las filas marcadas I; el job CI comprueba que las rutas citadas existen.
+- [x] Validar referencias `ruta::símbolo` contra declaraciones `def`/`fn` reales; tests unitarios rechazan menciones en comentarios/cadenas y coincidencias por prefijo ([CI](https://github.com/orbitalronin94/ronin-lang/actions/runs/41688569556)).
 - [ ] Revisar sustantivamente el resto de filas I/P y confirmar que la evidencia enlazada cubre el alcance descrito.
 - [ ] Completar trazabilidad inversa de requisitos a pruebas/fixtures cuando sea automatizable.
 - [ ] Delimitar y aprobar el denominador del perfil v1.0 antes de calcular métricas.
@@ -46,8 +47,10 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Simulación: 12 proyectos, 12 pasos, semilla 73 y comparación de trayectorias con tolerancia (10^{-12}).
 - [x] CSV: 11 proyectos y un proyecto multi-sistema; tests unitarios adicionales de escape en ambos backends.
 - [x] Validación: 13 entradas válidas, diez inválidas y cinco casos multi-sistema.
-- [x] CLI: selección y diez rutas de error comparadas entre runtimes.
+- [x] CLI: selección y trece rutas de error comparadas entre runtimes.
 - [x] Documentar diferencias intencionadas y contratos observados: selección por comando; errores comparados por fallo no-cero, stdout vacío y stderr explicativo, sin exigir igualdad textual ni códigos numéricos idénticos.
+- [x] Alinear opciones CLI Rust con Python: `--system` solo en check/solve/simulate/diagnose y `--delta` solo en solve/run; añadir tres casos de rechazo a la paridad CLI.
+- [x] Normalizar números no finitos del JSON CLI Python a cadenas `inf`/`-inf`/`nan`, con `allow_nan=False`, y fijar el mismo contrato en tests Rust/Python.
 - [x] Verificar el ciclo de serialización del IR v1 en ambos runtimes mediante parseo JSON estructural y comparación de objetos; el IR sigue siendo un formato de salida, no un importador/round-trip de vuelta a `.ronin`.
 - [x] Delimitar RNG: la misma semilla garantiza reproducibilidad dentro de cada backend; no se declara secuencia aleatoria común Python/Rust.
 - [x] Registrar vectores ausentes como fuera del alcance de paridad ejecutable mientras falten datos/fuentes normativas (OPEN-001 a OPEN-007); no se inventan resultados esperados.

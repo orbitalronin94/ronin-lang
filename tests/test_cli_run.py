@@ -24,9 +24,14 @@ def test_run_solves_every_system_and_emits_one_json_document(capsys, tmp_path):
     path.write_text(source, encoding="utf-8")
 
     assert main(["run", str(path)]) == 0
-    output = json.loads(capsys.readouterr().out)
+    raw_output = capsys.readouterr().out
+    output = json.loads(raw_output)
 
     assert list(output) == ["First", "Second"]
+    # Rust CLI encodes non-finite numbers as JSON strings; Python must do the same.
+    assert output["First"]["K_used"] == "inf"
+    assert output["Second"]["K_used"] == "inf"
+    assert "Infinity" not in raw_output
     assert len(output["First"]["allocation"]) == 2
     assert len(output["Second"]["allocation"]) == 2
     assert abs(sum(output["First"]["allocation"]) - 100.0) < 1e-9

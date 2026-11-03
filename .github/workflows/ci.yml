@@ -260,5 +260,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Test traceability checker
+        run: python tests/test_fixture_catalog_checker.py
       - name: Verify fixture catalog and requirement references
         run: python scripts/check_fixture_catalog.py

@@ -90,6 +90,18 @@ def main():
         rs = run_rust("run", valid, "--steps", "2")
         assert_failure("simulation option outside simulate", py, rs)
 
+        py = run_python("list", valid, "--system", "First")
+        rs = run_rust("list", valid, "--system", "First")
+        assert_failure("system option outside supported commands (list)", py, rs)
+
+        py = run_python("run", valid, "--system", "First")
+        rs = run_rust("run", valid, "--system", "First")
+        assert_failure("system option outside supported commands (run)", py, rs)
+
+        py = run_python("check", valid, "--delta", "0.05")
+        rs = run_rust("check", valid, "--delta", "0.05")
+        assert_failure("delta option outside solve/run", py, rs)
+
         malformed = root / "malformed.ronin"
         malformed.write_text("system Broken = { parts: }", encoding="utf-8")
         py = run_python("check", malformed)
@@ -102,7 +114,7 @@ def main():
         rs = run_rust("check", invalid)
         assert_failure("semantic validation rejection", py, rs)
 
-    print("CLI error-path parity OK: both runtimes fail cleanly on ten shared cases.")
+    print("CLI error-path parity OK: both runtimes fail cleanly on thirteen shared cases.")
     return 0
 
 
