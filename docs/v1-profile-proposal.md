@@ -26,7 +26,7 @@ La siguiente tabla propone el núcleo mínimo que ya tiene evidencia significati
 | Validación | VAL-CLI-001, TYPE-004/005 en alcance común | Validación previa a ejecución/compilación para invariantes compartidas | Mismos proyectos aceptados/rechazados y errores clasificados |
 | Solver | CORE-002, NORM-006 y subconjunto probado de PY-006/RS-006 | PUSFRE y perfiles CES/Hill/CES-Hill que superan fixtures compartidos | Vectores de referencia, tolerancias explícitas y paridad |
 | Simulación | PY-007, SIM-002 | Contrato de simulación actualmente compartido | Semilla, invariantes, historial y tolerancia documentados |
-| Diagnóstico | CORE-007, SIM-003, subconjunto PY-008/RS-008 | Rango/degeneración para los casos compartidos; sin bootstrap inferido | Fixtures activos/inactivos/indeterminados y paridad de informe |
+| Diagnóstico | CORE-007, SIM-003, subconjunto PY-008/RS-008 | Rango Ω y estados de degeneración en casos compartidos; sin bootstrap. Las afirmaciones individuales de identificabilidad que dependan de inferir parámetros libres quedan provisionales hasta ADR-0002 | Fixtures activos/inactivos/indeterminados y paridad de informe; campos de identificabilidad se excluyen del compromiso estable hasta aprobar modos explícitos |
 | IR | INTEROP-008, BUILD-001, RS-004/005 | JSON IR v1 normalizado, validado y equivalente | Fixtures canónicos, comparación estructural y errores |
 | CLI | PY-009, RS-009, BUILD-013/014 | Comandos list/check/solve/run/compile/simulate/diagnose en el alcance real de cada backend | Pruebas de integración; diferencias de selección documentadas |
 | CSV | INTEROP-009 | Exportación CSV en Python y Rust para el corpus compartido | `scripts/check_csv_parity.py` compara cabecera, filas y valores numéricos; tests unitarios por backend cubren comas, comillas y CR/LF combinados, pero falta incorporarlos a la paridad CLI cross-runtime antes de declarar cobertura general de CSV |
@@ -45,6 +45,7 @@ Estas capacidades permanecen fuera del perfil candidato inicial. Pueden incorpor
 | Equivalencia CES cuando lambda→0 | NORM-007, OPEN-001 | La fuente contiene formulaciones incompatibles |
 | Umbral exacto de órdenes del test N.2 | OPEN-002 | La cifra publicada no coincide con el cálculo indicado |
 | Bootstrap e intervalos | PY-008, RS-008 | Método, semillas y niveles de confianza no definidos; no devolver estimaciones ficticias |
+| Modos libres/fijos de parámetros | ADR-0002 | Los valores por sí solos no prueban si K/alpha_h están libres; los campos de identificabilidad quedan provisionales hasta aprobación e implementación de `parameter_modes` |
 | Memoria temporal de orden superior | Referencia R.9 / matriz correspondiente | Kernel no definido/implementado |
 | Ejemplos y datasets incompletos | EX-006/007/008, OPEN-003/004 | No hay datos fuente completos y verificables |
 | Referencia normativa N.6 ausente | OPEN-005 | Discrepancia editorial sin contenido de origen; no se infiere un requisito adicional hasta recuperar la referencia |
