@@ -78,6 +78,18 @@ def main():
         rs = run_rust("check", valid, "--unknown-option")
         assert_failure("unknown CLI option", py, rs)
 
+        py = run_python("check", valid, "--format", "csv")
+        rs = run_rust("check", valid, "--format", "csv")
+        assert_failure("format option outside run", py, rs)
+
+        py = run_python("run", valid, "--output", str(root / "out.json"))
+        rs = run_rust("run", valid, "--output", str(root / "out.json"))
+        assert_failure("output path option outside compile", py, rs)
+
+        py = run_python("run", valid, "--steps", "2")
+        rs = run_rust("run", valid, "--steps", "2")
+        assert_failure("simulation option outside simulate", py, rs)
+
         malformed = root / "malformed.ronin"
         malformed.write_text("system Broken = { parts: }", encoding="utf-8")
         py = run_python("check", malformed)
@@ -90,7 +102,7 @@ def main():
         rs = run_rust("check", invalid)
         assert_failure("semantic validation rejection", py, rs)
 
-    print("CLI error-path parity OK: both runtimes fail cleanly on seven shared cases.")
+    print("CLI error-path parity OK: both runtimes fail cleanly on ten shared cases.")
     return 0
 
 
