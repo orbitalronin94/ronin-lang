@@ -67,6 +67,12 @@ fn lex(source: &str) -> Result<Vec<Token>, String> {
                     escaped = true;
                 } else if current == '"' {
                     break;
+                } else if (current as u32) <= 0x1f {
+                    return Err(format!(
+                        "Unescaped control character in string at {}:{}",
+                        start_line,
+                        start_column + (i - start - 1)
+                    ));
                 }
             }
             if chars.get(i.saturating_sub(1)) != Some(&'"') {
@@ -548,6 +554,14 @@ mod tests {
         let source = "system S = {\n  parts: 1,\n  resource: 1,\n  agents: [{phi: 1, psi: 1, frequency: 1, note: @}]\n}";
         let error = parse(source).unwrap_err();
         assert!(error.contains("at 4:"), "unexpected diagnostic: {error}");
+    }
+
+    #[test]
+    fn rejects_unescaped_control_characters_in_strings() {
+        let newline = "system S = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, note: \"line one\nline two\"}] }";
+        let tab = "system S = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, note: \"before\tafter\"}] }";
+        assert!(parse(newline).unwrap_err().contains("Unescaped control character in string"));
+        assert!(parse(tab).unwrap_err().contains("Unescaped control character in string"));
     }
 
     #[test]
