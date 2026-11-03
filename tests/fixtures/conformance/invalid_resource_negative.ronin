@@ -1,0 +1,7 @@
+system NegativeResource = {
+  parts: 2, resource: -1,
+  agents: [
+    { phi: 0.5, psi: 0.5, frequency: 0.5 },
+    { phi: 0.5, psi: 0.5, frequency: 0.5 }
+  ]
+}
