@@ -23,7 +23,7 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Catálogo de fixtures positivos, negativos, diagnósticos y check-only.
 - [x] Trazabilidad inicial fixture → requisito.
 - [x] Job CI para detectar fixtures sin catalogar, referencias a archivos ausentes e IDs desconocidos.
-- [x] Comprobación inversa automatizada: cada fila I/P de la matriz debe incluir una nota de evidencia o limitación.
+- [x] Comprobación inversa automatizada: cada fila I/P de la matriz debe incluir una nota de evidencia o limitación ([PR #67](https://github.com/orbitalronin94/ronin-lang/pull/67), [CI 15/15](https://github.com/orbitalronin94/ronin-lang/actions/runs/41667655968)).
 - [ ] Revisar sustantivamente cada fila I/P y confirmar que la evidencia enlazada cubre el alcance descrito.
 - [ ] Completar trazabilidad inversa de requisitos a pruebas/fixtures cuando sea automatizable.
 - [ ] Delimitar y aprobar el denominador del perfil v1.0 antes de calcular métricas.
