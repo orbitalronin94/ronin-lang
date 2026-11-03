@@ -131,8 +131,10 @@ impl Parser {
 
     fn number(&mut self) -> Result<f64, String> {
         let token = self.take();
-        match token.value.to_lowercase().as_str() {
+        let normalized = token.value.to_ascii_lowercase();
+        match normalized.as_str() {
             "inf" | "infinity" | "∞" => Ok(f64::INFINITY),
+            "nan" => Err(format!("Expected number at {}:{}", token.line, token.column)),
             _ => token.value.parse::<f64>().map_err(|_| {
                 format!("Expected number at {}:{}", token.line, token.column)
             }),
@@ -195,7 +197,8 @@ impl Parser {
     fn value(&mut self) -> Result<crate::ast::Value, String> {
         use crate::ast::Value;
         let token = self.current().clone();
-        match token.value.as_str() {
+        let normalized = token.value.to_ascii_lowercase();
+        match normalized.as_str() {
             "{" => {
                 self.take();
                 let mut values = std::collections::BTreeMap::new();
@@ -330,7 +333,7 @@ impl Parser {
                 "sigma" => params.sigma=number(value)?,
                 "coexistence_delta" => params.coexistence_delta=number(value)?,
                 "lambda" => params.lambda=number(value)?,
-                "K" | "k" => params.k=number(value)?,
+                "K" => params.k=number(value)?,
                 "alpha_h" => params.alpha_h=number(value)?,
                 "memory_order" => {
                     let n=number(value)?;
@@ -562,6 +565,34 @@ mod tests {
         let tab = "system S = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, note: \"before\tafter\"}] }";
         assert!(parse(newline).unwrap_err().contains("Unescaped control character in string"));
         assert!(parse(tab).unwrap_err().contains("Unescaped control character in string"));
+    }
+
+
+    #[test]
+    fn rejects_non_ascii_whitespace_to_match_python_lexer() {
+        let nonbreaking_space = "system\\u{00a0}S = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}] }";
+        let vertical_tab = "system\\u{000b}S = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}] }";
+        assert!(parse(nonbreaking_space).unwrap_err().contains("Unexpected character"));
+        assert!(parse(vertical_tab).unwrap_err().contains("Unexpected character"));
+    }
+
+    #[test]
+    fn matches_python_case_insensitive_literal_values() {
+        let source = r#"system Literals = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, yes: TRUE, no: FALSE, absent: NULL, limit: INF}] }"#;
+        let systems = parse(source).unwrap();
+        let metadata = &systems[0].agents[0].metadata;
+        assert_eq!(metadata.get("yes"), Some(&crate::ast::Value::Bool(true)));
+        assert_eq!(metadata.get("no"), Some(&crate::ast::Value::Bool(false)));
+        assert_eq!(metadata.get("absent"), Some(&crate::ast::Value::Null));
+        assert_eq!(metadata.get("limit"), Some(&crate::ast::Value::Number(f64::INFINITY)));
+    }
+
+    #[test]
+    fn rejects_nan_numeric_fields_and_lowercase_k_alias() {
+        let nan = "system Bad = { parts: 1, resource: NaN, agents: [{phi: 1, psi: 1, frequency: 1}] }";
+        let lower_k = "system Bad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}], params: {k: 2} }";
+        assert!(parse(nan).is_err());
+        assert!(parse(lower_k).unwrap_err().contains("Unknown params field: k"));
     }
 
     #[test]
