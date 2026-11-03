@@ -23,9 +23,9 @@ La revisión usa las pruebas y scripts del repositorio; no es una certificación
 | Python | PY-001–012, SIM-002/003 | Package/entrypoint, modelos/errores, lexer/parser/validator, solver, simulación, diagnóstico, CLI, regresión y ejemplos | Alineado; PY-006/008/010/011/012 conservan límites explícitos |
 | Rust | RS-001–010 | AST/parser, validación integrada, IR, solver, simulación, diagnóstico, CLI y tests runtime | Alineado; RS-003/006/007/008/010 permanecen parciales |
 | Anexo normativo | NORM-001/002/003/005/006/008/011 | Tests PUSFRE, CES, k_min, degeneración, coherencia y paridad compartida | Alineado; discrepancias CES/coexistencia/umbral y conformidad global siguen P |
-| Ejemplos | EX-001–005 | Maquinas, Maquinas CES, Pesca, fixtures de degeneración y parser de ejemplos | Alineado; EX-005 es parser-only y se mantiene P |
+| Ejemplos | EX-001/002/003 I, EX-004 P, EX-005 P | Maquinas, Maquinas CES, Pesca resuelto en ambos runtimes, fixtures sintéticas de degeneración y parser de ejemplos | EX-003 incluye resolución; EX-004 permanece parcial porque el vector literal N.2 Test 6 mide 2.9952 órdenes frente al umbral 3.0; EX-005 es parser-only |
 
-**Total:** 62 filas I/P revisadas. El estado se conserva salvo correcciones ya integradas: NORM-005/P por la heurística de libertad de parámetros, y deuda `None/null` en NORM-004/PY-006. No se elevan estados P a I por añadir más casos de estrés.
+**Total:** 62 filas I/P revisadas. El estado se conserva salvo correcciones ya integradas: NORM-005/P por la heurística de libertad de parámetros, deuda `None/null` en NORM-004/PY-006 y EX-004/P porque los fixtures sintéticos no sustituyen el vector literal de N.2 Test 6. No se elevan estados P a I por añadir más casos de estrés.
 
 ## Conteos de evidencia confirmados
 
@@ -46,6 +46,7 @@ La revisión usa las pruebas y scripts del repositorio; no es una certificación
 - CES lambda→0 y N.2 Test 3 requieren ADR-0001.
 - N.2 Test 6 usa un vector de 2.9952 órdenes frente al umbral 3.0 (OPEN-002).
 - El contrato completo de coexistencia/k_min y los datasets NeuralScaling/FamaFrench siguen incompletos.
+- EX-004 usa fixtures sintéticas para verificar los estados; el vector literal de N.2 Test 6 permanece por debajo de 3.0 órdenes y no demuestra el resultado normativo esperado.
 - Tipos generales, concurrencia, streams consumibles, imports, funciones, macros y backends no implementados siguen fuera del perfil.
 - La prueba de 1.000 agentes es funcional; no constituye benchmark ni claim de rendimiento.
 
