@@ -20,8 +20,8 @@ Los elementos que dependan de una decisión normativa del autor se preparan como
 | C2 | Contrato compartido v0.3 | CLI, errores, selección, CSV, IR y comportamiento Python/Rust cubiertos por pruebas de integración/paridad; diferencias intencionadas documentadas | **Completado para el contrato documentado** |
 | C3 | Decisiones normativas v0.4 | OPEN-001…OPEN-007 resueltos por fuente/ADR aprobado o excluidos explícitamente del perfil; ningún placeholder se presenta como resultado | Bloqueado por decisiones/fuentes |
 | C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Baseline parser completado; aprobación pendiente |
-| C5 | Núcleo matemático y diagnósticos | Funcionalidades que se incluyan desde la línea de investigación integradas en PR pequeñas, con definición, fixtures y paridad; el resto se marca experimental/no incluido | En curso en PR #35 |
-| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | Pendiente |
+| C5 | Núcleo matemático y diagnósticos | Funcionalidades seleccionadas de investigación con definición, fixtures y paridad; el resto se marca experimental/no incluido | **En validación CI:** 80 casos de solver y 15 trayectorias de simulación generadas añadidos; APIs FIM/SIR/D-óptimo/Sobol excluidas del contrato estable v0.5 |
+| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | **En curso:** quickstart práctico incorporado; CI ya contiene smoke test de sus comandos |
 | C7 | Release candidate | Alcance congelado; matriz de compatibilidad, migración, documentación, suite completa y CI en verde en commit candidato | Pendiente |
 | C8 | Declaración v0.5.0 | Tag/release, notas, artefactos, hashes y limitaciones publicados; ningún bloqueo crítico abierto | Pendiente |
 
@@ -128,6 +128,13 @@ Cada unidad debe tener contrato matemático, supuestos, límites, fixtures, prue
 C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta que ambos gates estén resueltos. C5 puede desarrollar investigación en paralelo, pero solo se incluye en el release lo que cumpla sus pruebas y tenga supuestos documentados. C6 empieza con el quickstart existente y se completa tras congelar el perfil.
 
 ## Registro de trabajo
+### 2026-11-03 — C5/C6, integración selectiva y quickstart
+
+- Revisada PR #35 como fuente de mejoras de investigación. Se decidió no importar al runtime estable v0.5 las APIs nuevas de FIM/Jacobiano, SIR, D-óptimo y Sobol: son herramientas con entradas/supuestos externos y requieren contrato y revisión separados. Alcance registrado en [research-integration-scope-v0.5.md](research-integration-scope-v0.5.md).
+- Integradas selectivamente las pruebas de estrés deterministas de PR #35: 80 sistemas solver (16 × 5 modelos) y 15 sistemas de simulación (3 × 5 modelos, 24 pasos). Adaptado el generador solver para pasar explícitamente el `coexistence_delta` del proyecto y evitar depender del default de la API Python.
+- Incorporado [quickstart-practico.md](quickstart-practico.md), enlazado desde README e índice de documentación. El workflow ya contiene un smoke test que ejecuta los comandos del recorrido (list/check/solve/run/CSV/IR/simulate/diagnose y segundo ejemplo).
+- CI del commit de integración aún debe completar antes de aceptar C5/C6; no se declara la suite de estrés aprobada por el mero hecho de copiar los scripts.
+
 
 ### 2026-11-03 — C3, propuestas normativas preparadas
 
