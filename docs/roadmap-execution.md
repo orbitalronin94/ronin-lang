@@ -1,77 +1,82 @@
 # Plan de ejecución del roadmap
 
-**Base revisada:** `docs/roadmap.md`, `docs/conformance-matrix.md` y `README.md`.
-**Estado de partida:** v0.2 y v0.3 en curso; no se declara conformidad global ni paridad completa.
-**Propósito:** convertir los criterios existentes en una secuencia de trabajo verificable, sin alterar MDES v0.5.
+**Corte de estado:** 2026-11-03  
+**Base:** `docs/roadmap.md`, `docs/conformance-matrix.md`, catálogo de fixtures y CI de GitHub Actions.  
+**Estado:** v0.2 y v0.3 han ganado cobertura y automatización; ambos siguen abiertos. v0.4/v0.5 no están cerrados. No se declara conformidad global ni aprobación normativa del perfil v1.0.
 
-## Prioridad inmediata: cerrar la línea base v0.2
+## Avances integrados desde la línea base anterior
 
-### 1. Delimitar el perfil candidato v1.0
-- [ ] Identificar qué requisitos de MDES entran en el perfil estable inicial.
-- [ ] Separar requisitos normativos obligatorios, capacidades opcionales y propuestas de plataforma.
-- [ ] Para cada exclusión, registrar el ID, motivo, impacto visible y condición para reconsiderarla.
-- [ ] Aprobar el denominador antes de calcular cualquier porcentaje.
+- Validación numérica compartida: sumas de frecuencias dentro/fuera de la tolerancia de 1e-9, y rechazo de pesos de memoria con longitud o suma inválidas.
+- CLI: paridad de selección por defecto/explícita en `solve`, `simulate`, `diagnose`, `run` y `check`; diez rutas de fallo compartidas con stdout vacío y diagnóstico en stderr.
+- Parser: aceptación/rechazo del subconjunto común, rechazo de escapes Unicode surrogate aislados y un caso testigo de ubicación línea/columna.
+- CSV: pruebas unitarias de campos con comas, comillas y saltos de línea en Python y Rust. La paridad CLI sigue cubriendo cabecera, identidad de filas y valores numéricos; no se afirma aún round-trip cross-runtime de todos los casos de escape.
+- Trazabilidad: job CI independiente que verifica que todos los fixtures `.ronin` del catálogo existen, están catalogados y enlazan IDs presentes en la matriz.
+- Última ejecución completa de CI observada para la validación de memoria: [15/15 jobs correctos](https://github.com/orbitalronin94/ronin-lang/actions/runs/41658388618).
 
-**Salida:** una sección versionada del perfil v1.0, revisable y enlazada desde la matriz. No contar filas heterogéneas como si tuvieran el mismo peso.
+Estos resultados son evidencia de los alcances concretos enumerados, no un porcentaje de conformidad ni sustituyen la revisión de cada requisito MDES.
 
-### 2. Completar evidencia de la matriz
-- [ ] Revisar cada fila I/P y enlazar una prueba concreta o explicar por qué no es automatizable.
-- [ ] Distinguir evidencia de parser, validación semántica, ejecución numérica, CLI e interoperabilidad.
-- [ ] Corregir estados que hayan quedado obsoletos respecto al código actual.
-- [ ] Mantener explícita la diferencia entre “implementado y probado” y “conforme a MDES”.
+## v0.2 — matriz, fixtures y trazabilidad
 
-**Salida:** ninguna fila I/P sin evidencia auditable o nota de limitación.
+**Estado: en curso.**
 
-### 3. Consolidar el corpus de conformidad
-- [ ] Mantener fixtures positivos y negativos mínimos para cada comportamiento del perfil.
-- [ ] Añadir referencias a requisitos desde el catálogo de fixtures y viceversa.
-- [ ] Verificar que los casos parser-only no se ejecuten accidentalmente como aceptación semántica.
-- [ ] Mantener los datasets incompletos fuera de la aceptación de ejecución.
+- [x] Matriz con IDs y estados Python/Rust.
+- [x] Catálogo de fixtures positivos, negativos, diagnósticos y check-only.
+- [x] Trazabilidad inicial fixture → requisito.
+- [x] Job CI para detectar fixtures sin catalogar, referencias a archivos ausentes y IDs desconocidos.
+- [ ] Auditar cada fila I/P y enlazar evidencia específica o una limitación.
+- [ ] Completar trazabilidad inversa y revisar que cada requisito del perfil tenga fixture/prueba cuando sea automatizable.
+- [ ] Delimitar y aprobar el denominador del perfil v1.0 antes de calcular métricas.
+- [ ] Registrar resultados CI por área con enlaces vigentes desde la matriz.
 
-**Salida:** corpus compartido Python/Rust trazable, reproducible y sin datos reconstruidos por conjetura.
+**No cerrar v0.2:** el verificador comprueba integridad del inventario y de los IDs, no que cada fixture demuestre por sí solo el requisito asociado.
 
-### 4. Resolver la publicación de resultados CI
-- [ ] Confirmar que los jobs Python y Rust publican resultados separados por área.
-- [ ] Asegurar que los scripts de paridad se ejecutan como jobs independientes y fallan ante divergencias.
-- [ ] Documentar qué suites cubre cada job y qué queda fuera.
-- [ ] Registrar enlaces a ejecuciones recientes verificadas; no reutilizar enlaces históricos como prueba del estado actual.
+## v0.3 — paridad Python/Rust e IR
 
-**Salida:** evidencia CI actual enlazada desde la matriz o desde un informe de conformidad.
+**Estado: en curso, con cobertura amplia en el subconjunto actual.**
 
-## Línea paralela: cerrar v0.3 sin bloquear v0.2
+- [x] JSON IR v1: 11 proyectos válidos y cuatro rechazos comparados.
+- [x] Solver: 11 proyectos válidos, cuatro rechazos y override explícito de delta.
+- [x] Diagnóstico: cuatro fixtures; bootstrap continúa `null`.
+- [x] Simulación: 12 proyectos, 12 pasos, semilla 73 y comparación de trayectorias con tolerancia (10^{-12}).
+- [x] CSV: 11 proyectos y un proyecto multi-sistema; tests unitarios adicionales de escape en ambos backends.
+- [x] Validación: 13 entradas válidas, diez inválidas y cinco casos multi-sistema.
+- [x] CLI: selección y diez rutas de error comparadas entre runtimes.
+- [ ] Revisar las diferencias intencionadas y los contratos de error/códigos de salida.
+- [ ] Completar round-trip de IR y ampliar corpus donde exista una expectativa normativa fiable.
+- [ ] Decidir explícitamente si el RNG común forma parte del contrato; por ahora la evidencia se limita a los casos y semilla documentados.
+- [ ] Añadir vectores de referencia completos para las fórmulas aún no cubiertas.
 
-- [ ] Mantener fixtures canónicos de JSON IR y comparar Python/Rust en ambos sentidos cuando proceda.
-- [ ] Extender la paridad a errores, defaults, selección multi-sistema, serialización y límites numéricos.
-- [ ] Documentar diferencias intencionadas, especialmente el contrato de `solve` frente a `run`/ `check`.
-- [ ] Definir explícitamente si el RNG común forma parte del contrato; hasta entonces, validar invariantes y trayectorias compartidas con el alcance documentado.
-- [ ] Añadir pruebas de integración Rust para cada comando que se anuncie como soportado.
+La paridad se limita a los casos y campos enumerados por cada script. No equivale a paridad completa de todos los comandos, fórmulas o capacidades de MDES.
 
-**Salida:** conjunto de fixtures compartidos con resultados equivalentes y diferencias intencionadas justificadas.
+## v0.4 — decisiones normativas
 
-## Registro de bloqueos normativos
+**Estado: bloqueado por decisiones/fuentes pendientes.**
 
-| ID | Bloqueo | Acción segura hasta tener decisión |
+Siguen abiertos OPEN-001 a OPEN-007: límite CES cuando lambda tiende a cero, umbral N.2 Test 6, datos NeuralScaling/FamaFrench incompletos, referencia N.6 ausente, catálogo de tipos y contrato de deuda. No implementar deuda, bootstrap ni memoria temporal de orden superior a partir de fórmulas inferidas. Cada resolución requiere fuente normativa completa o propuesta aprobada explícitamente.
+
+## v0.5 — perfil de lenguaje
+
+**Estado: parcial; no declarar completitud.**
+
+- [x] Endurecer y comparar casos del parser compartido, escapes, Unicode y ubicaciones de error.
+- [ ] Delimitar explícitamente el subconjunto de lenguaje comprometido.
+- [ ] Completar inventario de construcciones léxicas/sintácticas y pruebas positivas/negativas para el perfil aprobado.
+- [ ] Resolver si imports/módulos y construcciones de alto nivel pertenecen al perfil v1.0.
+- [ ] Recuperar fuentes completas de ejemplos/datasets ausentes; no reconstruirlos por conjetura.
+- [ ] Revisar la matriz de errores para contexto y sugerencias sin exigir igualdad textual innecesaria entre backends.
+
+## Bloqueos normativos
+
+| ID | Bloqueo | Tratamiento actual |
 |---|---|---|
-| OPEN-001 | Límite CES cuando lambda tiende a cero | Conservar comportamiento actual y excluir la equivalencia disputada del perfil conforme |
-| OPEN-002 | Umbral de órdenes en N.2 Test 6 | Mantener fixture verificable separado y documentar el cálculo de la fuente |
-| OPEN-003 | NeuralScaling incompleto y fuera de rango | No usar como aceptación; recuperar datos fuente completos |
-| OPEN-004 | FamaFrench sin los 720 registros | No sintetizar observaciones; recuperar dataset original |
-| OPEN-005 | Referencia N.6 ausente | Registrar discrepancia editorial |
-| OPEN-006 | Catálogo de tipos sin sistema de tipos implementado | No anunciar tipado general |
+| OPEN-001 | Límite CES cuando lambda tiende a cero | Mantener la formulación implementada documentada; no declarar equivalencia disputada |
+| OPEN-002 | Umbral de órdenes en N.2 Test 6 | Mantener fixture verificable y registrar discrepancia de fuente |
+| OPEN-003 | NeuralScaling incompleto/fuera de rango | Excluir de aceptación hasta recuperar fuente válida |
+| OPEN-004 | FamaFrench sin los 720 registros | No sintetizar observaciones |
+| OPEN-005 | Referencia N.6 ausente | Discrepancia editorial abierta |
+| OPEN-006 | Catálogo de tipos sin sistema de tipos | No anunciar tipado general |
 | OPEN-007 | Definición normativa de deuda ausente | Mantener `debt: null`; no sustituirlo por cero ni inventar estimador |
-
-La implementación de deuda, bootstrap o memoria temporal de orden superior no debe comenzar con fórmulas inferidas. Primero hace falta una fuente normativa completa o una decisión de diseño aprobada y registrada.
-
-## Orden recomendado de ejecución
-
-1. Delimitar el perfil v1.0 y sus exclusiones.
-2. Completar evidencia de las filas I/P de la matriz.
-3. Cerrar trazabilidad bidireccional de fixtures y requisitos.
-4. Verificar la separación y publicación de CI.
-5. Cerrar discrepancias normativas o excluirlas expresamente del perfil.
-6. Completar la paridad Python/Rust del perfil compartido.
-7. Solo entonces calcular cobertura y evaluar el cierre de v0.2/v0.3.
 
 ## Regla de aceptación
 
-Cada tarea cerrada debe dejar: cambio de código o documento, prueba reproducible, requisito enlazado, resultado CI y limitaciones conocidas. Una tarea documental no cierra por sí sola una carencia de implementación; una prueba verde tampoco resuelve una ambigüedad normativa.
+Cada checkpoint cerrado debe enlazar requisito, implementación, prueba reproducible, resultado CI y límites. Una suite verde acredita únicamente los casos que ejecuta. Las decisiones normativas, la aprobación del perfil v1.0 y la conformidad integral requieren revisión explícita y no se deducen de la CI.

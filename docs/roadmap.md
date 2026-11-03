@@ -1,7 +1,7 @@
 # Roadmap de RONIN Runtime v0.1 a v1.0
 
 **Base de diseño:** MDES v0.5  
-**Estado actual:** v0.1 — implementación temprana y ejecutable  
+**Estado actual:** línea de base v0.1 con avances verificables en v0.2/v0.3; los hitos siguen abiertos  
 **Idioma canónico de proyecto:** castellano
 
 ## 1. Política de versiones
@@ -42,6 +42,11 @@ Esta línea no permite etiquetar como implementadas funciones ausentes ni relaja
 
 ## 4. Hitos de versión
 
+### Estado verificado a 2026-11-03
+
+Se han integrado checkpoints separados para: tolerancias y validación de frecuencias; auditoría automática de trazabilidad del catálogo de fixtures; paridad de selección de sistemas en `simulate`/`diagnose`; rutas de error de CLI; ubicaciones de diagnóstico del parser; escapes Unicode surrogate inválidos; y validación de longitud/suma de `memory_weights`. La CI de la última PR de validación de memoria terminó con 15/15 jobs correctos ([ejecución](https://github.com/orbitalronin94/ronin-lang/actions/runs/41658388618)). Esto mejora la evidencia de v0.2/v0.3, pero no cierra esos hitos ni demuestra conformidad integral.
+
+
 ### v0.1 — Foundation / baseline (estado actual)
 
 **Objetivo:** disponer de una base funcional que permita escribir, validar y resolver proyectos RONIN.
@@ -63,7 +68,7 @@ No implica:
 
 **Primera línea base creada.**
 
-La [matriz de trazabilidad](conformance-matrix.md) ya asigna IDs a los requisitos de las secciones 0–15, Partes V–VI, el anexo normativo y los ejemplos; distingue el estado Python/Rust y registra evidencias y bloqueos. El corpus compartido añade seis perfiles positivos ejecutables, cuatro negativos, tres diagnósticos y un fixture check-only de fitness cero. Es una primera auditoría, no el cierre del hito.
+La [matriz de trazabilidad](conformance-matrix.md) ya asigna IDs a los requisitos de las secciones 0–15, Partes V–VI, el anexo normativo y los ejemplos; distingue el estado Python/Rust y registra evidencias y bloqueos. El corpus compartido y su catálogo contienen siete fixtures positivos, diez negativos, tres diagnósticos y uno check-only. Un job de CI comprueba que los `.ronin` estén catalogados, existan y enlacen IDs presentes en la matriz. Es una línea base trazable, no el cierre del hito.
 
 **Objetivo:** convertir MDES v0.5 en una matriz de requisitos trazable y una suite de conformidad.
 
@@ -83,7 +88,7 @@ Trabajo:
 
 ### v0.3 — Python/Rust parity and portable IR (en curso)
 
-**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa; `scripts/check_ir_parity.py` compara 11 proyectos válidos y cuatro rechazos. `scripts/check_runtime_parity.py` contrasta fitness, allocation, coexistence, k_min, degeneracy y override de delta en 11 proyectos. `scripts/check_diagnostic_parity.py` compara cuatro informes; `scripts/check_simulation_contracts.py` compara trayectorias con semilla fija en 12 proyectos con tolerancia 1e-12; y `scripts/check_csv_parity.py` compara exportaciones CSV en 11 proyectos y un proyecto multi-sistema; `scripts/check_validation_parity.py` contrasta aceptación/rechazo, selección de sistemas y proyectos válidos con fitness cero; `scripts/check_cli_selection_parity.py` fija la diferencia intencionada entre `solve` (primer sistema) y `run`/`check` (todos); `scripts/check_parser_parity.py` contrasta aceptación/rechazo sintáctico en el subconjunto compartido, incluidas cadenas escapadas y metadata anidada. Todo queda integrado en jobs independientes de CI.
+**Primera entrega integrada:** `ronin-core compile` emite JSON IR v1 con validación previa; `scripts/check_ir_parity.py` compara 11 proyectos válidos y cuatro rechazos. `scripts/check_runtime_parity.py` contrasta fitness, allocation, coexistence, k_min, degeneracy y override de delta en 11 proyectos. `scripts/check_diagnostic_parity.py` compara cuatro informes; `scripts/check_simulation_contracts.py` compara trayectorias con semilla fija en 12 proyectos con tolerancia 1e-12; y `scripts/check_csv_parity.py` compara exportaciones CSV en 11 proyectos y un proyecto multi-sistema; `scripts/check_validation_parity.py` contrasta aceptación/rechazo, selección de sistemas y proyectos válidos con fitness cero; `scripts/check_cli_selection_parity.py` fija la diferencia intencionada entre `solve` (primer sistema) y `run`/`check` (todos); `scripts/check_parser_parity.py` contrasta ocho ficheros válidos, tres fuentes válidas inline y 21 fuentes inválidas inline; incluye escapes, Unicode, metadatos anidados, rechazo de surrogate aislado y una comprobación de ubicación línea/columna. `scripts/check_cli_error_parity.py` verifica diez fallos compartidos; `scripts/check_cli_selection_parity.py` cubre selección por defecto y explícita en solve/simulate/diagnose y el alcance de run/check. Los casos de longitud/suma de memory_weights están incluidos en la paridad de validación. Todo queda integrado en jobs independientes de CI.
 
 **Objetivo:** hacer que Python y Rust compartan un contrato de datos y ejecución verificable.
 
