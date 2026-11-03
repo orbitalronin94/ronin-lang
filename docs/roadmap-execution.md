@@ -2,7 +2,7 @@
 
 **Corte de estado:** 2026-11-03  
 **Base:** `docs/roadmap.md`, `docs/conformance-matrix.md`, catálogo de fixtures y CI de GitHub Actions.  
-**Estado:** v0.2 y v0.3 han ganado cobertura y automatización; ambos siguen abiertos. v0.4/v0.5 no están cerrados. No se declara conformidad global ni aprobación normativa del perfil v1.0.
+**Estado:** v0.2 sigue en curso. v0.3 queda cerrado para el contrato de paridad Python/Rust e IR v1 delimitado en esta hoja; esto no implica conformidad global MDES ni cierra v0.2. v0.4/v0.5 no están cerrados. No se declara conformidad global ni aprobación normativa del perfil v1.0.
 
 ## Avances integrados desde la línea base anterior
 
@@ -32,21 +32,21 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 
 ## v0.3 — paridad Python/Rust e IR
 
-**Estado: en curso, con cobertura amplia en el subconjunto actual.**
+**Estado: cerrado para el contrato compartido documentado (no conformidad integral MDES).**
 
-- [x] JSON IR v1: 11 proyectos válidos y cuatro rechazos comparados.
+- [x] JSON IR v1: 12 proyectos válidos y cuatro rechazos comparados; `ir_json_escaping.ronin` cubre escapes JSON, Unicode y metadata anidada.
 - [x] Solver: 11 proyectos válidos, cuatro rechazos y override explícito de delta.
 - [x] Diagnóstico: cuatro fixtures; bootstrap continúa `null`.
 - [x] Simulación: 12 proyectos, 12 pasos, semilla 73 y comparación de trayectorias con tolerancia (10^{-12}).
 - [x] CSV: 11 proyectos y un proyecto multi-sistema; tests unitarios adicionales de escape en ambos backends.
 - [x] Validación: 13 entradas válidas, diez inválidas y cinco casos multi-sistema.
 - [x] CLI: selección y diez rutas de error comparadas entre runtimes.
-- [ ] Revisar las diferencias intencionadas y los contratos de error/códigos de salida.
-- [ ] Completar round-trip de IR y ampliar corpus donde exista una expectativa normativa fiable.
-- [ ] Decidir explícitamente si el RNG común forma parte del contrato; por ahora la evidencia se limita a los casos y semilla documentados.
-- [ ] Añadir vectores de referencia completos para las fórmulas aún no cubiertas.
+- [x] Documentar diferencias intencionadas y contratos observados: selección por comando; errores comparados por fallo no-cero, stdout vacío y stderr explicativo, sin exigir igualdad textual ni códigos numéricos idénticos.
+- [x] Verificar el ciclo de serialización del IR v1 en ambos runtimes mediante parseo JSON estructural y comparación de objetos; el IR sigue siendo un formato de salida, no un importador/round-trip de vuelta a `.ronin`.
+- [x] Delimitar RNG: la misma semilla garantiza reproducibilidad dentro de cada backend; no se declara secuencia aleatoria común Python/Rust.
+- [x] Registrar vectores ausentes como fuera del alcance de paridad ejecutable mientras falten datos/fuentes normativas (OPEN-001 a OPEN-007); no se inventan resultados esperados.
 
-La paridad se limita a los casos y campos enumerados por cada script. No equivale a paridad completa de todos los comandos, fórmulas o capacidades de MDES.
+La paridad se limita a los casos y campos enumerados por cada script. Los contratos de error no exigen texto/código idéntico; la simulación no promete secuencia RNG común; IR v1 se emite y compara estructuralmente, pero no se importa como fuente. No equivale a paridad completa de todos los comandos, fórmulas o capacidades de MDES.
 
 ## v0.4 — decisiones normativas
 
