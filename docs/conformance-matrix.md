@@ -209,7 +209,7 @@ Esta primera matriz es la línea base, no el cierre del hito. v0.2 podrá declar
 - [ ] Las discrepancias OPEN-* tengan responsable/decisión o permanezcan fuera del perfil estable.
 - [ ] Se defina el denominador del perfil de conformidad antes de publicar cualquier porcentaje.
 
-**No se publica un porcentaje global todavía.** La matriz mezcla requisitos normativos, construcciones de lenguaje, propuestas de plataforma y ejemplos; primero hay que aprobar qué subconjunto constituye el perfil de v1.0. Contar todas las filas por igual daría una métrica engañosa.
+**No se publica un porcentaje global todavía.** El verificador comprueba que los IDs citados por `v1-profile-proposal.md` existen como filas de matriz y tienen una referencia MDES no vacía. Esto no certifica que la referencia sea semánticamente exacta ni aprueba el perfil. La matriz mezcla requisitos normativos, construcciones de lenguaje, propuestas de plataforma y ejemplos; primero hay que aprobar qué subconjunto constituye el perfil de v1.0. Contar todas las filas por igual daría una métrica engañosa.
 
 ## 15. Relación con el roadmap
 
