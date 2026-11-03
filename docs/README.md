@@ -5,6 +5,7 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 ## Empezar
 
 - [Inicio práctico: primer flujo ejecutable](quickstart-practico.md) · [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
+- [Integración selectiva de investigación v0.5](research-integration-scope-v0.5.md) · alcance de FIM, SIR, D-óptimo y Sobol
 
 - [Inicio práctico: primer flujo ejecutable](quickstart-practico.md) · [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
 - [Roadmap de v0.1 a v1.0](roadmap.md)
