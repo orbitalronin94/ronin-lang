@@ -131,7 +131,7 @@ INVALID_SOURCES = {
     """,
     "isolated_unicode_surrogate_object_key": r"""
         system Bad = { parts: 1, resource: 1,
-          agents: [{phi: 1, psi: 1, frequency: 1, meta: {"\\uD800": 1}}] }
+          agents: [{phi: 1, psi: 1, frequency: 1, meta: {"\uD800": 1}}] }
     """,
     "unescaped_newline_in_string": """
         system Bad = { parts: 1, resource: 1,
