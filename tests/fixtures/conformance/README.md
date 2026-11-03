@@ -12,6 +12,7 @@ These synthetic RONIN files are a shared input corpus for the Python and Rust im
 | `ces_hill.ronin` | Valid CES-Hill project | CORE-002, LANG-001–004, PARSER-001, RS-006, PY-006 |
 | `full_order1.ronin` | Valid full model with first-order memory and normalized weights | LANG-002/005, TYPE-003/004, PARSER-001; only the explicitly supported first-order profile |
 | `metadata_nested.ronin` | Nested metadata, escapes, Unicode-safe JSON values and a very small finite number | LANG-004/005, TYPE-001, PARSER-001, INTEROP-008, RS-005 |
+| `frequency_sum_within_tolerance.ronin` | Frequency sum differs from one by less than 1e-9 and remains valid | TYPE-004/005, VAL-CLI-001 |
 
 ## Negative fixtures
 
@@ -24,6 +25,7 @@ These synthetic RONIN files are a shared input corpus for the Python and Rust im
 | `invalid_resource_negative.ronin` | Resource must be non-negative | CORE-001, TYPE-004/005, VAL-CLI-001 |
 | `invalid_phi_out_of_range.ronin` | Agent phi outside [0,1] | CORE-008, TYPE-004/005, VAL-CLI-001 |
 | `invalid_gamma.ronin` | Gamma outside supported [0,1] range | TYPE-004/005, VAL-CLI-001 |
+| `frequency_sum_outside_tolerance.ronin` | Frequency sum exceeds the 1e-9 validation tolerance | TYPE-004/005, VAL-CLI-001 |
 
 ## Diagnostic fixtures
 
@@ -62,7 +64,7 @@ This inventory records the concrete scope visible in each parity script. Counts 
 | Script | Concrete coverage in the current script | Important boundary |
 |---|---|---|
 | `check_parser_parity.py` | 8 valid files, 3 valid inline sources and 19 invalid inline sources | Parser acceptance and declared system names only; not semantic execution |
-| `check_validation_parity.py` | 12 valid files, 7 invalid files and 5 multi-system selection cases | Acceptance/rejection and selected-system behavior; does not compare all diagnostic wording |
+| `check_validation_parity.py` | 13 valid files, 8 invalid files and 5 multi-system selection cases | Acceptance/rejection and selected-system behavior; does not compare all diagnostic wording |
 | `check_ir_parity.py` | 11 valid files and 4 invalid files | Structural JSON equality and rejection parity for the listed corpus |
 | `check_runtime_parity.py` | 11 valid files, 4 invalid files and one explicit delta override | Solver fields and numeric tolerances for the enumerated models; not all MDES formulas |
 | `check_diagnostic_parity.py` | 4 diagnostic/check-only fixtures | Report fields and range comparison; bootstrap confidence interval remains null |
