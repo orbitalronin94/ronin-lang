@@ -62,6 +62,10 @@ pytest -q
 cargo build --manifest-path rust/Cargo.toml --release --locked
 ```
 
+## Evidencia de robustez del candidato
+
+La CI de PR #96 ejecutó 17/17 jobs correctos e incluyó un proyecto CES-Hill de 1.000 agentes con comparación funcional Python/Rust. La prueba no establece límites de rendimiento. La distribución se comprobó en Ubuntu; no se declara soporte validado en Windows/macOS.
+
 ## Alcance de compatibilidad
 
 La guía final deberá enumerar:
