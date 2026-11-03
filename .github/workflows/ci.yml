@@ -253,3 +253,12 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Compare Python and Rust parser acceptance
         run: python scripts/check_parser_parity.py
+
+
+  fixture-catalog-traceability:
+    name: Conformance fixture catalog / traceability
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify fixture catalog and requirement references
+        run: python scripts/check_fixture_catalog.py
