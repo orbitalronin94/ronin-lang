@@ -41,7 +41,17 @@ def evidence_file_paths(text):
 def main():
     errors = []
     matrix_text = MATRIX.read_text(encoding="utf-8")
-    matrix_ids = requirement_ids(matrix_text)
+    matrix_row_ids = set()
+    for line_number, line in enumerate(matrix_text.splitlines(), start=1):
+        if not line.startswith("|"):
+            continue
+        cells = table_cells(line)
+        if not cells or not ROW_ID_PATTERN.fullmatch(cells[0]):
+            continue
+        requirement_id = cells[0]
+        if requirement_id in matrix_row_ids:
+            errors.append(f"conformance-matrix.md:{line_number}: duplicate requirement row ID {requirement_id}")
+        matrix_row_ids.add(requirement_id)
     catalog_text = CATALOG.read_text(encoding="utf-8")
     catalogued = set()
 
@@ -63,7 +73,7 @@ def main():
         ids = requirement_ids(cells[-1])
         if not ids:
             errors.append(f"README.md:{line_number}: no requirement IDs for {filename}")
-        for requirement_id in sorted(ids - matrix_ids):
+        for requirement_id in sorted(ids - matrix_row_ids):
             errors.append(f"README.md:{line_number}: {filename} references unknown matrix ID {requirement_id}")
 
     actual = {path.name for path in FIXTURE_DIR.glob("*.ronin")}
@@ -101,8 +111,8 @@ def main():
         print("\n".join(errors), file=sys.stderr)
         return 1
     print(
-        f"Traceability OK: {len(actual)} fixtures; {audited_rows} I/P rows; "
-        f"{checked_paths} cited evidence paths resolve."
+        f"Traceability OK: {len(matrix_row_ids)} unique matrix requirements; {len(actual)} fixtures; "
+        f"{audited_rows} I/P rows; {checked_paths} cited evidence paths resolve."
     )
     return 0
 
