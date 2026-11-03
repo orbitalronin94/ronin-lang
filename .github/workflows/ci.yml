@@ -290,7 +290,7 @@ jobs:
           "$VENV/bin/ronin" run "$GITHUB_WORKSPACE/examples/maquinas.ronin" --format csv > "$RUNNER_TEMP/run.csv"
           "$VENV/bin/ronin" compile "$GITHUB_WORKSPACE/examples/maquinas.ronin" -o "$RUNNER_TEMP/project.ir.json"
           "$VENV/bin/ronin" simulate "$GITHUB_WORKSPACE/examples/maquinas.ronin" --steps 8 --seed 42 > "$RUNNER_TEMP/sim.json"
-          "$VENV/bin/python" -c "import csv,json,pathlib; root=pathlib.Path('$RUNNER_TEMP'); json.loads((root/'solve.json').read_text()); json.loads((root/'project.ir.json').read_text()); json.loads((root/'sim.json').read_text()); rows=list(csv.reader((root/'run.csv').open())); assert rows[0] == ['system','agent_index','model','fitness','allocation']; assert len(rows)==3"
+          "$VENV/bin/python" -c "import csv,json,pathlib; root=pathlib.Path('$RUNNER_TEMP'); json.loads((root/'solve.json').read_text()); json.loads((root/'project.ir.json').read_text()); json.loads((root/'sim.json').read_text()); rows=list(csv.reader((root/'run.csv').open())); assert rows[0] == ['system','agent_index','model','fitness','allocation'], (rows[0], len(rows)); assert len(rows)==3, rows"
 
   rust-release-smoke:
     name: Rust release binary / smoke
