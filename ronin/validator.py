@@ -81,6 +81,6 @@ def validate_coherence(params):
             raise SemanticError("memory_weights length must equal memory_order")
         if any(isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x) or x < 0 for x in weights):
             raise SemanticError("memory_weights must be finite and non-negative numbers")
-        if not math.isclose(sum(weights), 1.0, abs_tol=1e-9):
+        if abs(sum(weights) - 1.0) > 1e-9:
             raise SemanticError("memory_weights must sum to 1")
     return True
