@@ -14,7 +14,7 @@ fn lex(source: &str) -> Result<Vec<Token>, String> {
 
     while i < chars.len() {
         let ch = chars[i];
-        if ch.is_whitespace() {
+        if matches!(ch, ' ' | '\t' | '\r' | '\n') {
             if ch == '\n' {
                 line += 1;
                 column = 1;
