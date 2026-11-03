@@ -17,7 +17,7 @@ Los elementos que dependan de una decisión normativa del autor se preparan como
 |---|---|---|---|
 | C0 | Baseline y gobierno del release | Rama de trabajo, SHA base, CI actual, PR/issues y alcance de v0.5 registrados | **Completado** |
 | C1 | Cierre de evidencia v0.2 | Cada requisito del perfil candidato tiene estado correcto, evidencia concreta y referencias válidas; matriz y catálogo se validan en CI | En curso |
-| C2 | Contrato compartido v0.3 | CLI, errores, selección, CSV, IR y comportamiento Python/Rust cubiertos por pruebas de integración/paridad; diferencias intencionadas documentadas | En curso |
+| C2 | Contrato compartido v0.3 | CLI, errores, selección, CSV, IR y comportamiento Python/Rust cubiertos por pruebas de integración/paridad; diferencias intencionadas documentadas | **Completado para el contrato documentado** |
 | C3 | Decisiones normativas v0.4 | OPEN-001…OPEN-007 resueltos por fuente/ADR aprobado o excluidos explícitamente del perfil; ningún placeholder se presenta como resultado | Bloqueado por decisiones/fuentes |
 | C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Baseline parser completado; aprobación pendiente |
 | C5 | Núcleo matemático y diagnósticos | Funcionalidades que se incluyan desde la línea de investigación integradas en PR pequeñas, con definición, fixtures y paridad; el resto se marca experimental/no incluido | En curso en PR #35 |
@@ -133,7 +133,8 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 
 - Auditoría de opciones: Rust aceptaba `--system` en `list`/`run` y `--delta` en comandos ajenos, aunque Python los rechaza. Se alineó el alcance de opciones y se añadieron tres casos a la paridad de errores (10 → 13).
 - Contrato JSON: el CLI Python emitía `Infinity` no estándar para parámetros por defecto; se reutilizó la normalización JSON del IR para emitir `"inf"`/`"-inf"`/`"nan"`, con `allow_nan=False`. Añadidas aserciones Python y Rust.
-- C2 sigue abierto hasta que CI confirme los cambios y se actualice issue #39 con el alcance de diferencias deliberadas.
+- CI completo en commit `16b6945ccaaa3ffb8be0705c7728eccc5c8a0add`: **15/15 jobs correctos** (https://github.com/orbitalronin94/ronin-lang/actions/runs/41689832857).
+- Issue [#39](https://github.com/orbitalronin94/ronin-lang/issues/39) cerrada con alcance y límites explícitos. C2 queda completado para el contrato compartido documentado; no implica paridad completa de MDES.
 
 ### 2026-11-03 — C1, primera ejecución
 
