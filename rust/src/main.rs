@@ -381,10 +381,10 @@ mod tests {
 
     #[test]
     fn csv_field_quotes_combined_special_characters() {
-        let value = "comma, quote \\"double\\" and line\\r\\nnext";
+        let value = "comma, quote \"double\" and line\r\nnext";
         assert_eq!(
             csv_field(value),
-            "\\"comma, quote \\"\\"double\\"\\" and line\\r\\nnext\\""
+            "\"comma, quote \"\"double\"\" and line\r\nnext\""
         );
     }
 
