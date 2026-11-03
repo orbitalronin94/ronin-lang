@@ -39,6 +39,17 @@ def evidence_file_paths(text):
             yield path
 
 
+def evidence_file_symbols(text):
+    """Return (path, symbol) pairs for inline-code file/function references."""
+    for match in INLINE_CODE_PATTERN.findall(text):
+        if "/" not in match or "::" not in match:
+            continue
+        path, symbol = match.split("::", 1)
+        symbol = symbol.split("::")[-1].strip().rstrip(".,;)")
+        if path and symbol:
+            yield path, symbol
+
+
 def main():
     errors = []
     matrix_text = MATRIX.read_text(encoding="utf-8")
@@ -139,6 +150,16 @@ def main():
             if not (ROOT / path).is_file():
                 errors.append(
                     f"conformance-matrix.md:{line_number}: {cells[0]} cites missing evidence path {path}"
+                )
+        for path, symbol in evidence_file_symbols(evidence):
+            source_path = ROOT / path
+            if not source_path.is_file():
+                continue
+            source = source_path.read_text(encoding="utf-8")
+            declaration = re.compile(r"\b(?:def|fn)\s+" + re.escape(symbol) + r"\b")
+            if not declaration.search(source):
+                errors.append(
+                    f"conformance-matrix.md:{line_number}: {cells[0]} cites missing symbol {symbol} in {path}"
                 )
 
     if errors:
