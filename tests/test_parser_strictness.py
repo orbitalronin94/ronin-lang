@@ -109,3 +109,8 @@ def test_parser_reports_line_and_column_for_missing_separator():
     )
     with pytest.raises(SyntaxError, match=r"at 2:9"):
         parse(source)
+
+def test_parser_rejects_isolated_unicode_surrogate_escape():
+    source = r'system S = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, note: "\uD800"}] }'
+    with pytest.raises(SyntaxError, match="Invalid Unicode surrogate sequence"):
+        parse(source)
