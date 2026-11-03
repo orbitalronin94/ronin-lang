@@ -84,4 +84,3 @@ All fixtures use synthetic values. They do not replace normative examples or mis
 
 A traceability ID identifies the intended requirement area; it does not upgrade a matrix status from P/A/N to I. In particular, parser acceptance does not prove semantic validation, solver correctness, or full MDES conformance. The matrix remains authoritative for the status and evidence of each requirement.
 
-| `ir_json_escaping.ronin` | IR v1: escapes JSON, Unicode y metadata anidada | `LANG-004`, `INTEROP-008`, `RS-005` |
