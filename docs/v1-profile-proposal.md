@@ -47,7 +47,9 @@ Estas capacidades permanecen fuera del perfil candidato inicial. Pueden incorpor
 | Bootstrap e intervalos | PY-008, RS-008 | Método, semillas y niveles de confianza no definidos; no devolver estimaciones ficticias |
 | Memoria temporal de orden superior | Referencia R.9 / matriz correspondiente | Kernel no definido/implementado |
 | Ejemplos y datasets incompletos | EX-006/007/008, OPEN-003/004 | No hay datos fuente completos y verificables |
-| Sistema de tipos general | TYPE-002, TYPE-006–009 | Catálogo y sistema de tipos no implementados |
+| Referencia normativa N.6 ausente | OPEN-005 | Discrepancia editorial sin contenido de origen; no se infiere un requisito adicional hasta recuperar la referencia |
+| Catálogo de tipos y sistema de tipos general | OPEN-006, TYPE-002, TYPE-006–009 | El catálogo no está acompañado de una definición implementable de sistema de tipos; se excluye el tipado general |
+
 | Funciones, control de flujo y módulos | LANG-006–015 | No existe intérprete general |
 | Concurrencia | CONC-001–006 | No existe runtime de actores/canales/futures |
 | Interoperabilidad general | INTEROP-001–007 | Bridges y formatos no implementados |
