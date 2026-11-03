@@ -11,6 +11,7 @@ Los cambios de MDES y del runtime se versionan por separado. Este archivo regist
 - Suite determinista de paridad de simulación para 15 sistemas generados, 24 pasos por sistema y semillas fijas.
 - Alcance explícito para las capacidades de investigación: FIM/Jacobiano, SIR, D-óptimo y Sobol no forman parte del contrato estable candidato.
 - Comprobaciones CI de distribución: construcción de sdist/wheel, instalación del wheel en un entorno virtual aislado, y compilación/smoke del binario Rust optimizado con `--release --locked`.
+- Caso funcional de estrés con un proyecto CES-Hill de 1.000 agentes, comparando la salida Python/Rust sin convertirlo en una afirmación de rendimiento.
 
 ### Corregido / aclarado
 - `debt` se representa como `null` cuando no existe estimador; no debe interpretarse como deuda cero.
@@ -28,6 +29,6 @@ Los cambios de MDES y del runtime se versionan por separado. Este archivo regist
 ### Pendiente antes de publicar
 - Cerrar revisión semántica de las 62 filas I/P de la matriz.
 - Aprobar el perfil de compatibilidad y resolver/excluir los bloqueos normativos.
-- Integrar el caso de proyecto de 1.000 agentes de PR #96 y repetir CI en el SHA final.
+- Mantener la evidencia de PR #96 (caso de 1.000 agentes y 17/17 jobs) enlazada al candidato; repetir CI si cambia el código del RC.
 - Preparar RC, guía de migración final, artefactos y checksums.
 - Publicar tag y GitHub Release solo tras cumplir los gates C7/C8.
