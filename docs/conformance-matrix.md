@@ -177,8 +177,8 @@ El catálogo enumera las fixtures, su propósito y los IDs asociados. El verific
 |---|---|---|---|
 | EX-001 | R.14, §8.1 | I | `examples/maquinas.ronin`, `tests/test_core.py::test_maquinas_normative_result`, `rust/src/solver.rs`; resultado PUSFRE de aceptación, solver y asignación |
 | EX-002 | R.14, §8.2 | I | `examples/maquinas_ces.ronin`, `scripts/check_runtime_parity.py`; ejecución de la variante CES en el corpus de paridad |
-| EX-003 | R.14, §8.1 | I | `examples/pesca.ronin`, `tests/test_core.py::test_parser_and_pesca_validation`, `scripts/check_validation_parity.py`; parseo y validación del fixture |
-| EX-004 | N.2 Tests 5–6 | I | `tests/fixtures/conformance/degeneracy_active.ronin`, `degeneracy_inactive.ronin`, `tests/test_core.py::test_degeneracy_active_for_narrow_omega_range`, `test_degeneracy_inactive_requires_three_full_orders`; fixtures sintéticas con rango medido. El vector literal de Test 6 sigue bloqueado por OPEN-002 (NORM-009 A) |
+| EX-003 | R.14, §8.1 | I | `examples/pesca.ronin`, `tests/test_core.py::test_parser_and_pesca_validation`, `scripts/check_validation_parity.py`, `scripts/check_runtime_parity.py`; parseo, validación y resolución Python/Rust del fixture |
+| EX-004 | N.2 Tests 5–6 | P | `tests/fixtures/conformance/degeneracy_active.ronin`, `degeneracy_inactive.ronin`, `tests/test_core.py::test_degeneracy_active_for_narrow_omega_range`, `test_degeneracy_inactive_requires_three_full_orders`, `test_source_degeneracy_example_is_below_threshold`; los tests de umbral usan fixtures sintéticas y el vector literal de Test 6 (2.9952 órdenes frente al umbral 3.0) no satisface el resultado esperado. La fila es parcial hasta resolver OPEN-002/NORM-009 |
 | EX-005 | Ejemplos 101–130 | P | `tests/test_examples.py` prueba parseo de todos los ficheros; no prueba ejecución semántica |
 | EX-006 | Ejemplos 1–100 | A | Los cuerpos no están en el Markdown maestro disponible |
 | EX-007 | §8.3, §8.9 | A | NeuralScaling/FamaFrench carecen de registros completos; no son datasets de aceptación |
