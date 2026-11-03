@@ -166,8 +166,13 @@ fn parse_args(
     if bootstrap.is_some() && command != "diagnose" {
         return Err("--bootstrap is only supported by diagnose".into());
     }
-    if system.is_some() && command == "compile" {
-        return Err("--system is not supported by compile; all systems are compiled".into());
+    if system.is_some()
+        && !["check", "solve", "simulate", "diagnose"].contains(&command.as_str())
+    {
+        return Err("--system is only supported by check, solve, simulate and diagnose".into());
+    }
+    if delta.is_some() && !["solve", "run"].contains(&command.as_str()) {
+        return Err("--delta is only supported by solve and run".into());
     }
     Ok((command, file, system, delta, output, bootstrap, steps, seed, output_format))
 }
@@ -368,6 +373,22 @@ mod tests {
         assert!(execute(&args).unwrap_err().contains("--format is only supported by run"));
         let args = vec!["run".into(), fixture(), "--format".into(), "xml".into()];
         assert!(execute(&args).unwrap_err().contains("--format must be json or csv"));
+    }
+
+    #[test]
+    fn system_option_is_restricted_to_supported_commands() {
+        for command in ["list", "run", "compile"] {
+            let args = vec![command.into(), fixture(), "--system".into(), "Maquinas".into()];
+            assert!(execute(&args).unwrap_err().contains("--system is only supported"));
+        }
+    }
+
+    #[test]
+    fn delta_option_is_restricted_to_solve_and_run() {
+        for command in ["list", "check", "simulate", "diagnose", "compile"] {
+            let args = vec![command.into(), fixture(), "--delta".into(), "0.05".into()];
+            assert!(execute(&args).unwrap_err().contains("--delta is only supported"));
+        }
     }
 
     #[test]
