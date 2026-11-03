@@ -64,7 +64,7 @@ This inventory records the concrete scope visible in each parity script. Counts 
 | `check_runtime_parity.py` | 11 valid files, 4 invalid files and one explicit delta override | Solver fields and numeric tolerances for the enumerated models; not all MDES formulas |
 | `check_diagnostic_parity.py` | 4 diagnostic/check-only fixtures | Report fields and range comparison; bootstrap confidence interval remains null |
 | `check_simulation_contracts.py` | 12 valid files, 12 steps, fixed seed 73 | Seeded trajectory/invariant comparison for these fixtures; not a universal RNG contract |
-| `check_cli_selection_parity.py` | Synthetic two-system valid and mixed-validity projects | Default `solve`, all-system `run`, and named selection; error paths are covered separately |
+| `check_cli_selection_parity.py` | Synthetic two-system valid and mixed-validity projects | Default `solve`/`simulate`/`diagnose`, all-system `run`/`check`, and named selection; error paths are covered separately |
 | `check_cli_error_parity.py` | 10 shared failures: missing file, unknown system, malformed source, semantic rejection, unsupported format, missing option value, unknown option, format option outside run, output option outside compile and simulation option outside simulate | Both runtimes must fail, keep stdout empty and provide stderr; exact wording and numeric exit codes are intentionally not equated |
 | `check_csv_parity.py` | 11 files and one synthetic multi-system project | Header, row identity and numeric values; quoting/escaping edge cases are not yet covered by this cross-runtime script |
 
