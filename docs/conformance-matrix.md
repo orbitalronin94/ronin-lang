@@ -91,7 +91,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | INTEROP-006 | §5.10 | Importar JSON de datos como proyecto/sistema | N | N | La exportación JSON IR no equivale a importar JSON externo como System |
 | INTEROP-007 | §5.11–5.19 | YAML, TOML, XML, Protobuf, MsgPack, BSON, Avro, Parquet y Arrow | N | N | No implementados |
 | INTEROP-008 | §3.2, §5.10 | Exportar IR JSON versionado | I | I | Python `ronin compile`; Rust `ronin-core compile`; ambos validan y emiten IR v1 con metadata y valores no finitos normalizados |
-| INTEROP-009 | §5.9 | Exportar resultados a CSV | I | N | Python `ronin run --format csv`; `tests/test_run_csv.py` |
+| INTEROP-009 | §5.9 | Exportar resultados a CSV | I | I | Python `ronin run --format csv`; Rust `ronin-core run --format csv`; `tests/test_run_csv.py`; `scripts/check_csv_parity.py` compara cabecera, filas, campos y valores numéricos en 11 proyectos más un multi-sistema |
 
 ## 7. Compilación, ejecución y herramientas
 
