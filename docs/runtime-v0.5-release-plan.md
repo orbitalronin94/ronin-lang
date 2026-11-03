@@ -142,6 +142,14 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 - PR #35 (investigación) se propone como línea experimental separada; solo se integrará en v0.5 lo que se seleccione explícitamente y tenga contrato/paridad.
 - **C4 no se cierra:** el perfil requiere aprobación del mantenedor. La propuesta evita afirmar conformidad integral con MDES v0.5.
 
+### 2026-11-03 — C6, primera puerta de distribución
+
+- CI actual instala el proyecto en modo editable; eso no demuestra que el wheel sea instalable fuera del checkout. Se añadieron jobs separados para construir sdist/wheel, instalar el wheel en un virtualenv limpio y ejecutar check/solve/run CSV/compile/simulate.
+- Se añadió un smoke test del binario Rust optimizado (`cargo build --release --locked`) para check/run CSV/compile/simulate.
+- El primer smoke de Rust detectó una línea vacía final al leer CSV; se ajustó el lector de prueba para ignorar filas vacías, sin modificar el formato del runtime.
+- CI de la rama anterior: 17/17 jobs correctos, incluidos wheel aislado y binario Rust release (https://github.com/orbitalronin94/ronin-lang/actions/runs/41692876766).
+- No se declara todavía distribución publicada ni soporte multiplataforma.
+
 ### 2026-11-03 — C3, propuestas normativas preparadas
 
 - Se trasladaron al plan de release dos propuestas que existían en la rama de investigación: [ADR-0001 — CES lambda→0](decisions/ADR-0001-ces-zero-limit.md) y [ADR-0002 — modos de parámetros](decisions/ADR-0002-parameter-modes.md).
