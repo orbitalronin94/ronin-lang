@@ -128,6 +128,6 @@ def test_parser_rejects_unescaped_control_characters_in_strings(raw_value):
         parse(source)
 
 def test_parser_rejects_isolated_unicode_surrogate_in_object_key():
-    source = r'system S = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, meta: {"\\uD800": 1}}] }'
+    source = r'system S = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, meta: {"\uD800": 1}}] }'
     with pytest.raises(SyntaxError, match="Invalid Unicode surrogate sequence"):
         parse(source)
