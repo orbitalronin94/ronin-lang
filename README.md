@@ -44,7 +44,6 @@ python scripts/check_csv_parity.py
 python scripts/check_validation_parity.py
 python scripts/check_cli_selection_parity.py
 python scripts/check_parser_parity.py
-python scripts/check_csv_parity.py
 ```
 
 ## Qué incluye v0.1
