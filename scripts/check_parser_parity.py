@@ -125,6 +125,11 @@ INVALID_SOURCES = {
         system Bad = { parts: 1, resource: 1,
           agents: [{phi: 1, psi: 1, frequency: 1}], params: {memory_weights: "bad"} }
     """,
+    "missing_separator_with_source_location": """system Bad = {
+  parts 2,
+  resource: 1,
+  agents: [{phi: 1, psi: 1, frequency: 1}]
+}""",
     "boolean_memory_weight": """
         system Bad = { parts: 1, resource: 1,
           agents: [{phi: 1, psi: 1, frequency: 1}], params: {memory_weights: [1, true]} }
@@ -182,6 +187,13 @@ def main():
             path = Path(directory) / f"{label}.ronin"
             path.write_text(source, encoding="utf-8")
             compare(path, False, label)
+            if label == "missing_separator_with_source_location":
+                py = run_python(path)
+                rs = run_rust(path)
+                if "2:9" not in py.stderr or "2:9" not in rs.stderr:
+                    raise AssertionError(
+                        f"source location missing: Python={py.stderr!r}, Rust={rs.stderr!r}"
+                    )
     return 0
 
 
