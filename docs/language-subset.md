@@ -70,6 +70,6 @@ Tampoco existe un importador de JSON IR v1 de vuelta a una declaración RONIN. L
 
 ## 5. Límites de la evidencia
 
-El corpus compartido verifica aceptación/rechazo en ocho archivos válidos, tres fuentes válidas inline y 28 fuentes inválidas inline. Es un corpus de regresión del subconjunto actual, no una prueba exhaustiva de la gramática MDES. Los diagnósticos se comparan por categoría y ubicación en los casos testigo; no se exige identidad textual de mensajes entre backends.
+El corpus compartido verifica aceptación/rechazo en nueve archivos válidos, tres fuentes válidas inline y 28 fuentes inválidas inline. Es un corpus de regresión del subconjunto actual, no una prueba exhaustiva de la gramática MDES. Los diagnósticos se comparan por categoría y ubicación en los casos testigo; no se exige identidad textual de mensajes entre backends.
 
 Cualquier ampliación del subconjunto debe añadir casos positivos y negativos a la paridad compartida, actualizar la matriz y documentar si cambia compatibilidad. La inclusión de construcciones de alto nivel en el perfil v1.0 requiere una decisión explícita del mantenedor y semántica normativa suficiente.
