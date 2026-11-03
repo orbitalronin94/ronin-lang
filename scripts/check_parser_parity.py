@@ -16,6 +16,7 @@ VALID_FILES = [
     ROOT / "tests" / "fixtures" / "conformance" / "hill.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "ces_hill.ronin",
     ROOT / "tests" / "fixtures" / "conformance" / "metadata_nested.ronin",
+    ROOT / "tests" / "fixtures" / "conformance" / "ir_json_escaping.ronin",
 ]
 
 VALID_SOURCES = {
