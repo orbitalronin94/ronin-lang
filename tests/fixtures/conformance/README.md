@@ -61,7 +61,7 @@ This inventory records the concrete scope visible in each parity script. Counts 
 
 | Script | Concrete coverage in the current script | Important boundary |
 |---|---|---|
-| `check_parser_parity.py` | 8 valid files, 3 valid inline sources and 19 invalid inline sources | Parser acceptance and declared system names only; not semantic execution |
+| `check_parser_parity.py` | 8 valid files, 3 valid inline sources and 20 invalid inline sources | Parser acceptance, declared system names and a shared line/column diagnostic sentinel; not semantic execution |
 | `check_validation_parity.py` | 12 valid files, 7 invalid files and 5 multi-system selection cases | Acceptance/rejection and selected-system behavior; does not compare all diagnostic wording |
 | `check_ir_parity.py` | 11 valid files and 4 invalid files | Structural JSON equality and rejection parity for the listed corpus |
 | `check_runtime_parity.py` | 11 valid files, 4 invalid files and one explicit delta override | Solver fields and numeric tolerances for the enumerated models; not all MDES formulas |
