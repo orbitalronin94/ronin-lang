@@ -129,6 +129,12 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 
 ## Registro de trabajo
 
+### 2026-11-03 — C1, revisión semántica inicial
+
+- Detectada y corregida una afirmación obsoleta: `docs/conformance-matrix.md` y `docs/roadmap-execution.md` decían que Python/Rust no compartían RNG, pero `rust/src/simulator.rs` replica MT19937, uniform de 53 bits y gauss cacheado de CPython; `scripts/check_simulation_contracts.py` compara 12 trayectorias con semilla fija a tolerancia 1e-12. Corregidas también `roadmap.md` y `source-coverage.md`.
+- Revisado el diagnóstico normativo: `NORM-005` baja de I a P porque la inferencia de parámetros libres desde valores numéricos sigue provisional (ADR-0002). La propuesta de perfil limita el compromiso estable de identificabilidad hasta resolverlo.
+- C1 sigue abierto: esta es una primera revisión semántica de las filas de simulación/diagnóstico, no la revisión completa de las 62 filas I/P.
+
 ### 2026-11-03 — C3, propuestas normativas preparadas
 
 - Se trasladaron al plan de release dos propuestas que existían en la rama de investigación: [ADR-0001 — CES lambda→0](decisions/ADR-0001-ces-zero-limit.md) y [ADR-0002 — modos de parámetros](decisions/ADR-0002-parameter-modes.md).
