@@ -573,9 +573,9 @@ mod tests {
         let nonbreaking_space = format!("system{}S = {{ parts: 1, resource: 1, agents: [{{phi: 1, psi: 1, frequency: 1}}] }}", char::from_u32(0x00a0).unwrap());
         let vertical_tab = format!("system{}S = {{ parts: 1, resource: 1, agents: [{{phi: 1, psi: 1, frequency: 1}}] }}", char::from_u32(0x000b).unwrap());
         let form_feed = format!("system{}S = {{ parts: 1, resource: 1, agents: [{{phi: 1, psi: 1, frequency: 1}}] }}", char::from_u32(0x000c).unwrap());
-        assert!(parse(nonbreaking_space).unwrap_err().contains("Unexpected character"));
-        assert!(parse(vertical_tab).unwrap_err().contains("Unexpected character"));
-        assert!(parse(form_feed).unwrap_err().contains("Unexpected character"));
+        assert!(parse(&nonbreaking_space).unwrap_err().contains("Unexpected character"));
+        assert!(parse(&vertical_tab).unwrap_err().contains("Unexpected character"));
+        assert!(parse(&form_feed).unwrap_err().contains("Unexpected character"));
     }
 
     #[test]
