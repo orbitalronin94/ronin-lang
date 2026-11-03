@@ -57,7 +57,7 @@ La paridad se limita a los casos y campos enumerados por cada script. Los contra
 
 **Estado: bloqueado por decisiones/fuentes pendientes.**
 
-Siguen abiertos OPEN-001 a OPEN-007: límite CES cuando lambda tiende a cero, umbral N.2 Test 6 (NORM-009 A por discrepancia numérica del vector fuente), datos NeuralScaling/FamaFrench incompletos, referencia N.6 ausente, catálogo de tipos y contrato de deuda. No implementar deuda, bootstrap ni memoria temporal de orden superior a partir de fórmulas inferidas. Cada resolución requiere fuente normativa completa o propuesta aprobada explícitamente.
+Siguen abiertos OPEN-001 a OPEN-007: límite CES cuando lambda tiende a cero, umbral N.2 Test 6 (NORM-009 A por discrepancia numérica del vector fuente), datos NeuralScaling/FamaFrench incompletos, referencia N.6 ausente, catálogo de tipos y contrato de deuda. `docs/v1-profile-proposal.md` asigna ahora una exclusión candidata explícita a cada uno; esto no es aprobación del perfil ni una decisión normativa. No implementar deuda, bootstrap ni memoria temporal de orden superior a partir de fórmulas inferidas. Cada resolución requiere fuente normativa completa o propuesta aprobada explícitamente.
 
 ## v0.5 — perfil técnico del lenguaje
 
