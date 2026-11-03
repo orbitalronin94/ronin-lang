@@ -248,3 +248,6 @@ Un requisito no puede contarse como conforme solo porque exista una función con
 ## 8. Estado actual
 
 En el momento de publicar este roadmap, el repositorio se declara **RONIN Runtime v0.1**, basado en **MDES v0.5**. El runtime Python ofrece más capacidades que la implementación Rust en algunas áreas; Rust ya dispone de parser y CLI iniciales, pero no tiene paridad completa ni compilación IR equivalente. Los límites detallados están en [source-coverage.md](source-coverage.md).
+
+
+El perfil de compatibilidad propuesto para Runtime v0.5.0 está en [runtime-v0.5-profile-proposal.md](runtime-v0.5-profile-proposal.md); no equivale a completar MDES v0.5.
