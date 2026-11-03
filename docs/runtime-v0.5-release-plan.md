@@ -21,7 +21,7 @@ Los elementos que dependan de una decisión normativa del autor se preparan como
 | C3 | Decisiones normativas v0.4 | OPEN-001…OPEN-007 resueltos por fuente/ADR aprobado o excluidos explícitamente del perfil; ningún placeholder se presenta como resultado | Bloqueado por decisiones/fuentes |
 | C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Propuesta de perfil Runtime v0.5 fusionada en PR #86; aprobación explícita pendiente |
 | C5 | Núcleo matemático y diagnósticos | Funcionalidades seleccionadas de investigación con definición, fixtures y paridad; el resto se marca experimental/no incluido | **Completado para alcance v0.5:** PR #89 fusionada; 80 casos solver + 15 trayectorias simuladas; APIs FIM/SIR/D-óptimo/Sobol excluidas explícitamente |
-| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | **En validación:** quickstart/smoke CLI existente; wheel Python aislado y Rust release `--locked` añadidos en esta rama; falta CI integrada |
+| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | **En validación final:** PR #94 fusionada con wheel Python aislado y Rust `--release --locked` (17/17 jobs); añadido caso funcional de 1.000 agentes, pendiente CI |
 | C7 | Release candidate | Alcance congelado; matriz de compatibilidad, migración, documentación, suite completa y CI en verde en commit candidato | Pendiente |
 | C8 | Declaración v0.5.0 | Tag/release, notas, artefactos, hashes y limitaciones publicados; ningún bloqueo crítico abierto | Pendiente |
 
@@ -128,6 +128,19 @@ Cada unidad debe tener contrato matemático, supuestos, límites, fixtures, prue
 C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta que ambos gates estén resueltos. C5 puede desarrollar investigación en paralelo, pero solo se incluye en el release lo que cumpla sus pruebas y tenga supuestos documentados. C6 empieza con el quickstart existente y se completa tras congelar el perfil.
 
 ## Registro de trabajo
+### 2026-11-03 — C5, estrés numérico integrado
+
+- PR [#89](https://github.com/orbitalronin94/ronin-lang/pull/89) fusionada. CI 15/15: 80 sistemas solver generados determinísticamente (16 por PUSFRE/CES/Hill/CES-Hill/full order 1), más 15 sistemas de simulación × 24 pasos con semillas fijas. Evidencia: https://github.com/orbitalronin94/ronin-lang/actions/runs/41693306589.
+- La misma PR corrigió evidencia de matriz: `debt()` devuelve `None`/`null`, no cero; actualizó CORE-002, PY-006, RS-006, SIM-002 y RS-007.
+- La integración de investigación avanzada queda acotada por [research-integration-scope-v0.5.md](research-integration-scope-v0.5.md); FIM/Jacobiano, SIR, D-óptimo y Sobol no son APIs estables v0.5.
+
+### 2026-11-03 — C6, instalación y distribución reproducibles
+
+- PR [#94](https://github.com/orbitalronin94/ronin-lang/pull/94) fusionada tras **17/17 jobs correctos**. Build sdist/wheel; instalación del wheel en venv aislado fuera del checkout; smoke de CLI Python; build Rust `--release --locked` y smoke de binario optimizado. Evidencia: https://github.com/orbitalronin94/ronin-lang/actions/runs/41694182321.
+- Auditoría de distribución: paquete Python sin dependencias runtime declaradas (backend de build setuptools); crate Rust sin dependencias externas y con `Cargo.lock`; licencia MIT. La matriz de tests cubre Python 3.9–3.12. La instalación aislada del wheel se ejecuta en Python 3.12; el binario Rust release se valida en `ubuntu-latest`. **No se declara Windows/macOS probado**.
+- Quickstart ejecutable ya está enlazado desde README y se ejercita en CI. Se corrigió la duplicación de ese enlace y de un comando CSV en README.
+- Se añade en esta rama una prueba funcional de proyecto de 1.000 agentes (sin umbral de tiempo ni claim de benchmark) para reforzar el gate de proyectos grandes. C6 no se cierra hasta que esta prueba y la CI integrada pasen.
+
 ### 2026-11-03 — C1, revisión semántica de simulación y diagnóstico
 
 - PR [#85](https://github.com/orbitalronin94/ronin-lang/pull/85) fusionada: corrigió la afirmación de RNG distinta, documentó la paridad seeded real de MT19937/gauss CPython y degradó NORM-005 a P porque la libertad de parámetros se infiere de valores y ADR-0002 sigue pendiente.
