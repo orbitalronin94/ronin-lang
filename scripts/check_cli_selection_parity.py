@@ -23,9 +23,10 @@ VALID_SECOND = """
 system Second = {
   parts: 2, resource: 20,
   agents: [
-    { phi: 0.6, psi: 0.5, frequency: 0.5 },
-    { phi: 0.5, psi: 0.6, frequency: 0.5 }
-  ]
+    { phi: 0.6, psi: 0.5, frequency: 0.9 },
+    { phi: 0.5, psi: 0.6, frequency: 0.1 }
+  ],
+  params: { model: "hill", K: 1, alpha_h: 2 }
 }
 """
 INVALID_SECOND = """
@@ -66,6 +67,50 @@ def compare_solutions(python_result, rust_result, system):
         for left, right in zip(py[field], rust[field]):
             if not math.isclose(left, right, rel_tol=1e-9, abs_tol=1e-9):
                 raise AssertionError(f"{system}.{field} differs: {left} vs {right}")
+
+
+def assert_simulation_parity(path, system=None):
+    options = ["--steps", "4", "--seed", "73"]
+    if system is not None:
+        options = ["--system", system, *options]
+    py = run_python("simulate", path, *options)
+    rs = run_rust("simulate", path, *options)
+    if py.returncode or rs.returncode:
+        raise AssertionError(f"simulate selection failed: {py.stderr} {rs.stderr}")
+    left, right = json.loads(py.stdout), json.loads(rs.stdout)
+    for field in ("history", "final_state", "survivability"):
+        if field == "survivability":
+            if not math.isclose(left[field], right[field], rel_tol=1e-9, abs_tol=1e-9):
+                raise AssertionError(f"simulate {field} differs")
+            continue
+        if len(left[field]) != len(right[field]):
+            raise AssertionError(f"simulate {field} lengths differ")
+        left_values = left[field] if field == "history" else [left[field]]
+        right_values = right[field] if field == "history" else [right[field]]
+        for left_row, right_row in zip(left_values, right_values):
+            for a, b in zip(left_row, right_row):
+                if not math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-9):
+                    raise AssertionError(f"simulate {field} differs: {a} vs {b}")
+    if left["steps"] != right["steps"] or left["seed"] != right["seed"]:
+        raise AssertionError("simulate steps/seed differ")
+    return left
+
+
+def assert_diagnostic_parity(path, system=None):
+    options = ["--system", system] if system is not None else []
+    py = run_python("diagnose", path, *options)
+    rs = run_rust("diagnose", path, *options)
+    if py.returncode or rs.returncode:
+        raise AssertionError(f"diagnose selection failed: {py.stderr} {rs.stderr}")
+    left, right = json.loads(py.stdout), json.loads(rs.stdout)
+    for field in ("omega_range_orders",):
+        if not math.isclose(left[field], right[field], rel_tol=1e-9, abs_tol=1e-9):
+            raise AssertionError(f"diagnose {field} differs")
+    for field in ("degeneracy", "lambda_identifiable", "K_identifiable",
+                  "alpha_h_identifiable", "recommendation"):
+        if left[field] != right[field]:
+            raise AssertionError(f"diagnose {field} differs")
+    return left
 
 
 def main():
@@ -116,7 +161,7 @@ def main():
         if py_selected_check.returncode or rs_selected_check.returncode:
             raise AssertionError("check --system First should validate the selected valid system")
 
-    print("CLI selection parity OK: solve defaults first; run/check cover all systems.")
+    print("CLI selection parity OK: solve/simulate/diagnose select the first by default; run/check cover all systems.")
     return 0
 
 
