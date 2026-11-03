@@ -1,0 +1,9 @@
+system IrEscaping = {
+  parts: 2, resource: 10,
+  agents: [
+    { phi: 0.6, psi: 0.7, frequency: 0.5,
+      note: "line\\nquote\\\" slash\\\\",
+      profile: { enabled: true, region: "costa-ñ", empty: null, values: [1, 2, 3] } },
+    { phi: 0.5, psi: 0.8, frequency: 0.5 }
+  ]
+}
