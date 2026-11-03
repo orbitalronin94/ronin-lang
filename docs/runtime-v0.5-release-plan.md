@@ -19,9 +19,9 @@ Los elementos que dependan de una decisión normativa del autor se preparan como
 | C1 | Cierre de evidencia v0.2 | Cada requisito del perfil candidato tiene estado correcto, evidencia concreta y referencias válidas; matriz y catálogo se validan en CI | En curso |
 | C2 | Contrato compartido v0.3 | CLI, errores, selección, CSV, IR y comportamiento Python/Rust cubiertos por pruebas de integración/paridad; diferencias intencionadas documentadas | **Completado para el contrato documentado** |
 | C3 | Decisiones normativas v0.4 | OPEN-001…OPEN-007 resueltos por fuente/ADR aprobado o excluidos explícitamente del perfil; ningún placeholder se presenta como resultado | Bloqueado por decisiones/fuentes |
-| C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Baseline parser completado; aprobación pendiente |
+| C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Propuesta de perfil Runtime v0.5 redactada y fusionada en PR #86; aprobación explícita pendiente |
 | C5 | Núcleo matemático y diagnósticos | Funcionalidades seleccionadas de investigación con definición, fixtures y paridad; el resto se marca experimental/no incluido | **En validación CI:** 80 casos de solver y 15 trayectorias de simulación generadas añadidos; APIs FIM/SIR/D-óptimo/Sobol excluidas del contrato estable v0.5 |
-| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | **En curso:** quickstart práctico incorporado; CI ya contiene smoke test de sus comandos |
+| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | **En validación CI:** quickstart, wheel Python en venv aislado, Rust `--release --locked` y smoke tests de ambos binarios |
 | C7 | Release candidate | Alcance congelado; matriz de compatibilidad, migración, documentación, suite completa y CI en verde en commit candidato | Pendiente |
 | C8 | Declaración v0.5.0 | Tag/release, notas, artefactos, hashes y limitaciones publicados; ningún bloqueo crítico abierto | Pendiente |
 
@@ -128,6 +128,12 @@ Cada unidad debe tener contrato matemático, supuestos, límites, fixtures, prue
 C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta que ambos gates estén resueltos. C5 puede desarrollar investigación en paralelo, pero solo se incluye en el release lo que cumpla sus pruebas y tenga supuestos documentados. C6 empieza con el quickstart existente y se completa tras congelar el perfil.
 
 ## Registro de trabajo
+### 2026-11-03 — C6, distribución limpia y binario release
+
+- Revisada PR #87: añade build sdist/wheel, instalación de wheel en venv aislado y ejecución de comandos instalados; también build Rust `--release --locked` y smoke de CLI/CSV/IR/simulación.
+- La rama de PR #87 completó 17/17 jobs en https://github.com/orbitalronin94/ronin-lang/actions/runs/41692876766, incluidos `Python wheel / isolated install smoke` y `Rust release binary / smoke`.
+- Portados los dos jobs y `rust/Cargo.lock` a la rama limpia `release/runtime-v0.5-followup` junto con las pruebas aleatorias de C5, para ejecutar una sola suite integrada. La nueva CI combinada sigue pendiente; el éxito de la rama de origen no sustituye su repetición sobre el mismo commit candidato.
+
 ### 2026-11-03 — C5/C6, integración selectiva y quickstart
 
 - Revisada PR #35 como fuente de mejoras de investigación. Se decidió no importar al runtime estable v0.5 las APIs nuevas de FIM/Jacobiano, SIR, D-óptimo y Sobol: son herramientas con entradas/supuestos externos y requieren contrato y revisión separados. Alcance registrado en [research-integration-scope-v0.5.md](research-integration-scope-v0.5.md).
