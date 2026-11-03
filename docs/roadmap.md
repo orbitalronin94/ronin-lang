@@ -115,23 +115,20 @@ Trabajo:
 
 > Este hito no autoriza a inventar fórmulas. Si una decisión no está resuelta en MDES, debe registrarse como propuesta hasta su aprobación.
 
-### v0.5 — Language profile completeness
+### v0.5 — Technical language subset baseline
 
-**Objetivo:** ampliar y cerrar el perfil de lenguaje que se comprometerá a soportar v1.0.
+**Estado:** baseline técnico del parser compartido completado; la aprobación del perfil de compatibilidad v1.0 sigue pendiente.
 
-Trabajo:
-- Completar la matriz léxica y sintáctica respecto a MDES.
-- Incorporar construcciones de alto nivel solo cuando su semántica esté definida.
-- Mejorar mensajes de error con ubicación, contexto y sugerencias útiles.
-- Definir imports/módulos y resolución de nombres si forman parte del perfil aprobado.
-- Recuperar los cuerpos originales ausentes de ejemplos 1–100 y los datasets omitidos; no reconstruirlos a mano.
-- Etiquetar ejemplos como normativos, ilustrativos, parser-only o ejecutables.
+RONIN documenta el subconjunto que implementan actualmente Python y Rust en [language-subset.md](language-subset.md). La paridad cubre nueve archivos válidos, tres fuentes válidas inline y 28 inválidas inline. Se alinearon whitespace admitido, valores literales, escapes, Unicode y rechazos de campos/valores fuera del subconjunto.
 
-**Criterios de salida:**
-- El perfil de lenguaje v1.0 está delimitado explícitamente.
-- Todos sus constructos tienen pruebas positivas y negativas.
-- Los ejemplos normativos completos se ejecutan o tienen una razón documentada para no hacerlo.
+Este hito cierra el inventario y la regresión del parser existente; no declara completa la gramática MDES v0.5 ni aprueba qué capacidades futuras serán obligatorias en v1.0.
 
+Trabajo posterior sujeto a aprobación/fuentes:
+- Resolver imports/módulos y construcciones de alto nivel para el perfil v1.0.
+- Recuperar los cuerpos originales ausentes de ejemplos 1–100 y datasets incompletos; no reconstruirlos a mano.
+- Ampliar diagnósticos con contexto/sugerencias sin exigir igualdad textual innecesaria entre backends.
+
+**Criterios del baseline técnico satisfechos:** subconjunto delimitado, inventario léxico/sintáctico y casos positivos/negativos en CI. La puerta normativa de v1.0 permanece abierta.
 ### v0.6 — Interoperability and stable interfaces
 
 **Objetivo:** permitir integrar RONIN desde otros programas y entornos.
