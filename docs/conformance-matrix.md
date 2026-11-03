@@ -169,6 +169,8 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 
 El corpus sintético `tests/fixtures/conformance/` se ejecuta tanto en Python como en Rust: seis perfiles positivos (PUSFRE, CES, Hill, CES-Hill, full/order 1 y metadata anidada), cuatro casos negativos y tres diagnósticos compartidos. Su catálogo está en `tests/fixtures/conformance/README.md`. No reemplaza los datasets normativos ausentes ni resuelve contradicciones de MDES.
 
+El catálogo de fixtures incluye ahora una tabla de trazabilidad inicial hacia los IDs de esta matriz y enumera los scripts de paridad que consumen el corpus. Esa relación identifica el área cubierta, pero no cambia por sí sola el estado I/P/A de ningún requisito: la evidencia concreta y el alcance de cada script deben revisarse antes de cerrar v0.2.
+
 ## 12. Ejemplos y datos de aceptación
 
 | ID | Referencia | Estado | Qué demuestra y qué no demuestra |
