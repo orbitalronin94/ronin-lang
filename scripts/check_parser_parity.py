@@ -142,6 +142,8 @@ line two"}] }
         system Bad = { parts: 1, resource: 1,
           agents: [{phi: 1, psi: 1, frequency: 1, note: "before	after"}] }
     """,
+    "nan_numeric_resource": "system Bad = { parts: 1, resource: NaN, agents: [{phi: 1, psi: 1, frequency: 1}] }",
+    "lowercase_k_parameter": "system Bad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}], params: {k: 2} }",
     "nonbreaking_space_separator": "system\u00a0Bad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}] }",
     "vertical_tab_separator": "system\u000bBad = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1}] }",
     "missing_separator_with_source_location": """system Bad = {
