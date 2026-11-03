@@ -1,0 +1,8 @@
+system InvalidMemoryWeightSum = {
+  parts: 2, resource: 10,
+  agents: [
+    { phi: 0.5, psi: 0.5, frequency: 0.5 },
+    { phi: 0.5, psi: 0.5, frequency: 0.5 }
+  ],
+  params: { model: "full", lambda: 0.5, K: 1, memory_order: 1, memory_weights: [0.4] }
+}
