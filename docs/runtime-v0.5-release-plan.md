@@ -21,7 +21,7 @@ Los elementos que dependan de una decisión normativa del autor se preparan como
 | C3 | Decisiones normativas v0.4 | OPEN-001…OPEN-007 resueltos por fuente/ADR aprobado o excluidos explícitamente del perfil; ningún placeholder se presenta como resultado | Bloqueado por decisiones/fuentes |
 | C4 | Lenguaje y perfil candidato v0.5 | Subconjunto léxico/sintáctico reproducible; perfil de runtime v0.5 delimitado, revisado y aprobado; parser-only separado de validación/ejecución | Propuesta de perfil Runtime v0.5 fusionada en PR #86; aprobación explícita pendiente |
 | C5 | Núcleo matemático y diagnósticos | Funcionalidades seleccionadas de investigación con definición, fixtures y paridad; el resto se marca experimental/no incluido | **Completado para alcance v0.5:** PR #89 fusionada; 80 casos solver + 15 trayectorias simuladas; APIs FIM/SIR/D-óptimo/Sobol excluidas explícitamente |
-| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | **En validación final:** PR #94 fusionada con wheel Python aislado y Rust `--release --locked` (17/17 jobs); añadido caso funcional de 1.000 agentes, pendiente CI |
+| C6 | Robustez y distribución | Instalación limpia, ejemplos ejecutables, pruebas de límites/errores, política de dependencias y artefactos reproducibles para plataformas declaradas | **Completado para la plataforma declarada:** PR #94 (wheel Python aislado + Rust `--release --locked`, 17/17) y PR #96 (paridad funcional con 1.000 agentes, 17/17). Validado en Ubuntu; Windows/macOS no declarados |
 | C7 | Release candidate | Alcance congelado; matriz de compatibilidad, migración, documentación, suite completa y CI en verde en commit candidato | Pendiente |
 | C8 | Declaración v0.5.0 | Tag/release, notas, artefactos, hashes y limitaciones publicados; ningún bloqueo crítico abierto | Pendiente |
 
@@ -128,6 +128,13 @@ Cada unidad debe tener contrato matemático, supuestos, límites, fixtures, prue
 C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta que ambos gates estén resueltos. C5 puede desarrollar investigación en paralelo, pero solo se incluye en el release lo que cumpla sus pruebas y tenga supuestos documentados. C6 empieza con el quickstart existente y se completa tras congelar el perfil.
 
 ## Registro de trabajo
+### 2026-11-03 — C6, validación final de proyecto grande
+
+- PR [#96](https://github.com/orbitalronin94/ronin-lang/pull/96) completó **17/17 jobs** en el commit `7a299b153827d33c29e2eee0209e4abb2f599811`: https://github.com/orbitalronin94/ronin-lang/actions/runs/41695104842.
+- El nuevo caso crea un proyecto CES-Hill con 1.000 agentes y compara salida Python/Rust, además de comprobar la conservación de asignación a través de la ruta `compare_source`. No mide rendimiento ni fija un umbral temporal.
+- C6 se cierra para el alcance probado: wheel Python aislado (Python 3.12), binario Rust optimizado `--release --locked`, CLI/CSV/IR/simulación y caso grande, sobre Ubuntu CI. No se afirma soporte verificado en Windows/macOS ni se publican artefactos de release.
+- PR #96 también elimina duplicaciones del README. Su merge integra el registro actualizado del plan de release.
+
 ### 2026-11-03 — C5, estrés numérico integrado
 
 - PR [#89](https://github.com/orbitalronin94/ronin-lang/pull/89) fusionada. CI 15/15: 80 sistemas solver generados determinísticamente (16 por PUSFRE/CES/Hill/CES-Hill/full order 1), más 15 sistemas de simulación × 24 pasos con semillas fijas. Evidencia: https://github.com/orbitalronin94/ronin-lang/actions/runs/41693306589.
