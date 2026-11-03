@@ -26,7 +26,7 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Comprobación inversa automatizada: cada fila I/P de la matriz debe incluir una nota de evidencia o limitación ([PR #67](https://github.com/orbitalronin94/ronin-lang/pull/67), [CI 15/15](https://github.com/orbitalronin94/ronin-lang/actions/runs/41667655968)).
 - [x] Verificar unicidad de IDs de fila y exigir que las referencias del catálogo apunten a IDs que existan como filas reales de la matriz.
 - [x] Exigir al menos una referencia explícita a test, fixture o script de paridad en cada fila I/P.
-- [x] Comprobar que todos los IDs de la propuesta v1.0 mapean a filas reales de la matriz con referencia MDES, que los IDs del alcance candidato están marcados I/P y que los símbolos de función citados existen; la revisión de exactitud y aprobación del perfil siguen pendientes.
+- [x] Comprobar que todos los IDs de la propuesta v1.0 mapean a filas reales de la matriz con referencia MDES, que los IDs del alcance candidato están marcados I/P y que los símbolos de función citados existen (PR [#79](https://github.com/orbitalronin94/ronin-lang/pull/79)); la revisión de exactitud y aprobación del perfil siguen pendientes.
 - [x] Auditar NORM-009 / N.2 Test 6: separar la prueba sintética de la rama inactiva del vector literal de la fuente, cuyo rango real (2.9952) contradice el esperado (3.0); registrar estado A y mantener OPEN-002 sin alterar la semántica.
 - [x] Añadir referencias a archivos concretos de implementación en las filas I/P y enlazar tests, fixtures o scripts en las filas marcadas I; el job CI comprueba que las rutas citadas existen.
 - [ ] Revisar sustantivamente el resto de filas I/P y confirmar que la evidencia enlazada cubre el alcance descrito.
