@@ -91,14 +91,14 @@ def make_large_system():
         for index in range(count)
     ]
     return (
-        "system Large1000 = {\\n"
-        + "  parts: 1000,\\n"
-        + "  resource: 100000,\\n"
-        + "  agents: [\\n"
-        + ",\\n".join(agents)
-        + "\\n  ],\\n"
-        + "  params: { model: \\"ces_hill\\", lambda: 0.5, K: 0.2, alpha_h: 1.5, alpha: 1.2 }\\n"
-        + "}\\n"
+        "system Large1000 = {\n"
+        + "  parts: 1000,\n"
+        + "  resource: 100000,\n"
+        + "  agents: [\n"
+        + ",\n".join(agents)
+        + "\n  ],\n"
+        + "  params: { model: \"ces_hill\", lambda: 0.5, K: 0.2, alpha_h: 1.5, alpha: 1.2 }\n"
+        + "}\n"
     )
 
 
