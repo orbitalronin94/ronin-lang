@@ -142,6 +142,7 @@ C3 y C4 pueden avanzar en paralelo, pero el perfil candidato no se congela hasta
 - La integración de investigación avanzada queda acotada por [research-integration-scope-v0.5.md](research-integration-scope-v0.5.md); FIM/Jacobiano, SIR, D-óptimo y Sobol no son APIs estables v0.5.
 
 ### 2026-11-03 — C6, instalación y distribución reproducibles
+- PR [#96](https://github.com/orbitalronin94/ronin-lang/pull/96) ejecutó **17/17 jobs correctos** en el commit `7a299b153827d33c29e2eee0209e4abb2f599811`. El job de solver terminó con éxito después de ejecutar el caso de 1.000 agentes; se añade un resumen explícito en el log para que la evidencia sea legible. La CI se vuelve a ejecutar después de la limpieza final de README y del mensaje de resumen.
 
 - PR [#94](https://github.com/orbitalronin94/ronin-lang/pull/94) fusionada tras **17/17 jobs correctos**. Build sdist/wheel; instalación del wheel en venv aislado fuera del checkout; smoke de CLI Python; build Rust `--release --locked` y smoke de binario optimizado. Evidencia: https://github.com/orbitalronin94/ronin-lang/actions/runs/41694182321.
 - Auditoría de distribución: paquete Python sin dependencias runtime declaradas (backend de build setuptools); crate Rust sin dependencias externas y con `Cargo.lock`; licencia MIT. La matriz de tests cubre Python 3.9–3.12. La instalación aislada del wheel se ejecuta en Python 3.12; el binario Rust release se valida en `ubuntu-latest`. **No se declara Windows/macOS probado**.
