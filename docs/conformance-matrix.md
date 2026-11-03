@@ -28,7 +28,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | CORE-004 | §1.4, N.1.4 | Estimar deuda del sistema | N | N | No existe estimador normativo; Python y Rust serializan `debt: null` para no presentar el placeholder como cero |
 | CORE-005 | §1.5 | Calcular geometría del sistema | N | N | No se encontró función ejecutable con contrato de geometría |
 | CORE-006 | §1.6 | Calcular fatiga de enrutamiento | N | N | No se encontró implementación ejecutable |
-| CORE-007 | §1.7, N.1.5 | Diagnosticar rango Ω y degeneración K–α | I | P | `ronin/diagnose.py`, `rust/src/diagnose.rs`; pruebas de umbral y parámetros no identificables |
+| CORE-007 | §1.7, N.1.5 | Diagnosticar rango Ω y degeneración K–α | I | P | `ronin/diagnose.py`, `rust/src/diagnose.rs`; `tests/test_core.py::test_degeneracy_active_for_narrow_omega_range`, `test_degeneracy_inactive_requires_three_full_orders`, `rust/src/diagnose.rs::shared_diagnostic_fixtures_match_expected_states`; cobertura Rust del informe compartido, bootstrap no implementado |
 | CORE-008 | §2.3, §3.5 | Rechazar combinaciones incoherentes entre modelo y parámetros | I | P | `ronin/validator.py`; `tests/test_core.py::test_model_coherence_is_enforced`; Rust valida a través de solver |
 | VAL-CLI-001 | R.7, R.12 | `check` valida sin ejecutar el solver y revisa todos los sistemas por defecto | I | I | `scripts/check_validation_parity.py`; casos válidos/no válidos (incluye recurso negativo, phi/gamma fuera de rango y suma de frecuencias dentro/fuera de 1e-9 y memory_weights con longitud/suma inválidas), fitness cero y selección multi-sistema |
 | CLI-SELECT-001 | R.12 | `solve` selecciona el primer sistema por defecto; `run` procesa todos | I | I | `scripts/check_cli_selection_parity.py`; comprueba selección por defecto en solve/simulate/diagnose, run/check sobre todos los sistemas y selección explícita; complementa `check_cli_error_parity.py` (10 fallos compartidos) |
@@ -39,8 +39,8 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 |---|---|---|---|---|---|
 | LANG-001 | §2.1 | Parsear declaraciones de sistema | I | I | `ronin/parser.py`, `rust/src/parser.rs`; `tests/test_core.py::test_parser_and_pesca_validation`, `tests/test_examples.py`; `examples/maquinas.ronin`, `examples/pesca.ronin` |
 | LANG-002 | §2.2 | Parsear parámetros principales y extendidos | I | P | `ronin/parser.py`, `ronin/model.py`, `rust/src/parser.rs`, `rust/src/ast.rs`; `tests/test_core.py::test_parser_supports_strings_signed_values_and_memory_arrays`; cobertura Rust no idéntica |
-| LANG-003 | §2.4 | Parsear campos numéricos del agente | I | I | `phi`, `psi`, `frequency`; tests de parser y solver |
-| LANG-004 | §2.5 | Conservar metadatos extendidos del agente | I | I | Python metadata; Rust `Value` incluye arrays/objetos; tests `test_agent_metadata.py` y parser Rust |
+| LANG-003 | §2.4 | Parsear campos numéricos del agente | I | I | `ronin/parser.py`, `rust/src/parser.rs`, `tests/test_core.py::test_parser_supports_strings_signed_values_and_memory_arrays`, `tests/test_parser_strictness.py`; campos `phi`, `psi` y `frequency` en el subconjunto compartido |
+| LANG-004 | §2.5 | Conservar metadatos extendidos del agente | I | I | `ronin/parser.py`, `rust/src/ast.rs`, `rust/src/parser.rs`, `tests/test_agent_metadata.py`, `tests/fixtures/conformance/metadata_nested.ronin`; metadata con arrays y objetos anidados |
 | LANG-005 | §2.6 | Parsear arrays y estructuras anidadas en valores admitidos | P | P | `ronin/parser.py`, `rust/src/parser.rs`; `tests/fixtures/conformance/metadata_nested.ronin`, `tests/fixtures/conformance/full_order1.ronin`, `tests/fixtures/conformance/full_order3_unsupported.ronin`; arrays/objetos en datos y metadata, no expresiones generales |
 | PARSER-001 | R.5–R.6 | Aceptación léxica/sintáctica equivalente en el subconjunto compartido | I | I | `scripts/check_parser_parity.py`: 9 ficheros válidos, 3 fuentes válidas inline y 29 inválidas inline; incluye escapes/Unicode, rechazo de controles sin escape, espacios no admitidos, literales case-insensitive, rechazo de NaN y de alias k; sentinel compartido línea/columna. No prueba validación semántica |
 | LANG-006 | §2.7 | Declarar y evaluar funciones puras RONIN | N | N | No existe parser/evaluador general de funciones |
@@ -58,11 +58,11 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 
 | ID | Referencia MDES | Requisito / comportamiento | Python | Rust | Evidencia actual / observaciones |
 |---|---|---|---|---|---|
-| TYPE-001 | §3.1 | Reconocer escalares numéricos, booleanos, cadenas y null en los contextos soportados | I | I | Lexer/parser y enum Rust `Value`; no implica sistema de tipos general |
+| TYPE-001 | §3.1 | Reconocer escalares numéricos, booleanos, cadenas y null en los contextos soportados | I | I | `ronin/lexer.py`, `ronin/parser.py`, `rust/src/ast.rs`, `rust/src/parser.rs`, `tests/test_parser_strictness.py`; no implica sistema de tipos general |
 | TYPE-002 | §3.2 | Implementar el catálogo completo de más de 160 tipos de dominio | N | N | El runtime usa tipos Python/Rust ordinarios y validaciones explícitas, no el catálogo tipado de MDES |
 | TYPE-003 | §3.3 | Implementar tipos compuestos RONIN como tipos del lenguaje | P | P | `ronin/model.py`, `rust/src/ast.rs`; estructuras System/Agent/Params en runtime, sin sistema de tipos de usuario |
 | TYPE-004 | §3.4 | Comprobar rangos y tipos antes de ejecutar/compilar | I | P | `ronin/validator.py`, `rust/src/solver.rs`, `scripts/check_validation_parity.py`; Python valida antes de compilar, Rust valida parcialmente al resolver |
-| TYPE-005 | §3.5 | Validar invariantes del sistema (frecuencias, phi/psi, partes, recurso) | I | P | `ronin/validator.py`; pruebas de frecuencia y casos inválidos |
+| TYPE-005 | §3.5 | Validar invariantes del sistema (frecuencias, phi/psi, partes, recurso) | I | P | `ronin/validator.py`, `rust/src/solver.rs`, `tests/test_core.py::test_invalid_frequency_sum`, `scripts/check_validation_parity.py`; Rust valida parcialmente al resolver |
 | TYPE-006 | §3.6 | Inferencia de tipos de expresiones | N | N | No existe evaluador de expresiones |
 | TYPE-007 | §3.7 | Tipos paramétricos genéricos | N | N | No implementados |
 | TYPE-008 | §3.8 | Tipos recursivos | N | N | No implementados |
@@ -90,14 +90,14 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | INTEROP-005 | §5.9 | Importar CSV como datos de sistema | N | N | Existe exportación de resultados CSV, no importación CSV al modelo |
 | INTEROP-006 | §5.10 | Importar JSON de datos como proyecto/sistema | N | N | La exportación JSON IR no equivale a importar JSON externo como System |
 | INTEROP-007 | §5.11–5.19 | YAML, TOML, XML, Protobuf, MsgPack, BSON, Avro, Parquet y Arrow | N | N | No implementados |
-| INTEROP-008 | §3.2, §5.10 | Exportar IR JSON versionado | I | I | Python `ronin compile`; Rust `ronin-core compile`; ambos validan y emiten IR v1 con metadata y valores no finitos normalizados |
+| INTEROP-008 | §3.2, §5.10 | Exportar IR JSON versionado | I | I | `ronin/ir.py`, `rust/src/ir.rs`, `tests/test_compile_ir.py`, `scripts/check_ir_parity.py`; ambos validan y emiten IR v1 con metadata y valores no finitos normalizados |
 | INTEROP-009 | §5.9 | Exportar resultados a CSV | I | I | Python `ronin run --format csv`; Rust `ronin-core run --format csv`; `scripts/check_csv_parity.py` compara cabecera, identidad de filas y valores numéricos en 11 proyectos más un multi-sistema. Tests unitarios Python/Rust cubren además comas, comillas y CR/LF combinados; esos casos aún no forman parte de la paridad CLI cross-runtime |
 
 ## 7. Compilación, ejecución y herramientas
 
 | ID | Referencia MDES | Requisito / comportamiento | Python | Rust | Evidencia actual / observaciones |
 |---|---|---|---|---|---|
-| BUILD-001 | Anexo compilador 1–3 | Construir IR normalizado tras validación | I | I | Python `ronin compile`; Rust `ronin-core compile`; ambos validan todos los sistemas y emiten formato `ronin-ir` v1 |
+| BUILD-001 | Anexo compilador 1–3 | Construir IR normalizado tras validación | I | I | `ronin/ir.py`, `rust/src/ir.rs`, `tests/test_compile_ir.py`, `scripts/check_ir_parity.py`; ambos validan todos los sistemas y emiten formato `ronin-ir` v1 |
 | BUILD-002 | §6.1 | Generar ejecutable nativo | N | N | No hay codegen nativo |
 | BUILD-003 | §6.2 | Generar WASM | N | N | No hay backend WASM |
 | BUILD-004 | §6.3 | Generar C | N | N | No hay backend C |
@@ -110,23 +110,23 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | BUILD-011 | §6.13 | REPL general del lenguaje | P | N | `ronin/repl.py`, `tests/test_repl.py`; consola Python básica para cargar/listar/comprobar/resolver sistemas, no un REPL del lenguaje completo |
 | BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | I | Python `diagnose`; Rust `diagnose` en `rust/src/main.rs`; `scripts/check_diagnostic_parity.py` compara informes del corpus compartido |
 | BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR; `scripts/check_cli_error_parity.py` contrasta diez fallos compartidos con stdout vacío y stderr diagnóstico |
-| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile/diagnose/simulate | — | I | `rust/src/main.rs`; pruebas CLI, paridad de selección multi-sistema y diez rutas de error compartidas; `bootstrap_ci` permanece null porque el estimador no está implementado |
+| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile/diagnose/simulate | — | I | `rust/src/main.rs`, `scripts/check_cli_selection_parity.py`, `scripts/check_cli_error_parity.py`; diez rutas de error compartidas; `bootstrap_ci` permanece null porque el estimador no está implementado |
 
 ## 8. Runtime de referencia Python — Parte V
 
 | ID | Referencia | Requisito | Estado | Evidencia / límite |
 |---|---|---|---|---|
-| PY-001 | R.1–R.2 | Paquete, entrypoint y módulo ejecutable | I | `pyproject.toml`, `ronin/__main__.py` |
-| PY-002 | R.3–R.4 | Modelos y jerarquía de errores | I | `ronin/model.py`, `ronin/errors.py` |
-| PY-003 | R.5 | Lexer con ubicación de errores y tokens soportados | I | `ronin/lexer.py`; tests lexer/escapes/Unicode y números |
-| PY-004 | R.6 | Parser del subconjunto system/agent/params | I | `ronin/parser.py`; strictness y examples parser tests |
-| PY-005 | R.7 | Validación semántica y coherencia de modelo | I | `ronin/validator.py`; tests de invariantes y combinaciones inválidas |
+| PY-001 | R.1–R.2 | Paquete, entrypoint y módulo ejecutable | I | `pyproject.toml`, `ronin/__main__.py`, `tests/test_cli_run.py` |
+| PY-002 | R.3–R.4 | Modelos y jerarquía de errores | I | `ronin/model.py`, `ronin/errors.py`, `tests/test_core.py` |
+| PY-003 | R.5 | Lexer con ubicación de errores y tokens soportados | I | `ronin/lexer.py`, `tests/test_parser_strictness.py`, `tests/test_core.py`; tests lexer/escapes/Unicode y números |
+| PY-004 | R.6 | Parser del subconjunto system/agent/params | I | `ronin/parser.py`, `tests/test_parser_strictness.py`, `tests/test_examples.py`; strictness y aceptación de ejemplos del subconjunto |
+| PY-005 | R.7 | Validación semántica y coherencia de modelo | I | `ronin/validator.py`, `tests/test_core.py`, `scripts/check_validation_parity.py`; tests de invariantes y combinaciones inválidas |
 | PY-006 | R.8–R.9 | Semántica CES-Saturada y solver | P | PUSFRE/CES/Hill/CES-Hill; `debt()` sigue placeholder y existen discrepancias normativas |
-| PY-007 | R.10 | Simulador con semilla reproducible | I | `ronin/simulator.py`; tests de normalización, semilla y sigma=0 |
+| PY-007 | R.10 | Simulador con semilla reproducible | I | `ronin/simulator.py`, `tests/test_core.py`, `scripts/check_simulation_contracts.py`; tests de normalización, semilla y sigma=0 |
 | SIM-002 | R.10 | Simulación reproducible y trayectoria común con semilla fija | I | I | `scripts/check_simulation_contracts.py`; compara historial completo Python/Rust en 12 proyectos con tolerancia 1e-12 y valida simplex, semilla y supervivencia |
 | SIM-003 | R.11 | Informes de diagnóstico equivalentes en el corpus compartido | I | I | `scripts/check_diagnostic_parity.py`; compara estado, identificabilidad, recomendación, rango Ω y `bootstrap_ci` |
 | PY-008 | R.11 | Diagnóstico K–α y bootstrap CI | P | `ronin/diagnose.py`, `ronin/semantics.py`, `scripts/check_diagnostic_parity.py`, `tests/test_core.py`; rango/degeneración implementados, bootstrap devuelve null |
-| PY-009 | R.12 | CLI de referencia | I | `ronin/cli.py`; list/check/solve/simulate/diagnose/run/compile/repl |
+| PY-009 | R.12 | CLI de referencia | I | `ronin/cli.py`, `tests/test_cli_multisystem.py`, `tests/test_cli_run.py`, `tests/test_repl.py`; list/check/solve/simulate/diagnose/run/compile/repl |
 | PY-010 | R.13 | Tests normativos y regresión | P | `tests/test_core.py`, `tests/test_parser_strictness.py`, `tests/test_conformance_fixtures.py`; suite de regresión existente, faltan vectores completos para todos los requisitos MDES |
 | PY-011 | R.14 | Ejemplos ejecutables y datasets completos | P | `tests/test_examples.py`, `examples/README.md`, `examples/maquinas.ronin`, `examples/maquinas_ces.ronin`, `examples/pesca.ronin`, `examples/degeneracy_active.ronin`, `examples/degeneracy_inactive.ronin`; ejemplos 101–130 son plantillas y los cuerpos 1–100 están ausentes |
 | PY-012 | R.15–R.16 | Arquitectura y conformidad integral del runtime | P | `ronin/cli.py`, `ronin/model.py`, `ronin/solver.py`, `tests/test_core.py`; arquitectura modular presente, conformidad integral no demostrada |
@@ -135,15 +135,15 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 
 | ID | Referencia | Requisito | Estado | Evidencia / límite |
 |---|---|---|---|---|
-| RS-001 | 6.2 | AST y modelos de datos | I | `rust/src/ast.rs`; metadata y Value anidados |
-| RS-002 | 6.3–6.4 | Lexer/parser de proyectos soportados | I | `rust/src/parser.rs`; tests de sintaxis, escapes, Unicode y objetos |
+| RS-001 | 6.2 | AST y modelos de datos | I | `rust/src/ast.rs`, `rust/tests/runtime.rs`; metadata y Value anidados |
+| RS-002 | 6.3–6.4 | Lexer/parser de proyectos soportados | I | `rust/src/parser.rs`, `rust/tests/runtime.rs`, `scripts/check_parser_parity.py`; tests de sintaxis, escapes, Unicode y objetos |
 | RS-003 | 6.5 | Validación semántica | P | `rust/src/solver.rs`, `rust/tests/runtime.rs`; validación integrada en solver, no cubre el validador completo de MDES |
-| RS-004 | 6.6 | Lowering a IR | I | `rust/src/ir.rs`; tests de campos y metadata |
+| RS-004 | 6.6 | Lowering a IR | I | `rust/src/ir.rs`, `scripts/check_ir_parity.py`; tests de campos y metadata |
 | RS-005 | 6.6 | Serializar IR con contrato JSON equivalente a Python | I | `rust/src/ir.rs`; `ronin-core compile`; `scripts/check_ir_parity.py` compara 12 fixtures válidos y 4 rechazos entre Python/Rust |
 | RS-006 | 6.7 | Solver PUSFRE/CES/Hill | P | `rust/src/solver.rs`; `scripts/check_runtime_parity.py` compara 11 proyectos válidos, 4 rechazos y override de delta; faltan otras construcciones/semánticas MDES |
 | RS-007 | 6.8 | Simulador Rust | P | `rust/src/simulator.rs`; tests de semilla reproducible, simplex y steps inválidos; necesita vectores cruzados de conformidad |
 | RS-008 | 6.9 | Diagnóstico Rust | P | `rust/src/diagnose.rs`; tests de degeneración activa/inactiva/unknown y fixtures compartidos; bootstrap no implementado |
-| RS-009 | 6.10 | CLI Rust list/check/solve/run/compile/diagnose/simulate | I | `rust/src/main.rs`; tests de CLI, informe diagnóstico, simulación y exportación CSV; RNG distinto al de Python |
+| RS-009 | 6.10 | CLI Rust list/check/solve/run/compile/diagnose/simulate | I | `rust/src/main.rs`, `scripts/check_cli_selection_parity.py`, `scripts/check_cli_error_parity.py`, `scripts/check_diagnostic_parity.py`, `scripts/check_csv_parity.py`; tests de CLI y contratos; RNG distinto al de Python |
 | RS-010 | 6.11 | Suite normativa Rust completa | P | `rust/tests/runtime.rs`, `rust/src/parser.rs`, `rust/src/main.rs`; tests unitarios/parser/CLI presentes, no cubren todas las normas MDES |
 | RS-011 | 6.12 | Bindings Python con PyO3 | N | No existe crate/binding PyO3 en el workspace actual |
 | RS-012 | 6.13 | Backend WASM | N | No implementado |
@@ -160,7 +160,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | NORM-005 | N.1 pasos 10–11 | Rango Ω, degeneración y advertencias | I | `ronin/diagnose.py`, `ronin/semantics.py`, `rust/src/diagnose.rs`, `tests/test_core.py`; pruebas de umbral y diagnóstico en el subconjunto implementado |
 | NORM-006 | N.2 Tests 1–2 | Compatibilidad Maquinas y PUSFRE explícito | I | `tests/test_core.py::test_maquinas_normative_result`, `test_explicit_pusfre_matches_legacy_default` |
 | NORM-007 | N.2 Test 3 | CES con lambda→0 recupera PUSFRE | A | La prueba implementada sigue media geométrica; el anexo pide equivalencia PUSFRE. Requiere decisión normativa, no un cambio silencioso |
-| NORM-008 | N.2 Test 4 | Rechazar modelo/parámetros incoherentes | I | `test_explicit_pusfre_matches_legacy_default`, `test_model_coherence_is_enforced`; Rust `rejects_model_parameter_incoherence` |
+| NORM-008 | N.2 Test 4 | Rechazar modelo/parámetros incoherentes | I | `tests/test_core.py::test_explicit_pusfre_matches_legacy_default`, `tests/test_core.py::test_model_coherence_is_enforced`, `rust/src/solver.rs`; Rust `rejects_model_parameter_incoherence` |
 | NORM-009 | N.2 Tests 5–6 | Detectar degeneración activa/inactiva con el umbral normativo | A | La rama activa/inactiva está implementada y probada con fixtures sintéticos (`tests/test_core.py::test_degeneracy_active_for_narrow_omega_range`, `test_degeneracy_inactive_requires_three_full_orders`; `tests/fixtures/conformance/degeneracy_active.ronin`, `tests/fixtures/conformance/degeneracy_inactive.ronin`; Rust `shared_diagnostic_fixtures_match_expected_states`). Pero el ejemplo literal de N.2 Test 6 (`0.001, 0.01, 0.989`) cubre 2.9952 órdenes, no 3.0; `test_source_degeneracy_example_is_below_threshold` confirma que resulta activo. El comportamiento implementado está probado; la aceptación normativa exacta sigue bloqueada por OPEN-002 |
 | NORM-010 | N.2 Test 7 | Diagnóstico del dataset Neural Scaling real | A | Datos fuente incompletos y valores phi/psi fuera del rango normativo |
 | NORM-011 | N.3 | Cumplimiento integral de tolerancias, simulación y requisitos | P | `scripts/check_runtime_parity.py`, `scripts/check_simulation_contracts.py`, `scripts/check_diagnostic_parity.py`, `tests/test_conformance_fixtures.py`; hay pruebas parciales, no procede declarar conformidad global |
