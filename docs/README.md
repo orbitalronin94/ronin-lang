@@ -6,6 +6,7 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 
 - [Inicio práctico: primer flujo ejecutable](quickstart-practico.md) · [Tutorial para mortales](tutorial.md) · [English companion](tutorial.en.md)
 - [Roadmap de v0.1 a v1.0](roadmap.md)
+- [Plan de ejecución y siguientes pasos](roadmap-execution.md) — prioridades verificables para cerrar v0.2/v0.3 sin adelantar decisiones normativas.
 - [Especificación formal de MDES](spec.md) · [English companion](spec.en.md)
 - [Matriz de trazabilidad y conformidad MDES v0.5](conformance-matrix.md) — IDs, estado Python/Rust, pruebas y bloqueos.
 - [Fixtures compartidos de conformidad](../tests/fixtures/conformance/README.md) — entradas positivas, negativas y diagnósticas probadas en ambos runtimes.
