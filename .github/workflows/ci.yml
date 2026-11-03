@@ -264,3 +264,48 @@ jobs:
         run: python tests/test_fixture_catalog_checker.py
       - name: Verify fixture catalog and requirement references
         run: python scripts/check_fixture_catalog.py
+
+  python-wheel-smoke:
+    name: Python wheel / isolated install smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Build wheel and source distribution
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build --sdist --wheel --outdir dist
+      - name: Install wheel into a clean virtual environment
+        run: |
+          python -m venv "$RUNNER_TEMP/ronin-wheel-venv"
+          VENV="$RUNNER_TEMP/ronin-wheel-venv"
+          "$VENV/bin/python" -m pip install --upgrade pip
+          "$VENV/bin/python" -m pip install --no-deps dist/*.whl
+          "$VENV/bin/ronin" --version
+          "$VENV/bin/ronin" check "$GITHUB_WORKSPACE/examples/maquinas.ronin"
+          "$VENV/bin/ronin" solve "$GITHUB_WORKSPACE/examples/maquinas.ronin" > "$RUNNER_TEMP/solve.json"
+          "$VENV/bin/ronin" run "$GITHUB_WORKSPACE/examples/maquinas.ronin" --format csv > "$RUNNER_TEMP/run.csv"
+          "$VENV/bin/ronin" compile "$GITHUB_WORKSPACE/examples/maquinas.ronin" -o "$RUNNER_TEMP/project.ir.json"
+          "$VENV/bin/ronin" simulate "$GITHUB_WORKSPACE/examples/maquinas.ronin" --steps 8 --seed 42 > "$RUNNER_TEMP/sim.json"
+          "$VENV/bin/python" -c "import csv,json,pathlib; root=pathlib.Path('$RUNNER_TEMP'); json.loads((root/'solve.json').read_text()); json.loads((root/'project.ir.json').read_text()); json.loads((root/'sim.json').read_text()); rows=list(csv.reader((root/'run.csv').open())); assert rows[0] == ['system','agent_index','model','fitness','allocation'], (rows[0], len(rows)); assert len(rows)==3, rows"
+
+  rust-release-smoke:
+    name: Rust release binary / smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Build optimized CLI
+        run: cargo build --release --locked --manifest-path rust/Cargo.toml --bin ronin-core
+      - name: Exercise release binary from repository root
+        run: |
+          BIN="$GITHUB_WORKSPACE/rust/target/release/ronin-core"
+          "$BIN" check examples/maquinas.ronin
+          "$BIN" run examples/maquinas.ronin --format csv > "$RUNNER_TEMP/rust-run.csv"
+          "$BIN" compile examples/maquinas.ronin -o "$RUNNER_TEMP/rust-project.ir.json"
+          "$BIN" simulate examples/maquinas.ronin --steps 8 --seed 42 > "$RUNNER_TEMP/rust-sim.json"
+          python -c "import csv,json,pathlib; root=pathlib.Path('$RUNNER_TEMP'); json.loads((root/'rust-project.ir.json').read_text()); json.loads((root/'rust-sim.json').read_text()); rows=[row for row in csv.reader((root/'rust-run.csv').open()) if row]; assert rows[0] == ['system','agent_index','model','fitness','allocation']; assert len(rows)==3"
