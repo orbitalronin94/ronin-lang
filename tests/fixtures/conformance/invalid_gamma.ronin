@@ -1,0 +1,8 @@
+system InvalidGamma = {
+  parts: 2, resource: 10,
+  agents: [
+    { phi: 0.5, psi: 0.5, frequency: 0.5 },
+    { phi: 0.5, psi: 0.5, frequency: 0.5 }
+  ],
+  params: { gamma: 1.5 }
+}
