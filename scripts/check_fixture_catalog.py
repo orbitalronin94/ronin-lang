@@ -44,6 +44,7 @@ def main():
     matrix_text = MATRIX.read_text(encoding="utf-8")
     matrix_row_ids = set()
     matrix_references = {}
+    matrix_statuses = {}
     for line_number, line in enumerate(matrix_text.splitlines(), start=1):
         if not line.startswith("|"):
             continue
@@ -58,6 +59,10 @@ def main():
         if not reference or reference in {"—", "-", "TBD", "TODO"}:
             errors.append(f"conformance-matrix.md:{line_number}: {requirement_id} has no MDES reference")
         matrix_references[requirement_id] = reference
+        if len(cells) == 6:
+            matrix_statuses[requirement_id] = {cell.strip("* " + chr(96)) for cell in cells[3:5]}
+        elif len(cells) >= 5:
+            matrix_statuses[requirement_id] = {cells[3].strip("* " + chr(96))}
 
     profile_text = PROFILE.read_text(encoding="utf-8")
     profile_ids = {item for item in requirement_ids(profile_text) if not item.startswith("OPEN-")}
@@ -66,6 +71,15 @@ def main():
     for requirement_id in sorted(profile_ids & matrix_row_ids):
         if not matrix_references.get(requirement_id):
             errors.append(f"v1-profile-proposal.md: {requirement_id} has no matrix MDES reference")
+
+    candidate_section = profile_text.split("## 2. Candidato de alcance incluido", 1)[1].split("## 3. Exclusiones", 1)[0]
+    candidate_ids = {item for item in requirement_ids(candidate_section) if not item.startswith("OPEN-")}
+    for requirement_id in sorted(candidate_ids):
+        statuses = matrix_statuses.get(requirement_id, set())
+        if not statuses.intersection({"I", "P"}):
+            errors.append(
+                f"v1-profile-proposal.md: candidate ID {requirement_id} is not I/P in the conformance matrix"
+            )
 
     catalog_text = CATALOG.read_text(encoding="utf-8")
     catalogued = set()
@@ -132,7 +146,8 @@ def main():
         return 1
     print(
         f"Traceability OK: {len(matrix_row_ids)} unique matrix requirements; "
-        f"{len(profile_ids)} profile proposal IDs map to matrix rows; {len(actual)} fixtures; "
+        f"{len(profile_ids)} profile proposal IDs map to matrix rows; "
+        f"{len(candidate_ids)} candidate IDs are I/P; {len(actual)} fixtures; "
         f"{audited_rows} I/P rows; {checked_paths} cited evidence paths resolve."
     )
     return 0
