@@ -46,10 +46,10 @@ def evidence_symbol_declared(source, symbol):
     if not terminal_symbol:
         return False
     declaration = re.compile(
-        r"(?m)^\\s*(?:async\\s+def|def|"
-        r"(?:pub(?:\\([^)]*\\))?\\s+)?(?:async\\s+)?fn)\\s+"
+        r"(?m)^\s*(?:async\s+def|def|"
+        r"(?:pub(?:\([^)]*\))?\s+)?(?:async\s+)?fn)\s+"
         + re.escape(terminal_symbol)
-        + r"\\b"
+        + r"\b"
     )
     return bool(declaration.search(source))
 
