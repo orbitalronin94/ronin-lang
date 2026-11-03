@@ -35,6 +35,8 @@ def test_shared_positive_fixtures_validate_and_solve(filename):
         "invalid_phi_out_of_range.ronin",
         "invalid_gamma.ronin",
         "frequency_sum_outside_tolerance.ronin",
+        "invalid_memory_weights_length.ronin",
+        "invalid_memory_weights_sum.ronin",
     ],
 )
 def test_shared_negative_fixtures_are_rejected(filename):
