@@ -45,6 +45,8 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Solver: 11 proyectos válidos, cuatro rechazos y override explícito de delta.
 - [x] Diagnóstico: cuatro fixtures; bootstrap continúa `null`.
 - [x] Simulación: 12 proyectos, 12 pasos, semilla 73 y comparación de trayectorias con tolerancia (10^{-12}).
+- [x] Stress numérico del solver: 80 sistemas deterministas generados (16 por modelo) con frecuencias/parametrización extremas y rechazo degenerado.
+- [x] Stress de simulación: 15 sistemas generados (3 por modelo), 24 pasos y semillas fijas; comparación Python/Rust a tolerancia 1e-12.
 - [x] CSV: 11 proyectos y un proyecto multi-sistema; tests unitarios adicionales de escape en ambos backends.
 - [x] Validación: 13 entradas válidas, diez inválidas y cinco casos multi-sistema.
 - [x] CLI: selección y trece rutas de error comparadas entre runtimes.
