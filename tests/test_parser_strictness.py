@@ -131,3 +131,13 @@ def test_parser_rejects_isolated_unicode_surrogate_in_object_key():
     source = r'system S = { parts: 1, resource: 1, agents: [{phi: 1, psi: 1, frequency: 1, meta: {"\uD800": 1}}] }'
     with pytest.raises(SyntaxError, match="Invalid Unicode surrogate sequence"):
         parse(source)
+
+@pytest.mark.parametrize("separator", ["\\u00a0", "\\u000b", "\\u000c"])
+def test_parser_rejects_whitespace_outside_ascii_space_tab_cr_lf(separator):
+    source = (
+        "system" + separator
+        + "S = { parts: 1, resource: 1, agents: "
+        + "[{phi: 1, psi: 1, frequency: 1}] }"
+    )
+    with pytest.raises(SyntaxError, match="Unexpected"):
+        parse(source)
