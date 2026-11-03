@@ -1,7 +1,7 @@
 # Roadmap de RONIN Runtime v0.1 a v1.0
 
 **Base de diseño:** MDES v0.5  
-**Estado actual:** v0.3 cerrado para el contrato compartido Python/Rust e IR v1; baseline técnico v0.5 del parser completado; v0.2 continúa en curso y el perfil v1.0 sigue pendiente de aprobación  
+**Estado actual:** Runtime publicado 0.1.0; gates C0–C2, C5 y C6 del candidato Runtime v0.5 completados para el alcance documentado; C1, C3 y aprobación C4 siguen abiertos; C7/C8 pendientes. No se declara conformidad integral con MDES v0.5  
 **Idioma canónico de proyecto:** castellano
 
 ## 1. Política de versiones
@@ -12,6 +12,17 @@ Este proyecto mantiene dos líneas de versión independientes:
 - **RONIN Runtime v0.1:** versión del software implementado hasta ahora.
 
 Que exista una especificación completa no significa que todas sus capacidades estén implementadas. Del mismo modo, incrementar la versión del runtime no cambia automáticamente la versión de MDES. Cualquier cambio normativo debe quedar documentado y revisado expresamente.
+
+## Estado verificable del candidato Runtime v0.5
+
+La preparación de v0.5 se sigue en [runtime-v0.5-release-plan.md](runtime-v0.5-release-plan.md) y en la [issue #83](https://github.com/orbitalronin94/ronin-lang/issues/83). A 2026-11-03:
+
+- **Completados:** C0 (baseline), C2 (contrato compartido documentado), C5 (paridad/alcance de investigación) y C6 (distribución/robustez para Ubuntu CI).
+- **Abiertos:** C1 (revisión semántica de 62 filas I/P), C3 (decisiones/fuentes OPEN-001…OPEN-007) y C4 (aprobación explícita del perfil).
+- **Pendientes:** C7 (release candidate) y C8 (tag, artefactos, hashes y GitHub Release).
+- PR #89, #94 y #96 están integradas. Evidencia de C6: 17/17 jobs en [CI de PR #96](https://github.com/orbitalronin94/ronin-lang/actions/runs/41695675868).
+
+La versión declarada en `pyproject.toml` y `rust/Cargo.toml` sigue siendo 0.1.0. El candidato v0.5 no está publicado ni aprobado. Runtime v0.5 no equivale a conformidad integral con MDES v0.5.
 
 ## 2. Principios del roadmap
 
