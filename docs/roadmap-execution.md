@@ -6,9 +6,9 @@
 
 ## Avances integrados desde la línea base anterior
 
-- Validación numérica compartida: sumas de frecuencias dentro/fuera de la tolerancia de (10^{-9}), y rechazo de pesos de memoria con longitud o suma inválidas.
-- CLI: paridad de selección por defecto/explicita en `solve`, `simulate`, `diagnose`, `run` y `check`; diez rutas de fallo compartidas con stdout vacío y diagnóstico en stderr.
-- Parser: aceptación/rechazo del subconjunto común, rechazo de escapes Unicode surrogate aislados y un sentinel de ubicación línea/columna.
+- Validación numérica compartida: sumas de frecuencias dentro/fuera de la tolerancia de 1e-9, y rechazo de pesos de memoria con longitud o suma inválidas.
+- CLI: paridad de selección por defecto/explícita en `solve`, `simulate`, `diagnose`, `run` y `check`; diez rutas de fallo compartidas con stdout vacío y diagnóstico en stderr.
+- Parser: aceptación/rechazo del subconjunto común, rechazo de escapes Unicode surrogate aislados y un caso testigo de ubicación línea/columna.
 - CSV: pruebas unitarias de campos con comas, comillas y saltos de línea en Python y Rust. La paridad CLI sigue cubriendo cabecera, identidad de filas y valores numéricos; no se afirma aún round-trip cross-runtime de todos los casos de escape.
 - Trazabilidad: job CI independiente que verifica que todos los fixtures `.ronin` del catálogo existen, están catalogados y enlazan IDs presentes en la matriz.
 - Última ejecución completa de CI observada para la validación de memoria: [15/15 jobs correctos](https://github.com/orbitalronin94/ronin-lang/actions/runs/41658388618).
