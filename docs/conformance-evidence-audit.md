@@ -27,6 +27,10 @@ La revisión usa las pruebas y scripts del repositorio; no es una certificación
 
 **Total:** 62 filas I/P revisadas. El estado se conserva salvo correcciones ya integradas: NORM-005/P por la heurística de libertad de parámetros, deuda `None/null` en NORM-004/PY-006 y EX-004/P porque los fixtures sintéticos no sustituyen el vector literal de N.2 Test 6. No se elevan estados P a I por añadir más casos de estrés.
 
+## Registro por requisito
+
+La revisión cubre las 62 filas I/P que el checker contabiliza en la matriz. Los estados de cada ID permanecen visibles en la matriz; el resumen por áreas anterior explica el alcance contrastado. Correcciones explícitas de esta revisión: EX-003 mantiene I y ahora cita ejecución/paridad; EX-004 queda P porque el fixture sintético no reemplaza el vector literal de Test 6. Las demás filas conservan su estado solo cuando el límite y la evidencia descritos corresponden al comportamiento realmente probado.
+
 ## Conteos de evidencia confirmados
 
 - Parser: 9 ficheros válidos + 3 fuentes inline válidas + 29 fuentes inline inválidas.
