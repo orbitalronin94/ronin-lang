@@ -29,6 +29,7 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Comprobar que todos los IDs de la propuesta v1.0 mapean a filas reales de la matriz con referencia MDES y que los IDs del alcance candidato están marcados I/P; la revisión de exactitud y aprobación del perfil siguen pendientes.
 - [x] Auditar NORM-009 / N.2 Test 6: separar la prueba sintética de la rama inactiva del vector literal de la fuente, cuyo rango real (2.9952) contradice el esperado (3.0); registrar estado A y mantener OPEN-002 sin alterar la semántica.
 - [x] Añadir referencias a archivos concretos de implementación en las filas I/P y enlazar tests, fixtures o scripts en las filas marcadas I; el job CI comprueba que las rutas citadas existen.
+- [x] Validar referencias `ruta::símbolo` contra declaraciones `def`/`fn` reales; tests unitarios rechazan menciones en comentarios/cadenas y coincidencias por prefijo ([CI](https://github.com/orbitalronin94/ronin-lang/actions/runs/41688569556)).
 - [ ] Revisar sustantivamente el resto de filas I/P y confirmar que la evidencia enlazada cubre el alcance descrito.
 - [ ] Completar trazabilidad inversa de requisitos a pruebas/fixtures cuando sea automatizable.
 - [ ] Delimitar y aprobar el denominador del perfil v1.0 antes de calcular métricas.
