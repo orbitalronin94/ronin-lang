@@ -58,6 +58,15 @@ class Parser:
             raise ValueError(f"{field} must be boolean")
         return value
 
+    @staticmethod
+    def decode_string(token):
+        decoded = json.loads(token.value)
+        if any(0xD800 <= ord(char) <= 0xDFFF for char in decoded):
+            raise SyntaxError(
+                f"Invalid Unicode surrogate sequence at {token.line}:{token.column}"
+            )
+        return decoded
+
     def value(self):
         token = self.token
         if token.kind == "NUMBER":
@@ -65,12 +74,7 @@ class Parser:
             return float(token.value)
         if token.kind == "STRING":
             self.take()
-            decoded = json.loads(token.value)
-            if any(0xD800 <= ord(char) <= 0xDFFF for char in decoded):
-                raise SyntaxError(
-                    f"Invalid Unicode surrogate sequence at {token.line}:{token.column}"
-                )
-            return decoded
+            return self.decode_string(token)
         if token.value == "∞":
             self.take()
             return math.inf
@@ -92,7 +96,7 @@ class Parser:
                     raise SyntaxError("Unterminated object")
                 key_token = self.token
                 if key_token.kind == "STRING":
-                    key = json.loads(self.take().value)
+                    key = self.decode_string(self.take())
                 elif key_token.kind == "IDENT":
                     key = self.take().value
                 else:
