@@ -1,4 +1,4 @@
-# Documentación de RONIN Runtime v0.1 · MDES v0.5
+# Documentación de RONIN Runtime (v0.1 publicada; v0.5 en preparación) · MDES v0.5
 
 La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es la versión de referencia de la especificación; RONIN Runtime v0.1 es el estado actual del software. No son el mismo número de versión.
 
@@ -37,5 +37,3 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 
 El castellano es el idioma principal; los archivos `.en.md` son resúmenes de acompañamiento, no traducciones literales completas. El material fuente se conserva en sus documentos españoles.
 
-
-- [Propuesta de perfil Runtime v0.5](runtime-v0.5-profile-proposal.md): alcance de compatibilidad del runtime v0.5.0 y exclusiones pendientes de aprobación.
