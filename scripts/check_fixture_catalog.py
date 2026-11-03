@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_DIR = ROOT / "tests" / "fixtures" / "conformance"
 CATALOG = FIXTURE_DIR / "README.md"
 MATRIX = ROOT / "docs" / "conformance-matrix.md"
+PROFILE = ROOT / "docs" / "v1-profile-proposal.md"
 ID_PATTERN = re.compile(r"\b([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*)-(\d{3})(?:[–/-](\d{3}))?\b")
 ROW_ID_PATTERN = re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-\d{3}$")
 INLINE_CODE_PATTERN = re.compile(chr(96) + r"([^" + chr(96) + r"]+)" + chr(96))
@@ -42,6 +43,7 @@ def main():
     errors = []
     matrix_text = MATRIX.read_text(encoding="utf-8")
     matrix_row_ids = set()
+    matrix_references = {}
     for line_number, line in enumerate(matrix_text.splitlines(), start=1):
         if not line.startswith("|"):
             continue
@@ -52,6 +54,19 @@ def main():
         if requirement_id in matrix_row_ids:
             errors.append(f"conformance-matrix.md:{line_number}: duplicate requirement row ID {requirement_id}")
         matrix_row_ids.add(requirement_id)
+        reference = cells[1].strip() if len(cells) > 1 else ""
+        if not reference or reference in {"—", "-", "TBD", "TODO"}:
+            errors.append(f"conformance-matrix.md:{line_number}: {requirement_id} has no MDES reference")
+        matrix_references[requirement_id] = reference
+
+    profile_text = PROFILE.read_text(encoding="utf-8")
+    profile_ids = {item for item in requirement_ids(profile_text) if not item.startswith("OPEN-")}
+    for requirement_id in sorted(profile_ids - matrix_row_ids):
+        errors.append(f"v1-profile-proposal.md: unknown matrix requirement ID {requirement_id}")
+    for requirement_id in sorted(profile_ids & matrix_row_ids):
+        if not matrix_references.get(requirement_id):
+            errors.append(f"v1-profile-proposal.md: {requirement_id} has no matrix MDES reference")
+
     catalog_text = CATALOG.read_text(encoding="utf-8")
     catalogued = set()
 
@@ -116,7 +131,8 @@ def main():
         print("\n".join(errors), file=sys.stderr)
         return 1
     print(
-        f"Traceability OK: {len(matrix_row_ids)} unique matrix requirements; {len(actual)} fixtures; "
+        f"Traceability OK: {len(matrix_row_ids)} unique matrix requirements; "
+        f"{len(profile_ids)} profile proposal IDs map to matrix rows; {len(actual)} fixtures; "
         f"{audited_rows} I/P rows; {checked_paths} cited evidence paths resolve."
     )
     return 0
