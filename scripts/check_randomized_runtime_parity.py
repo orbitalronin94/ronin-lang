@@ -101,7 +101,10 @@ def close(left, right, label, case):
 
 def compare_source(source, label):
     systems = parse(source)
-    expected = {name: asdict(solve(system)) for name, system in systems.items()}
+    expected = {
+        name: asdict(solve(system, delta=system.params.coexistence_delta))
+        for name, system in systems.items()
+    }
     temporary = tempfile.NamedTemporaryFile(
         mode="w", encoding="utf-8", suffix=".ronin", prefix=".random-parity-",
         dir=ROOT, delete=False,
