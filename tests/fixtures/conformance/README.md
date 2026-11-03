@@ -51,6 +51,23 @@ The shared corpus is consumed by these cross-runtime scripts:
 
 Run the scripts from the repository root after installing the Python package and Rust toolchain. The canonical CI workflow remains the source of truth for the exact jobs and supported environments.
 
+## Script coverage inventory
+
+This inventory records the concrete scope visible in each parity script. Counts refer to inputs/cases enumerated by the script, not to a percentage of MDES conformance.
+
+| Script | Concrete coverage in the current script | Important boundary |
+|---|---|---|
+| `check_parser_parity.py` | 8 valid files, 3 valid inline sources and 17 invalid inline sources | Parser acceptance and declared system names only; not semantic execution |
+| `check_validation_parity.py` | 12 valid files, 4 invalid files and 5 multi-system selection cases | Acceptance/rejection and selected-system behavior; does not compare all diagnostic wording |
+| `check_ir_parity.py` | 11 valid files and 4 invalid files | Structural JSON equality and rejection parity for the listed corpus |
+| `check_runtime_parity.py` | 11 valid files, 4 invalid files and one explicit delta override | Solver fields and numeric tolerances for the enumerated models; not all MDES formulas |
+| `check_diagnostic_parity.py` | 4 diagnostic/check-only fixtures | Report fields and range comparison; bootstrap confidence interval remains null |
+| `check_simulation_contracts.py` | 12 valid files, 12 steps, fixed seed 73 | Seeded trajectory/invariant comparison for these fixtures; not a universal RNG contract |
+| `check_cli_selection_parity.py` | Synthetic two-system valid and mixed-validity projects | Default `solve`, all-system `run`, and named selection; not every CLI error/exit code |
+| `check_csv_parity.py` | 11 files and one synthetic multi-system project | Header, row identity and numeric values; quoting/escaping edge cases are not yet covered by this cross-runtime script |
+
+When a script's input list changes, update this table in the same change. Unit tests and workflow jobs may provide additional evidence; they should be linked separately rather than silently folded into these counts.
+
 ## Limits
 
 All fixtures use synthetic values. They do not replace normative examples or missing real datasets in MDES v0.5. Expected behavior is tested by both implementations where the corresponding feature exists.
