@@ -66,7 +66,7 @@ This inventory records the concrete scope visible in each parity script. Counts 
 
 | Script | Concrete coverage in the current script | Important boundary |
 |---|---|---|
-| `check_parser_parity.py` | 8 valid files, 3 valid inline sources and 24 invalid inline sources | Parser acceptance, declared system names, isolated-surrogate rejection in values and object keys, plus raw-control-character rejection, plus a shared line/column diagnostic sentinel; not semantic execution |
+| `check_parser_parity.py` | 9 valid files, 3 valid inline sources and 29 invalid inline sources | Parser acceptance, declared system names, isolated-surrogate rejection in values and object keys, plus raw-control-character rejection, plus a shared line/column diagnostic sentinel; not semantic execution |
 | `check_validation_parity.py` | 13 valid files, 10 invalid files and 5 multi-system selection cases | Acceptance/rejection and selected-system behavior; does not compare all diagnostic wording |
 | `check_ir_parity.py` | 11 valid files and 4 invalid files | Structural JSON equality and rejection parity for the listed corpus |
 | `check_runtime_parity.py` | 11 valid files, 4 invalid files and one explicit delta override | Solver fields and numeric tolerances for the enumerated models; not all MDES formulas |
@@ -76,7 +76,7 @@ This inventory records the concrete scope visible in each parity script. Counts 
 | `check_cli_error_parity.py` | 10 shared failures: missing file, unknown system, malformed source, semantic rejection, unsupported format, missing option value, unknown option, format option outside run, output option outside compile and simulation option outside simulate | Both runtimes must fail, keep stdout empty and provide stderr; exact wording and numeric exit codes are intentionally not equated |
 | `check_csv_parity.py` | 11 files and one synthetic multi-system project | Header, row identity and numeric values; separate Python/Rust unit tests cover combined commas, quotes and CR/LF fields, but these edge cases are not yet exercised by the cross-runtime CLI script |
 
-When a script's input list changes, update this table in the same change. Unit tests and workflow jobs may provide additional evidence; they should be linked separately rather than silently folded into these counts.
+When a script's input list changes, update this table in the same change. Unit tests and workflow jobs may provide additional evidence; they should be linked separately rather than silently folded into these counts. The fixture-catalog CI check also audits the reverse direction: each matrix row marked I/P must have a non-empty evidence or limitation note. This is a completeness guard, not a semantic proof that the cited test covers the entire requirement.
 
 ## Limits
 
