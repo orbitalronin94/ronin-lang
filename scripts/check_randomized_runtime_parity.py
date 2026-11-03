@@ -228,7 +228,7 @@ def main():
     print(
         "Randomized Python/Rust solver parity OK: "
         f"{len(cases)} deterministic systems, seed={SEED}, models={','.join(MODELS)}, "
-        "plus a matched degenerate-system rejection"
+        "plus a 1,000-agent CES-Hill project and matched degenerate-system rejection"
     )
 
 
