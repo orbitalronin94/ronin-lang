@@ -109,8 +109,8 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 | BUILD-010 | §6.12 | Depurador RONIN | N | N | No hay debugger |
 | BUILD-011 | §6.13 | REPL general del lenguaje | P | N | `ronin/repl.py`, `tests/test_repl.py`; consola Python básica para cargar/listar/comprobar/resolver sistemas, no un REPL del lenguaje completo |
 | BUILD-012 | §6.14 | Comando CLI de diagnóstico | I | I | Python `diagnose`; Rust `diagnose` en `rust/src/main.rs`; `scripts/check_diagnostic_parity.py` compara informes del corpus compartido |
-| BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR; `scripts/check_cli_error_parity.py` contrasta diez fallos compartidos con stdout vacío y stderr diagnóstico |
-| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile/diagnose/simulate | — | I | `rust/src/main.rs`, `scripts/check_cli_selection_parity.py`, `scripts/check_cli_error_parity.py`; diez rutas de error compartidas; `bootstrap_ci` permanece null porque el estimador no está implementado |
+| BUILD-013 | §1, §2, §6 | CLI Python para list/check/solve/simulate/diagnose/run/compile | I | — | `ronin/cli.py`; tests CLI multi-sistema, run, CSV e IR; `scripts/check_cli_error_parity.py` contrasta trece fallos compartidos con stdout vacío y stderr diagnóstico |
+| BUILD-014 | §6, Parte VI | CLI Rust `ronin-core` list/check/solve/run/compile/diagnose/simulate | — | I | `rust/src/main.rs`, `scripts/check_cli_selection_parity.py`, `scripts/check_cli_error_parity.py`; trece rutas de error compartidas; `bootstrap_ci` permanece null porque el estimador no está implementado |
 
 ## 8. Runtime de referencia Python — Parte V
 
