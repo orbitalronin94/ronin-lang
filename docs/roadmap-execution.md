@@ -49,6 +49,8 @@ Estos resultados son evidencia de los alcances concretos enumerados, no un porce
 - [x] Validación: 13 entradas válidas, diez inválidas y cinco casos multi-sistema.
 - [x] CLI: selección y trece rutas de error comparadas entre runtimes.
 - [x] Documentar diferencias intencionadas y contratos observados: selección por comando; errores comparados por fallo no-cero, stdout vacío y stderr explicativo, sin exigir igualdad textual ni códigos numéricos idénticos.
+- [x] Alinear opciones CLI Rust con Python: `--system` solo en check/solve/simulate/diagnose y `--delta` solo en solve/run; añadir tres casos de rechazo a la paridad CLI.
+- [x] Normalizar números no finitos del JSON CLI Python a cadenas `inf`/`-inf`/`nan`, con `allow_nan=False`, y fijar el mismo contrato en tests Rust/Python.
 - [x] Verificar el ciclo de serialización del IR v1 en ambos runtimes mediante parseo JSON estructural y comparación de objetos; el IR sigue siendo un formato de salida, no un importador/round-trip de vuelta a `.ronin`.
 - [x] Delimitar RNG: la misma semilla garantiza reproducibilidad dentro de cada backend; no se declara secuencia aleatoria común Python/Rust.
 - [x] Registrar vectores ausentes como fuera del alcance de paridad ejecutable mientras falten datos/fuentes normativas (OPEN-001 a OPEN-007); no se inventan resultados esperados.
