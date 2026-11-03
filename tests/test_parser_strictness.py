@@ -103,10 +103,10 @@ def test_parser_rejects_invalid_extended_parameter_types(params):
 
 def test_parser_reports_line_and_column_for_missing_separator():
     source = (
-        "system S = {\\n"
-        "  parts 2,\\n"
-        "  resource: 1,\\n"
-        "  agents: [{phi: 1, psi: 1, frequency: 1}]\\n"
+        "system S = {\n"
+        "  parts 2,\n"
+        "  resource: 1,\n"
+        "  agents: [{phi: 1, psi: 1, frequency: 1}]\n"
         "}"
     )
     with pytest.raises(SyntaxError, match=r"at 2:9"):
