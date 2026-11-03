@@ -433,6 +433,7 @@ mod tests {
         assert!(output.contains("\"allocation\":["));
         assert!(output.contains("\"fitness\":["));
         assert!(output.contains("\"debt\":null"));
+        assert!(output.contains("\"K_used\":\"inf\""));
     }
 
     #[test]
