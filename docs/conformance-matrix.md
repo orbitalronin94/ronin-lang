@@ -169,7 +169,7 @@ Esta matriz convierte las secciones de MDES v0.5 en requisitos rastreables. No m
 
 El corpus sintético `tests/fixtures/conformance/` contiene siete fixtures positivos (PUSFRE, CES, Hill, CES-Hill, full/order 1, metadata anidada y suma de frecuencias dentro de tolerancia), diez negativos, tres diagnósticos y uno check-only. El job `Conformance fixture catalog / traceability` verifica en CI que cada `.ronin` esté catalogado, exista y enlace IDs presentes en la matriz. No reemplaza los datasets normativos ausentes ni resuelve contradicciones de MDES.
 
-El catálogo enumera las fixtures, su propósito y los IDs asociados. El verificador automático comprueba inventario y referencias fixture → matriz, y en sentido inverso exige que cada fila I/P tenga una nota de evidencia o limitación. No verifica que el test demuestre toda la semántica del requisito: la suficiencia de la evidencia y el alcance de cada script siguen requiriendo revisión para cerrar v0.2.
+El catálogo enumera las fixtures, su propósito y los IDs asociados. El verificador automático comprueba inventario y referencias fixture → matriz, y en sentido inverso exige que cada fila I/P tenga una nota de evidencia o limitación (integrado en [PR #67](https://github.com/orbitalronin94/ronin-lang/pull/67); [CI 15/15](https://github.com/orbitalronin94/ronin-lang/actions/runs/41667655968)). No verifica que el test demuestre toda la semántica del requisito: la suficiencia de la evidencia y el alcance de cada script siguen requiriendo revisión para cerrar v0.2.
 
 ## 12. Ejemplos y datos de aceptación
 
