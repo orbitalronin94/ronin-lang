@@ -57,3 +57,11 @@ La revisión cubre las 62 filas I/P que el checker contabiliza en la matriz. Los
 ## Gate C1
 
 C1 podrá cerrarse cuando el workflow de trazabilidad pase sobre el commit que contiene esta auditoría y la matriz/profile mantengan las referencias y estados coherentes. La aprobación del perfil es C4, y las decisiones normativas OPEN-* son C3; no se mezclan con el cierre de la auditoría de evidencia.
+
+## Revisión de cierre C1 — 2026-11-10
+
+C1 **permanece abierto**. En una segunda lectura del artefacto se confirma que el resumen por áreas y el párrafo genérico de «Registro por requisito» no exponen una ficha verificable para cada uno de los 62 IDs: no permiten comprobar de forma directa, fila a fila, qué símbolo/test se inspeccionó ni qué conclusión individual se obtuvo. La matriz contiene referencias concretas y el checker comprueba su existencia, pero eso no equivale por sí solo a una auditoría semántica individual.
+
+Antes de cerrar C1, la auditoría debe incorporar un registro por ID con: (1) estado Python/Rust revisado, (2) símbolo o comportamiento de implementación inspeccionado, (3) prueba/fixture/script ejecutado o revisado, (4) resultado observado y (5) límite que impide ampliar la afirmación. Si una fila no recibió esa revisión, debe quedar pendiente y excluirse del total de filas revisadas. No se deben generar conclusiones automáticamente copiando las referencias de la matriz.
+
+Esta revisión no modifica estados de conformidad ni decisiones normativas. C3 (OPEN-*) y C4 (aprobación explícita del perfil) siguen siendo puertas separadas. La CI de documentación tampoco sustituye la inspección semántica.
