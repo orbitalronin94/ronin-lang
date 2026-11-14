@@ -13,6 +13,8 @@ La documentación canónica se mantiene **primero en castellano**. MDES v0.5 es 
 - [Propuesta de perfil de conformidad v1.0](v1-profile-proposal.md) — alcance candidato, exclusiones y reglas de medición pendientes de aprobación.
 - [Especificación formal de MDES](spec.md) · [English companion](spec.en.md)
 - [Matriz de trazabilidad y conformidad MDES v0.5](conformance-matrix.md) — IDs, estado Python/Rust, pruebas y bloqueos.
+- [Auditoría semántica de evidencia](conformance-evidence-audit.md) — revisión individual de las 62 filas I/P; pendiente de CI integrada para cerrar C1.
+- [Changelog](../CHANGELOG.md) y [guía de migración v0.1 → v0.5](migration-v0.1-to-v0.5.md) — borradores del candidato no publicado.
 - [Fixtures compartidos de conformidad](../tests/fixtures/conformance/README.md) — entradas positivas, negativas y diagnósticas probadas en ambos runtimes.
 - [Cobertura y límites de implementación](source-coverage.md)
 
