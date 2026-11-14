@@ -178,6 +178,10 @@ fn parse_args(
 }
 
 pub fn execute(args: &[String]) -> Result<String, String> {
+    // Keep the standalone version query aligned with `ronin --version` in Python.
+    if args.len() == 1 && args[0] == "--version" {
+        return Ok(format!("RONIN {}", env!("CARGO_PKG_VERSION")));
+    }
     let (command, file, selected, delta, output_path, bootstrap, steps, seed, output_format) = parse_args(args)?;
     let source = fs::read_to_string(&file)
         .map_err(|error| format!("cannot read {}: {}", file, error))?;
@@ -315,6 +319,12 @@ mod tests {
             .join("../examples/maquinas.ronin")
             .to_string_lossy()
             .into_owned()
+    }
+
+    #[test]
+    fn version_flag_matches_python_cli_format() {
+        let args = vec!["--version".into()];
+        assert_eq!(execute(&args).unwrap(), "RONIN 0.1.0");
     }
 
     #[test]
