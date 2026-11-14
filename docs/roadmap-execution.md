@@ -8,6 +8,7 @@
 
 - Validación numérica compartida: sumas de frecuencias dentro/fuera de la tolerancia de 1e-9, y rechazo de pesos de memoria con longitud o suma inválidas.
 - CLI: paridad de selección por defecto/explícita en `solve`, `simulate`, `diagnose`, `run` y `check`; trece rutas de fallo compartidas con stdout vacío y diagnóstico en stderr.
+- CLI: `ronin-core --version` devuelve el mismo formato y versión de paquete que `ronin --version` (`RONIN 0.1.0`); se añadió una prueba unitaria Rust. La verificación CI de este cambio queda pendiente.
 - Parser: aceptación/rechazo del subconjunto común, rechazo de escapes Unicode surrogate aislados y un caso testigo de ubicación línea/columna.
 - CSV: pruebas unitarias de campos con comas, comillas y saltos de línea en Python y Rust. La paridad CLI sigue cubriendo cabecera, identidad de filas y valores numéricos; no se afirma aún round-trip cross-runtime de todos los casos de escape.
 - Trazabilidad: job CI independiente que verifica el inventario de fixtures, los IDs del catálogo, las notas de evidencia/limitación de filas I/P y las rutas de archivo citadas en esas evidencias. Las filas marcadas I enlazan también a tests, fixtures o scripts que respaldan el alcance indicado.
