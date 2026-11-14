@@ -1,6 +1,6 @@
 # Plan de ejecución del roadmap
 
-**Corte de estado:** 2026-11-03  
+**Corte de estado:** 2026-11-14  
 **Base:** `docs/roadmap.md`, `docs/conformance-matrix.md`, catálogo de fixtures y CI de GitHub Actions.  
 **Estado:** v0.2 sigue en curso. v0.3 queda cerrado para el contrato de paridad Python/Rust e IR v1 delimitado en esta hoja; esto no implica conformidad global MDES ni cierra v0.2. v0.4 sigue bloqueado por decisiones normativas; el baseline técnico v0.5 del parser está completado, pero el perfil v1.0 no está aprobado. No se declara conformidad global.
 
@@ -91,3 +91,12 @@ Siguen abiertos OPEN-001 a OPEN-007: límite CES cuando lambda tiende a cero, um
 ## Regla de aceptación
 
 Cada checkpoint cerrado debe enlazar requisito, implementación, prueba reproducible, resultado CI y límites. Una suite verde acredita únicamente los casos que ejecuta. Las decisiones normativas, la aprobación del perfil v1.0 y la conformidad integral requieren revisión explícita y no se deducen de la CI.
+
+
+## Verificación adicional de la línea principal — 2026-11-14
+
+El último commit observado en `main` es `6e071e81a966485e7822718328550aa914954c6b` (3 de noviembre de 2026). Su mensaje registra **17/17 jobs CI satisfactorios**, incluyendo la paridad determinista Python/Rust del solver y simulación con un caso CES-Hill de 1.000 agentes, instalación aislada del wheel Python y smoke test Rust `--release --locked`. Esta evidencia amplía la robustez del runtime; no cambia por sí sola el estado de los gates normativos ni demuestra conformidad integral.
+
+La auditoría semántica fila por fila de las 62 entradas I/P aparece descrita en el PR abierto [#99](https://github.com/orbitalronin94/ronin-lang/pull/99), pero **no está integrada en `main`** en este corte. Por tanto, C1 sigue abierto en la rama principal. También permanece abierto el PR [#98](https://github.com/orbitalronin94/ronin-lang/pull/98), que contiene un borrador de changelog y guía de migración; esos documentos no se consideran publicados mientras no se integren y verifiquen en `main`.
+
+**Siguiente secuencia verificable:** (1) revisar y ejecutar CI sobre la auditoría de 62 filas; (2) integrar en `main` solo si la evidencia y los checks son satisfactorios; (3) sincronizar la matriz, el perfil v0.5 y la propuesta v1.0; (4) abordar C3/C4 y después preparar el candidato de release. No se calcula porcentaje global hasta aprobar el denominador del perfil.
